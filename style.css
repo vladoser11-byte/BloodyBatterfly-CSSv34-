@@ -1,1 +1,377 @@
+/* Система бонусов */
+.bonus-system {
+    max-width: 800px;
+    margin: 0 auto;
+}
 
+.auth-card {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.auth-input {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    background: rgba(255,255,255,0.9);
+}
+
+.auth-btn {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #ff6b6b;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.auth-btn:hover {
+    background: #ee5a24;
+}
+
+.auth-btn.secondary {
+    background: #6c757d;
+}
+
+.auth-btn.secondary:hover {
+    background: #545b62;
+}
+
+/* Интерфейс бонусов */
+.bonus-interface {
+    background: rgba(255,255,255,0.95);
+    border-radius: 15px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.user-stats {
+    display: flex;
+    gap: 10px;
+}
+
+.vip-status {
+    background: linear-gradient(135deg, #ffd700, #ffa500);
+    color: #333;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.discount-badge {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.logout-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Карта ежедневного бонуса */
+.daily-bonus-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.bonus-timer-container {
+    margin-bottom: 20px;
+}
+
+.bonus-timer {
+    background: rgba(255,255,255,0.2);
+    padding: 15px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745, #20c997);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.bonus-claim-btn {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-radius: 25px;
+    cursor: pointer;
+    margin: 20px 0;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+}
+
+.bonus-claim-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255,107,107,0.4);
+}
+
+.bonus-claim-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.bonus-info {
+    margin-top: 20px;
+}
+
+.possible-bonuses {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.bonus-type {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.bonus-icon {
+    font-size: 1.2em;
+}
+
+/* Список активных бонусов */
+.active-bonuses-section {
+    margin-bottom: 30px;
+}
+
+.bonuses-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.bonus-item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.bonus-item.vip {
+    border-left-color: #ffd700;
+    background: linear-gradient(135deg, #fff9e6, #fff3cd);
+}
+
+.bonus-item.discount {
+    border-left-color: #28a745;
+    background: linear-gradient(135deg, #e8f5e8, #d4edda);
+}
+
+.bonus-item h4 {
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bonus-timer {
+    font-weight: bold;
+    color: #e91e63;
+    font-size: 0.9em;
+}
+
+.bonus-code {
+    background: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 0.9em;
+    margin: 5px 0;
+    display: inline-block;
+}
+
+/* Магазин бонусов */
+.bonus-shop {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+}
+
+.shop-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.shop-item {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.item-name {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.item-prices {
+    margin-bottom: 15px;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9em;
+}
+
+.discounted-price {
+    color: #e91e63;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+.buy-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.3s;
+}
+
+.buy-btn:hover {
+    background: #218838;
+}
+
+/* Модальные окна */
+.modal-bonus {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-bonus-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.reward-animation {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+
+.reward-title {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+.reward-description {
+    margin-bottom: 20px;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Анимации */
+@keyframes confetti {
+    0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.hidden {
+    display: none !important;
+}
