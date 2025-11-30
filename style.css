@@ -1,4 +1,632 @@
-/* Система бонусов */
+/* === ОСНОВНЫЕ СТИЛИ И ПЕРЕМЕННЫЕ === */
+:root {
+    --blood-red: #ff0066;
+    --christmas-red: #ff0000;
+    --christmas-green: #00ff00;
+    --christmas-gold: #ffd700;
+    --snow-white: #ffffff;
+    --dark-bg: #0a0a0a;
+    --darker-bg: #050505;
+    --text-light: #ffffff;
+    --text-gray: #cccccc;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #0a0a0a 0%, #001a00 100%);
+    color: var(--text-light);
+    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* === НОВОГОДНИЙ ФОН С ЁЛКАМИ === */
+.christmas-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -3;
+}
+
+.snowflakes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.snowflake {
+    position: absolute;
+    color: var(--snow-white);
+    font-size: 20px;
+    animation: snow-fall 10s linear infinite;
+    user-select: none;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes snow-fall {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.trees {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+}
+
+.tree {
+    font-size: 4rem;
+    animation: tree-glow 3s infinite alternate;
+    text-shadow: 0 0 20px var(--christmas-green);
+}
+
+@keyframes tree-glow {
+    0% {
+        text-shadow: 0 0 20px var(--christmas-green);
+    }
+    100% {
+        text-shadow: 0 0 40px var(--christmas-green), 0 0 60px var(--christmas-gold);
+    }
+}
+
+.tree-1 { animation-delay: 0s; }
+.tree-2 { animation-delay: 1s; }
+.tree-3 { animation-delay: 2s; }
+.tree-4 { animation-delay: 1.5s; }
+
+.decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.decoration {
+    position: absolute;
+    font-size: 24px;
+    animation: decoration-float 15s infinite linear;
+    opacity: 0.7;
+}
+
+@keyframes decoration-float {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(0.8);
+    }
+    100% {
+        transform: translateY(-100vh) rotate(360deg) scale(1.2);
+    }
+}
+
+/* === СИСТЕМА ЧАСТИЦ === */
+.particles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -2;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--christmas-red);
+    border-radius: 50%;
+    animation: particle-float 20s infinite linear;
+    opacity: 0;
+}
+
+@keyframes particle-float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* === ШАПКА === */
+.header {
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid var(--christmas-red);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 15px 0;
+    box-shadow: 0 0 30px rgba(255, 0, 102, 0.3);
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+}
+
+.logo {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: var(--christmas-red);
+    text-shadow: 0 0 20px var(--christmas-red), 0 0 40px var(--blood-red);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+    text-shadow: 0 0 30px var(--christmas-red), 0 0 60px var(--blood-red);
+}
+
+.nav-menu {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+}
+
+.nav-link {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: bold;
+    padding: 12px 25px;
+    border-radius: 12px;
+    transition: all 0.4s ease;
+    background: rgba(255, 0, 102, 0.15);
+    border: 2px solid var(--christmas-red);
+    font-size: 1rem;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: var(--christmas-red);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 0, 102, 0.5);
+}
+
+/* === ОСНОВНОЙ КОНТЕНТ === */
+.main-content {
+    margin-top: 100px;
+    min-height: calc(100vh - 180px);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 50px 30px;
+}
+
+.page {
+    display: none;
+    animation: page-fade 0.5s ease;
+}
+
+@keyframes page-fade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page.active {
+    display: block;
+}
+
+.section-title {
+    font-size: 3.5rem;
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--christmas-red);
+    text-shadow: 0 0 20px var(--christmas-red);
+    animation: title-glow 3s infinite alternate;
+}
+
+@keyframes title-glow {
+    0% {
+        text-shadow: 0 0 20px var(--christmas-red);
+    }
+    100% {
+        text-shadow: 0 0 30px var(--christmas-red), 0 0 60px var(--blood-red);
+    }
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 1.3rem;
+    color: var(--text-gray);
+    margin-bottom: 50px;
+}
+
+/* === ГЛАВНАЯ СТРАНИЦА === */
+.hero {
+    text-align: center;
+    padding: 100px 0;
+    background: radial-gradient(circle at center, rgba(255,0,102,0.1) 0%, transparent 70%);
+    position: relative;
+}
+
+.hero-title {
+    font-size: 4.5rem;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, var(--christmas-red), var(--christmas-gold), var(--christmas-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow-text 8s infinite linear;
+}
+
+@keyframes rainbow-text {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    color: var(--text-gray);
+}
+
+.server-info {
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid var(--christmas-red);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 30px auto;
+    max-width: 600px;
+    backdrop-filter: blur(10px);
+}
+
+.server-ip {
+    font-size: 1.4rem;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.server-ip:hover {
+    background: rgba(255, 0, 102, 0.2);
+    transform: scale(1.02);
+}
+
+.ip-icon {
+    margin-right: 10px;
+}
+
+.server-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--christmas-gold);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-gray);
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.cta-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 40px;
+    background: linear-gradient(135deg, var(--christmas-red), var(--blood-red));
+    color: white;
+    text-decoration: none;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: all 0.4s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.cta-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(255, 0, 102, 0.6);
+}
+
+.telegram-btn {
+    background: linear-gradient(135deg, #0088cc, #00aced);
+}
+
+/* === СЕКЦИИ === */
+.events-section {
+    margin: 80px 0;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.event-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid var(--christmas-gold);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+}
+
+.event-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+}
+
+.event-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.event-timer {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--christmas-gold);
+    margin-top: 15px;
+    font-family: 'Courier New', monospace;
+}
+
+.event-badge {
+    background: var(--christmas-green);
+    color: black;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-top: 15px;
+    display: inline-block;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 0, 102, 0.4);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--christmas-red);
+    box-shadow: 0 20px 40px rgba(255, 0, 102, 0.3);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--christmas-red);
+}
+
+.feature-description {
+    color: var(--text-gray);
+    line-height: 1.6;
+}
+
+.feature-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--christmas-red);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* === СТРАНИЦА ДОНАТА === */
+.donate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.donate-card {
+    background: linear-gradient(135deg, rgba(255,0,102,0.1), rgba(0,255,0,0.05));
+    border: 3px solid var(--christmas-red);
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.donate-card.featured {
+    border-color: var(--christmas-gold);
+    transform: scale(1.05);
+}
+
+.donate-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(255, 0, 102, 0.4);
+}
+
+.donate-card.featured:hover {
+    transform: scale(1.05) translateY(-10px);
+}
+
+.donate-badge {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: var(--christmas-gold);
+}
+
+.donate-price {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 20px 0;
+    color: var(--text-light);
+    text-shadow: 0 0 20px var(--christmas-red);
+}
+
+.donate-sale {
+    background: var(--christmas-green);
+    color: black;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.donate-features {
+    list-style: none;
+    margin: 25px 0;
+    text-align: left;
+}
+
+.donate-features li {
+    padding: 10px 0;
+    color: var(--text-gray);
+    position: relative;
+    padding-left: 35px;
+}
+
+.donate-features li::before {
+    content: '✅';
+    position: absolute;
+    left: 0;
+}
+
+.donate-button {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: var(--christmas-red);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.donate-button:hover {
+    background: var(--blood-red);
+    transform: scale(1.05);
+}
+
+.donate-button.featured-btn {
+    background: var(--christmas-gold);
+    color: black;
+}
+
+.bonus-section {
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid var(--christmas-gold);
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.bonus-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.bonus-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/* === СИСТЕМА БОНУСОВ === */
 .bonus-system {
     max-width: 800px;
     margin: 0 auto;
@@ -464,8 +1092,252 @@
     display: none !important;
 }
 
-/* Адаптивность для бонусов */
+/* === ПОДДЕРЖКА === */
+.support-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.support-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid var(--christmas-green);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+}
+
+.support-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--christmas-red);
+}
+
+.support-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.support-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--christmas-green);
+}
+
+.support-description {
+    color: var(--text-gray);
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.support-link {
+    display: inline-block;
+    padding: 15px 30px;
+    background: var(--christmas-green);
+    color: black;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.support-link:hover {
+    background: var(--christmas-red);
+    color: white;
+    transform: scale(1.05);
+}
+
+.quick-links {
+    margin-top: 50px;
+}
+
+.links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.quick-link {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--christmas-red);
+    border-radius: 10px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.quick-link:hover {
+    background: var(--christmas-red);
+    transform: translateY(-3px);
+}
+
+/* === ПРАВИЛА === */
+.rules-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.rules-section {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.rules-section h3 {
+    color: var(--christmas-gold);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.rules-list {
+    list-style: none;
+}
+
+.rules-list li {
+    padding: 10px 0;
+    color: var(--text-gray);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rules-list li:last-child {
+    border-bottom: none;
+}
+
+.rules-note {
+    text-align: center;
+    margin-top: 40px;
+    padding: 30px;
+    background: rgba(255, 0, 0, 0.1);
+    border-radius: 20px;
+}
+
+.rules-button {
+    padding: 15px 30px;
+    background: var(--christmas-red);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+.rules-button:hover {
+    background: var(--blood-red);
+    transform: scale(1.05);
+}
+
+/* === ПОДВАЛ === */
+.footer {
+    background: rgba(5, 5, 5, 0.95);
+    border-top: 3px solid var(--christmas-red);
+    padding: 50px 0 30px;
+    margin-top: 100px;
+    backdrop-filter: blur(20px);
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.footer-section h3 {
+    color: var(--christmas-red);
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: var(--text-gray);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.footer-links a:hover {
+    color: var(--christmas-red);
+    transform: translateX(5px);
+}
+
+.copyright {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 0, 102, 0.3);
+    color: var(--text-gray);
+}
+
+/* === АДАПТИВНОСТЬ === */
 @media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .nav-menu {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .nav-link {
+        text-align: center;
+        width: 100%;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+    }
+
+    .server-stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cta-button {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .donate-card.featured {
+        transform: none;
+    }
+    
+    .donate-card.featured:hover {
+        transform: translateY(-10px);
+    }
+
     .chances-grid {
         grid-template-columns: 1fr;
         gap: 20px;
