@@ -149,7 +149,7 @@ function redirectToTelegram(type) {
     window.open(links[type] || telegramUrl, '_blank');
 }
 
-// Система бонусов с шансами
+// Система бонусов с улучшенной валидацией
 class BonusSystem {
     constructor() {
         this.users = JSON.parse(localStorage.getItem('bonus_users') || '{}');
@@ -164,14 +164,49 @@ class BonusSystem {
         setInterval(() => this.updateBonusTimers(), 1000);
     }
 
+    // Валидация пароля
+    validatePassword(password) {
+        const weakPasswords = [
+            '123456', '123456789', 'password', '12345678', '111111',
+            '1234567', '123123', '000000', '1234567890', 'qwerty'
+        ];
+        
+        if (password.length < 6) {
+            return { valid: false, message: 'Пароль должен быть не менее 6 символов' };
+        }
+        
+        if (weakPasswords.includes(password)) {
+            return { valid: false, message: 'Слишком простой пароль. Используйте английские буквы и символы' };
+        }
+        
+        // Проверка на только цифры
+        if (/^\d+$/.test(password)) {
+            return { valid: false, message: 'Пароль не может состоять только из цифр' };
+        }
+        
+        // Проверка на наличие хотя бы одной буквы
+        if (!/[a-zA-Z]/.test(password)) {
+            return { valid: false, message: 'Добавьте английские буквы в пароль' };
+        }
+        
+        return { valid: true, message: 'Пароль надежный' };
+    }
+
     // Регистрация
-    register(nickname, password) {
+    register(nickname, password, confirmPassword) {
         if (nickname.length < 3) {
             return { success: false, error: 'Никнейм должен быть не менее 3 символов' };
         }
-        if (password.length < 4) {
-            return { success: false, error: 'Пароль должен быть не менее 4 символов' };
+        
+        if (password !== confirmPassword) {
+            return { success: false, error: 'Пароли не совпадают' };
         }
+        
+        const passwordValidation = this.validatePassword(password);
+        if (!passwordValidation.valid) {
+            return { success: false, error: passwordValidation.message };
+        }
+        
         if (this.users[nickname]) {
             return { success: false, error: 'Пользователь уже существует' };
         }
@@ -287,7 +322,7 @@ class BonusSystem {
         const cooldown = 24 * 60 * 60 * 1000;
 
         if (lastClaim && (now - lastClaim) < cooldown) {
-            alert('Бонус уже был получен сегодня!');
+            this.showMessage('Бонус уже был получен сегодня!', 'warning');
             return;
         }
 
@@ -401,6 +436,18 @@ class BonusSystem {
                 setTimeout(() => confetti.remove(), 5000);
             }, i * 100);
         }
+    }
+
+    // Показать сообщение
+    showMessage(message, type = 'info') {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `bonus-message ${type}`;
+        messageDiv.textContent = message;
+        document.body.appendChild(messageDiv);
+        
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 5000);
     }
 
     // Обновить таймер бонуса
@@ -537,7 +584,7 @@ class BonusSystem {
         const originalPrice = prices[itemId];
         const finalPrice = Math.round(originalPrice * (1 - discount / 100));
 
-        alert(`Покупка успешна! Сумма: ${finalPrice}₽${discount > 0 ? ` (скидка ${discount}%)` : ''}`);
+        this.showMessage(`Покупка успешна! Сумма: ${finalPrice}₽${discount > 0 ? ` (скидка ${discount}%)` : ''}`, 'success');
     }
 
     // Вспомогательные методы
@@ -589,7 +636,7 @@ function bonusLogin() {
     const password = document.getElementById('bonusPassword').value;
 
     if (!nick || !password) {
-        alert('Заполните все поля');
+        bonusSystem.showMessage('Заполните все поля', 'error');
         return;
     }
 
@@ -603,33 +650,93 @@ function bonusLogin() {
         // Очищаем поля
         document.getElementById('bonusNick').value = '';
         document.getElementById('bonusPassword').value = '';
+        
+        bonusSystem.showMessage('Успешный вход!', 'success');
     } else {
-        alert(result.error);
+        bonusSystem.showMessage(result.error, 'error');
     }
 }
 
 function bonusLogout() {
     bonusSystem.logout();
+    bonusSystem.showMessage('Вы вышли из системы', 'info');
 }
 
+// Показать модальное окно регистрации
 function showBonusRegister() {
-    const nick = prompt('Введите никнейм (мин. 3 символа):');
-    if (!nick || nick.length < 3) {
-        alert('Никнейм должен быть не менее 3 символов');
+    const modal = document.createElement('div');
+    modal.className = 'modal-bonus';
+    modal.innerHTML = `
+        <div class="modal-bonus-content register-modal">
+            <div class="modal-header">
+                <h2>📝 Регистрация в системе бонусов</h2>
+                <button class="close-btn" onclick="this.closest('.modal-bonus').remove()">×</button>
+            </div>
+            
+            <div class="warning-message">
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-text">
+                    <strong>ВАЖНО:</strong> Используйте тот же никнейм, что и на сервере! 
+                    Иначе бонусы не будут привязаны к вашему аккаунту в игре.
+                </div>
+            </div>
+            
+            <div class="auth-form">
+                <div class="form-group">
+                    <label for="regNick">Никнейм (как на сервере):</label>
+                    <input type="text" id="regNick" placeholder="Введите ваш игровой ник" class="auth-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="regPassword">Пароль:</label>
+                    <input type="password" id="regPassword" placeholder="Минимум 6 символов" class="auth-input">
+                    <div class="password-hint">
+                        🔒 Используйте английские буквы и символы ($, !, @, #)
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="regConfirmPassword">Повторите пароль:</label>
+                    <input type="password" id="regConfirmPassword" placeholder="Повторите пароль" class="auth-input">
+                </div>
+                
+                <div class="password-requirements">
+                    <h4>Требования к паролю:</h4>
+                    <ul>
+                        <li>❌ Не используйте простые пароли (123456, password)</li>
+                        <li>✅ Минимум 6 символов</li>
+                        <li>✅ Английские буквы обязательны</li>
+                        <li>✅ Можно использовать символы: $ ! @ # %</li>
+                        <li>✅ Пример хорошего пароля: Dragon$123</li>
+                    </ul>
+                </div>
+                
+                <button onclick="processRegistration()" class="auth-btn register-btn">🎮 Зарегистрироваться</button>
+                <button onclick="this.closest('.modal-bonus').remove()" class="auth-btn secondary">Отмена</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+// Обработка регистрации
+function processRegistration() {
+    const nick = document.getElementById('regNick').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+    if (!nick || !password || !confirmPassword) {
+        bonusSystem.showMessage('Заполните все поля', 'error');
         return;
     }
 
-    const password = prompt('Введите пароль (мин. 4 символа):');
-    if (!password || password.length < 4) {
-        alert('Пароль должен быть не менее 4 символов');
-        return;
-    }
-
-    const result = bonusSystem.register(nick, password);
+    const result = bonusSystem.register(nick, password, confirmPassword);
     if (result.success) {
-        alert('Регистрация успешна! Теперь войдите в систему.');
+        bonusSystem.showMessage('Регистрация успешна! Теперь войдите в систему.', 'success');
+        document.querySelector('.modal-bonus').remove();
     } else {
-        alert(result.error);
+        bonusSystem.showMessage(result.error, 'error');
     }
 }
 
@@ -678,6 +785,133 @@ style.textContent = `
             transform: translateX(0);
             opacity: 1;
         }
+    }
+    
+    .bonus-message {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        font-weight: bold;
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+        max-width: 300px;
+    }
+    
+    .bonus-message.success {
+        background: #00ff00;
+        color: black;
+    }
+    
+    .bonus-message.error {
+        background: #ff4444;
+        color: white;
+    }
+    
+    .bonus-message.warning {
+        background: #ffaa00;
+        color: black;
+    }
+    
+    .bonus-message.info {
+        background: #0088cc;
+        color: white;
+    }
+    
+    .register-modal {
+        max-width: 500px;
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--christmas-red);
+        padding-bottom: 15px;
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 2em;
+        color: var(--text-light);
+        cursor: pointer;
+        padding: 0;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .warning-message {
+        background: rgba(255, 165, 0, 0.2);
+        border: 2px solid #ffaa00;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .warning-icon {
+        font-size: 1.5em;
+        flex-shrink: 0;
+    }
+    
+    .warning-text {
+        flex: 1;
+        line-height: 1.4;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-light);
+        font-weight: bold;
+    }
+    
+    .password-hint {
+        font-size: 0.8em;
+        color: var(--text-gray);
+        margin-top: 5px;
+    }
+    
+    .password-requirements {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0;
+        text-align: left;
+    }
+    
+    .password-requirements h4 {
+        margin-bottom: 10px;
+        color: var(--christmas-gold);
+    }
+    
+    .password-requirements ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .password-requirements li {
+        padding: 5px 0;
+        font-size: 0.9em;
+    }
+    
+    .register-btn {
+        background: var(--christmas-green) !important;
+        color: black !important;
+        margin-bottom: 10px;
     }
 `;
 document.head.appendChild(style);
