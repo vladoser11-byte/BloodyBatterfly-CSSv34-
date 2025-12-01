@@ -3,67 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BloodyBatterfly - Сервер CSS ClientMod V34 2026</title>
+    <title>BloodyBatterfly | CSS Clientmod V34 Сервер</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦋</text></svg>">
-    <style>
-        /* Временные стили для быстрой загрузки */
-        body { 
-            margin: 0; 
-            padding: 0; 
-            background: #0a0a14;
-            color: white;
-            font-family: 'Montserrat', sans-serif;
-            overflow-x: hidden;
-        }
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0a0a14;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid #ffb7c5;
-            border-top: 3px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;800&family=Rubik+Mono+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 <body>
-    <div class="loading">
-        <div class="spinner"></div>
+    <!-- Анимированный фон: сакура, бабочки, снежинки -->
+    <div class="bg-animation">
+        <div class="sakura"></div>
+        <div class="snowflake"></div>
+        <div class="butterfly"></div>
+        <div class="sakura"></div>
+        <div class="snowflake"></div>
+        <div class="butterfly"></div>
     </div>
 
-    <!-- Фоновые элементы -->
-    <div class="sakura-bg"></div>
-    <div class="butterflies-container"></div>
-    
-    <!-- Основной контейнер (будет заполнен JavaScript) -->
-    <div id="app"></div>
+    <div class="container">
+        <!-- Шапка -->
+        <header>
+            <div class="logo">
+                <h1><i class="fas fa-skull-crossbones"></i> Bloody<span class="accent">Batterfly</span> <span class="new-year-badge">V34 2026</span></h1>
+                <p>Официальный сервер CSS Clientmod V34 | Новогоднее обновление</p>
+            </div>
+            <nav>
+                <ul class="nav-list">
+                    <li><a href="#main" class="nav-link active"><i class="fas fa-home"></i> Главная</a></li>
+                    <li><a href="#donate" class="nav-link"><i class="fas fa-donate"></i> Донат</a></li>
+                    <li><a href="#promo" class="nav-link"><i class="fas fa-gift"></i> Промокоды</a></li>
+                    <li><a href="#bonus" class="nav-link"><i class="fas fa-coins"></i> Ежедневный бонус</a></li>
+                    <li><a href="#support" class="nav-link"><i class="fas fa-headset"></i> Поддержка</a></li>
+                    <li><a href="#register" class="nav-link"><i class="fas fa-user-plus"></i> Регистрация/Вход</a></li>
+                </ul>
+            </nav>
+        </header>
 
+        <!-- Основной контент -->
+        <main>
+            <!-- Главная -->
+            <section id="main" class="content-section active">
+                <h2><i class="fas fa-gamepad"></i> Добро пожаловать на BloodyBatterfly!</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3><i class="fas fa-users"></i> Активное комьюнити</h3>
+                        <p>Стабильный онлайн, дружеская атмосфера, регулярные ивенты.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3><i class="fas fa-calendar-star"></i> Новогодний ивент 2026</h3>
+                        <p>Праздничная атмосфера, тематические декорации на картах, новогодние скины.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3><i class="fas fa-wrench"></i> Clientmod V34</h3>
+                        <p>Улучшенная оптимизация, новые команды, исправление старых багов.</p>
+                    </div>
+                </div>
+                <div class="server-stats">
+                    <h3><i class="fas fa-chart-line"></i> Статистика сервера</h3>
+                    <p>Онлайн: <span class="online-count">327</span> игроков</p>
+                    <p>Карты в ротации: 18</p>
+                    <p>Режимы: Deathmatch, Zombie Plague, GunGame</p>
+                    <p>Версия: CSS Clientmod V34</p>
+                </div>
+            </section>
+
+            <!-- Донат -->
+            <section id="donate" class="content-section">
+                <h2><i class="fas fa-crown"></i> Поддержать сервер</h2>
+                <p class="section-desc">Донат помогает развивать сервер и добавлять новый контент.</p>
+                <div class="donate-grid">
+                    <div class="donate-card">
+                        <h3>Спонсор</h3>
+                        <p class="price">199 ₽</p>
+                        <ul>
+                            <li>Цветной ник в чате</li>
+                            <li>Доступ к !skin</li>
+                            <li>Префикс [Sponsor]</li>
+                        </ul>
+                        <button class="btn-buy" onclick="window.open('https://t.me/BloodyBatterflyDonate', '_blank')">Купить через Telegram</button>
+                    </div>
+                    <div class="donate-card popular">
+                        <div class="popular-badge">Популярный</div>
+                        <h3>Вип</h3>
+                        <p class="price">499 ₽</p>
+                        <ul>
+                            <li>Всё из "Спонсора"</li>
+                            <li>Доступ к !vipmenu</li>
+                            <li>Возможность !respawn</li>
+                            <li>Ежемесячный бонус</li>
+                        </ul>
+                        <button class="btn-buy" onclick="window.open('https://t.me/BloodyBatterflyDonate', '_blank')">Купить через Telegram</button>
+                    </div>
+                    <div class="donate-card">
+                        <h3>Легенда</h3>
+                        <p class="price">999 ₽</p>
+                        <ul>
+                            <li>Всё из "Вип"</li>
+                            <li>Уникальный скин "Легенда"</li>
+                            <li>Личный слот на сервере</li>
+                            <li>Значок в табе</li>
+                        </ul>
+                        <button class="btn-buy" onclick="window.open('https://t.me/BloodyBatterflyDonate', '_blank')">Купить через Telegram</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Промокоды -->
+            <section id="promo" class="content-section">
+                <h2><i class="fas fa-ticket-alt"></i> Новогодние промокоды 2026</h2>
+                <p class="section-desc">Активируй в игре командой <code>/promo КОД</code></p>
+                <div class="promo-container">
+                    <div class="promo-input">
+                        <input type="text" id="promoInput" placeholder="Введите промокод...">
+                        <button id="checkPromo"><i class="fas fa-check"></i> Проверить</button>
+                    </div>
+                    <div class="promo-list">
+                        <div class="promo-item">
+                            <span class="promo-code">NEWYEAR2026</span>
+                            <span class="promo-desc">Скидка 10% на донат (шанс 70%)</span>
+                        </div>
+                        <div class="promo-item">
+                            <span class="promo-code">BUTTERFLY25</span>
+                            <span class="promo-desc">Скидка 20% на донат (шанс 20%)</span>
+                        </div>
+                        <div class="promo-item">
+                            <span class="promo-code">BLOODYVIP</span>
+                            <span class="promo-desc">Скидка 30% на донат (шанс 10%)</span>
+                        </div>
+                        <div class="promo-item">
+                            <span class="promo-code">LEGEND2026</span>
+                            <span class="promo-desc">Скидка 40% на донат (шанс 5%)</span>
+                        </div>
+                    </div>
+                    <div id="promoResult"></div>
+                </div>
+            </section>
+
+            <!-- Ежедневный бонус -->
+            <section id="bonus" class="content-section">
+                <h2><i class="fas fa-calendar-day"></i> Ежедневный бонус</h2>
+                <p class="section-desc">Зайди на сервер и получи награду командой <code>/bonus</code></p>
+                <div class="bonus-calendar">
+                    <div class="bonus-day claimed">
+                        <div class="day">1</div>
+                        <div class="reward">500$</div>
+                    </div>
+                    <div class="bonus-day claimed">
+                        <div class="day">2</div>
+                        <div class="reward">Скин "Новичок"</div>
+                    </div>
+                    <div class="bonus-day today">
+                        <div class="day">3</div>
+                        <div class="reward">1000$</div>
+                    </div>
+                    <div class="bonus-day">
+                        <div class="day">4</div>
+                        <div class="reward">Кейс "Обычный"</div>
+                    </div>
+                    <div class="bonus-day">
+                        <div class="day">5</div>
+                        <div class="reward">Префикс на день</div>
+                    </div>
+                    <div class="bonus-day">
+                        <div class="day">6</div>
+                        <div class="reward">2000$</div>
+                    </div>
+                    <div class="bonus-day">
+                        <div class="day">7</div>
+                        <div class="reward">Вип на 1 день</div>
+                    </div>
+                </div>
+                <p class="bonus-notice">Награда обновляется каждый день в 00:00 МСК.</p>
+            </section>
+
+            <!-- Поддержка -->
+            <section id="support" class="content-section">
+                <h2><i class="fas fa-question-circle"></i> Поддержка</h2>
+                <div class="support-grid">
+                    <div class="support-card">
+                        <h3><i class="fab fa-telegram"></i> Telegram-канал</h3>
+                        <p>Анонсы, новости, обновления.</p>
+                        <button class="btn-tg" onclick="window.open('https://t.me/BloodyBatterflyNews', '_blank')">Перейти</button>
+                    </div>
+                    <div class="support-card">
+                        <h3><i class="fas fa-comments"></i> Чат поддержки</h3>
+                        <p>Помощь по игровым вопросам, багам.</p>
+                        <button class="btn-tg" onclick="window.open('https://t.me/BloodyBatterflySupport', '_blank')">Написать</button>
+                    </div>
+                    <div class="support-card">
+                        <h3><i class="fas fa-book"></i> FAQ & Гайды</h3>
+                        <p>Ответы на частые вопросы, установка Clientmod.</p>
+                        <button class="btn-tg" onclick="window.open('https://t.me/BloodyBatterflyFAQ', '_blank')">Читать</button>
+                    </div>
+                </div>
+                <div class="support-warning">
+                    <p><i class="fas fa-exclamation-triangle"></i> <strong>ВАЖНО:</strong> Администрация никогда не просит пароль от аккаунта!</p>
+                </div>
+            </section>
+
+            <!-- Регистрация/Вход -->
+            <section id="register" class="content-section">
+                <h2><i class="fas fa-user-shield"></i> Регистрация / Вход</h2>
+                <div class="auth-container">
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" data-tab="login">Вход</button>
+                        <button class="auth-tab" data-tab="register">Регистрация</button>
+                    </div>
+
+                    <!-- Форма входа -->
+                    <form id="loginForm" class="auth-form active">
+                        <input type="text" placeholder="Ник на сервере" required>
+                        <input type="password" placeholder="Пароль" required>
+                        <button type="submit"><i class="fas fa-sign-in-alt"></i> Войти</button>
+                        <p class="auth-link"><a href="#forgot">Забыли пароль?</a></p>
+                    </form>
+
+                    <!-- Форма регистрации -->
+                    <form id="registerForm" class="auth-form">
+                        <input type="text" id="regNick" placeholder="Ник на сервере*" required>
+                        <p class="input-note">Укажите тот же ник, что и в игре на сервере.</p>
+                        
+                        <input type="email" id="regEmail" placeholder="Email*" required>
+                        <p class="input-note">На этот адрес придут уведомления о смене пароля, ежедневных бонусах и ответы поддержки.</p>
+                        
+                        <input type="password" id="regPassword" placeholder="Пароль*" required pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
+                        <p class="input-note">Пароль должен быть не менее 8 символов, содержать буквы, цифры и специальный символ.</p>
+                        
+                        <input type="password" id="regConfirm" placeholder="Подтвердите пароль*" required>
+                        
+                        <label class="checkbox-label">
+                            <input type="checkbox" required> Я согласен с правилами сервера
+                        </label>
+                        
+                        <button type="submit"><i class="fas fa-user-plus"></i> Зарегистрироваться</button>
+                    </form>
+
+                    <!-- Восстановление пароля -->
+                    <form id="forgotForm" class="auth-form">
+                        <h3><i class="fas fa-key"></i> Восстановление пароля</h3>
+                        <input type="email" placeholder="Ваш Email" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i> Отправить инструкцию</button>
+                        <p class="input-note">На указанный Email придет письмо со ссылкой для сброса пароля.</p>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <!-- Подвал -->
+        <footer>
+            <p>BloodyBatterfly &copy; 2023-2026 | Сервер CSS Clientmod V34</p>
+            <p>Все права защищены. Данный сайт не является официальным продуктом Valve.</p>
+            <div class="footer-links">
+                <a href="#rules">Правила</a> | 
+                <a href="#privacy">Конфиденциальность</a> | 
+                <a href="#staff">Администрация</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="script.js"></script>
-    <script>
-        // Скрываем загрузку когда страница загрузилась
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                document.querySelector('.loading').style.display = 'none';
-            }, 500);
-        });
-    </script>
 </body>
 </html>
