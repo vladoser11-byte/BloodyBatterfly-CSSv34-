@@ -3,415 +3,613 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BloodyButterfly DJN - Новогодний сервер</title>
-    <link rel="stylesheet" href="style.css">
+    <title>BloodyButterfly - Новогодний сервер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a2a, #1a1a4a);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .snow {
+            position: absolute;
+            top: -10px;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            filter: blur(0.5px);
+            animation: snowfall linear infinite;
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(20px);
+                opacity: 0;
+            }
+        }
+
+        .village {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 30%;
+            background: 
+                linear-gradient(75deg, transparent 45%, #2d2d2d 45%, #2d2d2d 50%, #3d3d3d 50%, #3d3d3d 55%, transparent 55%) 50px 60px,
+                linear-gradient(-75deg, transparent 45%, #2d2d2d 45%, #2d2d2d 50%, #3d3d3d 50%, #3d3d3d 55%, transparent 55%) 150px 40px,
+                linear-gradient(80deg, transparent 40%, #252525 40%, #252525 45%, #353535 45%, #353535 50%, transparent 50%) 250px 70px;
+            background-size: 300px 100px;
+            background-repeat: repeat-x;
+        }
+
+        .santa {
+            position: absolute;
+            top: 20%;
+            right: -100px;
+            width: 80px;
+            height: 100px;
+            background: 
+                radial-gradient(circle at 50% 30%, #f9c7c7 20px, transparent 20px),
+                linear-gradient(to bottom, #c41e3a 0px 40px, #3a3a3a 40px 70px),
+                linear-gradient(135deg, transparent 0px, #c41e3a 0px 20px, transparent 20px),
+                linear-gradient(-135deg, transparent 0px, #c41e3a 0px 20px, transparent 20px);
+            animation: santaFly 25s linear infinite;
+            cursor: pointer;
+            z-index: 100;
+            border-radius: 40% 40% 30% 30%;
+        }
+
+        .santa::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 20px;
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
+        }
+
+        .santa::after {
+            content: '';
+            position: absolute;
+            top: 25px;
+            right: 20px;
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
+        }
+
+        @keyframes santaFly {
+            0% {
+                transform: translateX(100vw) translateY(0);
+            }
+            100% {
+                transform: translateX(-100px) translateY(0);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo span {
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .countdown {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .countdown h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .timer {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .time-unit {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .time-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fff;
+            display: block;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .time-label {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress {
+            height: 100%;
+            background: #fff;
+            width: 99.8%;
+            border-radius: 4px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .widget {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .widget h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .server-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #ccc;
+        }
+
+        .info-value {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .bonus-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .bonus-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .bonus-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bonus-name {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .bonus-chance {
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        .bonus-status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-available {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-claimed {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: rgba(26, 26, 74, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .modal h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .form-text {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .alert-warning {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .promo-code {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .promo-code h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .promo-code .code {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            color: #fff;
+            font-family: monospace;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 50px;
+            color: #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .timer {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .santa {
+                width: 60px;
+                height: 80px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Фон с анимацией -->
     <div class="background">
         <div class="snow-container"></div>
-        <div class="stars"></div>
-        <div class="mountains"></div>
-        <div class="trees"></div>
         <div class="village"></div>
         <div class="santa" id="santa"></div>
-        <div class="northern-lights"></div>
-    </div>
-
-    <!-- Уведомление о куки -->
-    <div class="cookie-notice" id="cookie-notice">
-        <div class="cookie-content">
-            <p>Мы используем файлы cookie для улучшения работы сайта. Оставаясь на сайте, вы соглашаетесь с этим.</p>
-            <button class="btn btn-small" id="accept-cookies">Принять</button>
-        </div>
     </div>
 
     <div class="container">
-        <!-- Шапка -->
         <header>
             <div class="logo">
-                <div class="logo-icon"></div>
-                <div class="logo-text">
-                    <h1>BloodyButterfly</h1>
-                    <span class="server-tag">DJN • ClientMod V34</span>
-                </div>
+                <h1>BloodyButterfly</h1>
+                <span>DJN • ClientMod V34</span>
             </div>
             <nav>
                 <ul>
-                    <li><a href="#" class="nav-link active" data-target="home">Главная</a></li>
-                    <li><a href="#" class="nav-link" data-target="donate">Донат</a></li>
-                    <li><a href="#" class="nav-link" data-target="bonus">Бонусы</a></li>
-                    <li><a href="#" class="nav-link" data-target="support">Поддержка</a></li>
-                    <li><a href="#" class="nav-link" data-target="rules">Правила</a></li>
+                    <li><a href="#">Главная</a></li>
+                    <li><a href="#">Донат</a></li>
+                    <li><a href="#">Бонусы</a></li>
                     <li><a href="#" class="btn-login">Вход</a></li>
                     <li><a href="#" class="btn-register">Регистрация</a></li>
                 </ul>
             </nav>
-            <div class="mobile-menu-btn" id="mobile-menu-btn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
         </header>
 
-        <!-- Мобильное меню -->
-        <div class="mobile-menu" id="mobile-menu">
-            <nav>
-                <ul>
-                    <li><a href="#" class="nav-link active" data-target="home">Главная</a></li>
-                    <li><a href="#" class="nav-link" data-target="donate">Донат</a></li>
-                    <li><a href="#" class="nav-link" data-target="bonus">Бонусы</a></li>
-                    <li><a href="#" class="nav-link" data-target="support">Поддержка</a></li>
-                    <li><a href="#" class="nav-link" data-target="rules">Правила</a></li>
-                    <li><a href="#" class="btn-login">Вход</a></li>
-                    <li><a href="#" class="btn-register">Регистрация</a></li>
-                </ul>
-            </nav>
+        <div class="main-content">
+            <div class="countdown">
+                <h2>До Нового 2026 Года осталось:</h2>
+                <div class="timer">
+                    <div class="time-unit">
+                        <span class="time-value" id="days">30</span>
+                        <span class="time-label">дней</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="hours">21</span>
+                        <span class="time-label">часов</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="minutes">23</span>
+                        <span class="time-label">минут</span>
+                    </div>
+                    <div class="time-unit">
+                        <span class="time-value" id="seconds">39</span>
+                        <span class="time-label">секунд</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                <p style="text-align: center; margin-top: 15px; color: #ccc;">Готовность: 99.8%</p>
+            </div>
+
+            <div class="sidebar">
+                <div class="widget">
+                    <h3>Информация о сервере</h3>
+                    <div class="server-info">
+                        <div class="info-item">
+                            <span class="info-label">Статус:</span>
+                            <span class="info-value">Онлайн</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Игроков:</span>
+                            <span class="info-value">127/200</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Версия:</span>
+                            <span class="info-value">ClientMod V34</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Режим:</span>
+                            <span class="info-value">Декант</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget">
+                    <h3>Ежедневный бонус</h3>
+                    <div class="bonus-container">
+                        <div class="bonus-item">
+                            <div class="bonus-info">
+                                <span class="bonus-name">VIP на 10 минут</span>
+                                <span class="bonus-chance">Шанс: 50%</span>
+                            </div>
+                            <span class="bonus-status status-available">Доступно</span>
+                        </div>
+                        <div class="bonus-item">
+                            <div class="bonus-info">
+                                <span class="bonus-name">Промокод 10% скидка</span>
+                                <span class="bonus-chance">Шанс: 70%</span>
+                            </div>
+                            <span class="bonus-status status-available">Доступно</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-block" id="claim-bonus">Получить бонус</button>
+                </div>
+
+                <div class="widget">
+                    <h3>Быстрые действия</h3>
+                    <button class="btn btn-block" style="margin-bottom: 10px;">Скачать лаунчер</button>
+                    <button class="btn btn-block" style="margin-bottom: 10px;">Техподдержка</button>
+                    <button class="btn btn-block">Наш Discord</button>
+                </div>
+            </div>
         </div>
 
-        <!-- Основной контент -->
-        <main>
-            <!-- Герой секция -->
-            <section class="hero">
-                <div class="hero-content">
-                    <h2 class="hero-title">Новогоднее обновление 2026</h2>
-                    <p class="hero-subtitle">Присоединяйся к самому атмосферному серверу этой зимой!</p>
-                    <div class="hero-buttons">
-                        <button class="btn btn-primary btn-large">Скачать лаунчер</button>
-                        <button class="btn btn-secondary btn-large">Узнать больше</button>
-                    </div>
-                </div>
-                <div class="hero-features">
-                    <div class="feature-card">
-                        <div class="feature-icon">🎮</div>
-                        <h3>ClientMod V34</h3>
-                        <p>Последняя версия с новогодними фичами</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">⭐</div>
-                        <h3>VIP система</h3>
-                        <p>Уникальные привилегии и бонусы</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🎁</div>
-                        <h3>Ежедневные награды</h3>
-                        <p>Получай подарки каждый день</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Счетчик -->
-            <section class="countdown-section">
-                <div class="countdown-header">
-                    <h2>До Нового 2026 Года осталось:</h2>
-                    <p>Присоединяйся к праздничным событиям!</p>
-                </div>
-                <div class="countdown">
-                    <div class="timer">
-                        <div class="time-unit">
-                            <span class="time-value" id="days">30</span>
-                            <span class="time-label">дней</span>
-                        </div>
-                        <div class="time-unit">
-                            <span class="time-value" id="hours">21</span>
-                            <span class="time-label">часов</span>
-                        </div>
-                        <div class="time-unit">
-                            <span class="time-value" id="minutes">23</span>
-                            <span class="time-label">минут</span>
-                        </div>
-                        <div class="time-unit">
-                            <span class="time-value" id="seconds">39</span>
-                            <span class="time-label">секунд</span>
-                        </div>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress" id="progress"></div>
-                        </div>
-                        <div class="progress-text">
-                            <span>Готовность сервера:</span>
-                            <span class="progress-value">99.8%</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Основной контент -->
-            <div class="main-content">
-                <!-- Левая колонка -->
-                <div class="content-column">
-                    <!-- О сервере -->
-                    <section class="server-info-widget widget">
-                        <h3 class="widget-title">О сервере BloodyButterfly</h3>
-                        <div class="server-description">
-                            <p>BloodyButterfly DJN - это уникальный игровой сервер с модификацией ClientMod V34, предлагающий захватывающий геймплей в новогодней атмосфере.</p>
-                            <div class="server-stats">
-                                <div class="stat-item">
-                                    <span class="stat-value">127</span>
-                                    <span class="stat-label">Онлайн игроков</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-value">12</span>
-                                    <span class="stat-label">Месяцев работы</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-value">99.8%</span>
-                                    <span class="stat-label">Аптайм</span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Новости -->
-                    <section class="news-widget widget">
-                        <h3 class="widget-title">Последние новости</h3>
-                        <div class="news-list">
-                            <article class="news-item">
-                                <div class="news-date">25.12.2025</div>
-                                <h4 class="news-title">Новогодний ивент начался!</h4>
-                                <p class="news-excerpt">Присоединяйтесь к праздничным событиям и получайте эксклюзивные награды.</p>
-                                <a href="#" class="news-link">Читать далее</a>
-                            </article>
-                            <article class="news-item">
-                                <div class="news-date">20.12.2025</div>
-                                <h4 class="news-title">Обновление ClientMod V34</h4>
-                                <p class="news-excerpt">Вышло крупное обновление с новогодним оформлением и новыми функциями.</p>
-                                <a href="#" class="news-link">Читать далее</a>
-                            </article>
-                            <article class="news-item">
-                                <div class="news-date">15.12.2025</div>
-                                <h4 class="news-title">Конкурс новогодних построек</h4>
-                                <p class="news-excerpt">Создавайте самые красивые новогодние постройки и выигрывайте призы.</p>
-                                <a href="#" class="news-link">Читать далее</a>
-                            </article>
-                        </div>
-                    </section>
-                </div>
-
-                <!-- Правая колонка -->
-                <div class="sidebar">
-                    <!-- Статус сервера -->
-                    <div class="status-widget widget">
-                        <h3 class="widget-title">Статус сервера</h3>
-                        <div class="server-status">
-                            <div class="status-indicator online"></div>
-                            <div class="status-info">
-                                <span class="status-text">Онлайн</span>
-                                <span class="players-count">127/200 игроков</span>
-                            </div>
-                        </div>
-                        <div class="server-details">
-                            <div class="detail-item">
-                                <span class="detail-label">Режим:</span>
-                                <span class="detail-value">Декант</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Версия:</span>
-                                <span class="detail-value">ClientMod V34</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">IP:</span>
-                                <span class="detail-value">play.bloodybutterfly.ru</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Ежедневный бонус -->
-                    <div class="bonus-widget widget">
-                        <h3 class="widget-title">Ежедневный бонус</h3>
-                        <div class="bonus-container">
-                            <div class="bonus-item" data-type="vip">
-                                <div class="bonus-icon">👑</div>
-                                <div class="bonus-info">
-                                    <span class="bonus-name">VIP статус</span>
-                                    <span class="bonus-chance">Шанс: 50% - 10мин, 25% - 20мин, 15% - 30мин</span>
-                                </div>
-                                <div class="bonus-status status-available">Доступно</div>
-                            </div>
-                            <div class="bonus-item" data-type="promo">
-                                <div class="bonus-icon">🎫</div>
-                                <div class="bonus-info">
-                                    <span class="bonus-name">Промокод на скидку</span>
-                                    <span class="bonus-chance">Шанс: 70% - 10%, 20% - 20%, 5% - 30%, 1% - 40%</span>
-                                </div>
-                                <div class="bonus-status status-available">Доступно</div>
-                            </div>
-                        </div>
-                        <button class="btn btn-block" id="claim-bonus">
-                            <span class="btn-text">Получить бонус</span>
-                            <span class="btn-loader"></span>
-                        </button>
-                        <div class="bonus-timer">
-                            <span>Следующий бонус через:</span>
-                            <span class="timer-value" id="bonus-timer">23:59:59</span>
-                        </div>
-                    </div>
-
-                    <!-- Быстрые действия -->
-                    <div class="actions-widget widget">
-                        <h3 class="widget-title">Быстрые действия</h3>
-                        <div class="action-buttons">
-                            <button class="btn btn-block btn-action">
-                                <span class="btn-icon">⬇️</span>
-                                Скачать лаунчер
-                            </button>
-                            <button class="btn btn-block btn-action">
-                                <span class="btn-icon">💬</span>
-                                Техподдержка
-                            </button>
-                            <button class="btn btn-block btn-action">
-                                <span class="btn-icon">🎮</span>
-                                Наш Discord
-                            </button>
-                            <button class="btn btn-block btn-action">
-                                <span class="btn-icon">📊</span>
-                                Статистика
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Топ донатеров -->
-                    <div class="donators-widget widget">
-                        <h3 class="widget-title">Топ донатеров</h3>
-                        <div class="donators-list">
-                            <div class="donator-item">
-                                <span class="donator-rank">1</span>
-                                <span class="donator-name">BloodyPlayer</span>
-                                <span class="donator-amount">5000₽</span>
-                            </div>
-                            <div class="donator-item">
-                                <span class="donator-rank">2</span>
-                                <span class="donator-name">NewYearGuy</span>
-                                <span class="donator-amount">3500₽</span>
-                            </div>
-                            <div class="donator-item">
-                                <span class="donator-rank">3</span>
-                                <span class="donator-name">SnowQueen</span>
-                                <span class="donator-amount">2000₽</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Донат секция -->
-            <section class="donate-section">
-                <div class="section-header">
-                    <h2>Поддержать сервер</h2>
-                    <p>Получи эксклюзивные привилегии и помоги развитию проекта</p>
-                </div>
-                <div class="donate-packages">
-                    <div class="package-card">
-                        <div class="package-header">
-                            <h3>Новичок</h3>
-                            <div class="package-price">299₽</div>
-                        </div>
-                        <ul class="package-features">
-                            <li>Префикс в чате</li>
-                            <li>Доступ к /hat</li>
-                            <li>Цветной ник</li>
-                            <li>Набор новичка</li>
-                        </ul>
-                        <button class="btn btn-block btn-package">Выбрать</button>
-                    </div>
-                    <div class="package-card featured">
-                        <div class="package-badge">Популярный</div>
-                        <div class="package-header">
-                            <h3>VIP</h3>
-                            <div class="package-price">799₽</div>
-                        </div>
-                        <ul class="package-features">
-                            <li>Все возможности Новичка</li>
-                            <li>Доступ к /fly</li>
-                            <li>Эффекты частиц</li>
-                            <li>VIP-кейсы ежемесячно</li>
-                            <li>Приоритет в подключении</li>
-                        </ul>
-                        <button class="btn btn-block btn-package">Выбрать</button>
-                    </div>
-                    <div class="package-card">
-                        <div class="package-header">
-                            <h3>Премиум</h3>
-                            <div class="package-price">1499₽</div>
-                        </div>
-                        <ul class="package-features">
-                            <li>Все возможности VIP</li>
-                            <li>Эксклюзивный префикс</li>
-                            <li>Доступ к бета-тестам</li>
-                            <li>Персональная поддержка</li>
-                            <li>Участие в выборах</li>
-                        </ul>
-                        <button class="btn btn-block btn-package">Выбрать</button>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Футер -->
         <footer>
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-logo">
-                        <h3>BloodyButterfly</h3>
-                        <span>DJN • ClientMod V34</span>
-                    </div>
-                    <p class="footer-description">
-                        Самый атмосферный новогодний сервер с модификацией ClientMod V34. Присоединяйся к нам!
-                    </p>
-                </div>
-                <div class="footer-section">
-                    <h4>Навигация</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Главная</a></li>
-                        <li><a href="#">Донат</a></li>
-                        <li><a href="#">Бонусы</a></li>
-                        <li><a href="#">Поддержка</a></li>
-                        <li><a href="#">Правила</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Полезное</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Скачать лаунчер</a></li>
-                        <li><a href="#">Баги и ошибки</a></li>
-                        <li><a href="#">Статистика</a></li>
-                        <li><a href="#">Наш Discord</a></li>
-                        <li><a href="#">Контакты</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Контакты</h4>
-                    <div class="footer-contacts">
-                        <div class="contact-item">
-                            <span class="contact-icon">📧</span>
-                            <span>support@bloodybutterfly.ru</span>
-                        </div>
-                        <div class="contact-item">
-                            <span class="contact-icon">🎮</span>
-                            <span>Discord: bb.djn</span>
-                        </div>
-                        <div class="contact-item">
-                            <span class="contact-icon">🌐</span>
-                            <span>play.bloodybutterfly.ru</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 BloodyButterfly DJN. Все права защищены.</p>
-                <p>ClientMod V34 - Новогоднее обновление 2026</p>
-            </div>
+            <p>BloodyButterfly DJN &copy; 2025. Все права защищены.</p>
+            <p>ClientMod V34 - Новогоднее обновление</p>
         </footer>
     </div>
 
-    <!-- Модальные окна -->
     <div class="modal" id="login-modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Вход на сервер</h2>
             <div class="alert alert-warning">
-                <strong>Внимание!</strong> Используйте тот же ник, что и на сервере, иначе аккаунт не будет привязан!
+                <strong>Внимание!</strong> Используйте тот же ник, что и на сервере!
             </div>
             <form id="login-form">
                 <div class="form-group">
@@ -422,34 +620,11 @@
                     <label for="login-password">Пароль</label>
                     <input type="password" id="login-password" class="form-control" required>
                     <div class="form-text">
-                        Пароль должен содержать английские буквы, цифры и символы. Не используйте простые пароли типа 123456789!
+                        Пароль должен содержать английские буквы, цифры и символы.
                     </div>
                 </div>
-                <div class="form-options">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="remember-me">
-                        <span class="checkmark"></span>
-                        Запомнить меня
-                    </label>
-                    <a href="#" class="forgot-password">Забыли пароль?</a>
-                </div>
-                <button type="submit" class="btn btn-block btn-primary">
-                    <span class="btn-text">Войти</span>
-                    <span class="btn-loader"></span>
-                </button>
+                <button type="submit" class="btn btn-block">Войти</button>
             </form>
-            <div class="auth-divider">
-                <span>или</span>
-            </div>
-            <div class="social-auth">
-                <button class="btn btn-social btn-discord">
-                    <span class="social-icon">🎮</span>
-                    Войти через Discord
-                </button>
-            </div>
-            <p class="auth-switch">
-                Нет аккаунта? <a href="#" class="switch-to-register">Зарегистрироваться</a>
-            </p>
         </div>
     </div>
 
@@ -458,59 +633,33 @@
             <span class="close-modal">&times;</span>
             <h2>Регистрация на сервере</h2>
             <div class="alert alert-warning">
-                <strong>Внимание!</strong> Используйте тот же ник, что и на сервере, иначе аккаунт не будет привязан!
+                <strong>Внимание!</strong> Используйте тот же ник, что и на сервере!
             </div>
             <form id="register-form">
                 <div class="form-group">
                     <label for="reg-username">Никнейм на сервере</label>
                     <input type="text" id="reg-username" class="form-control" required>
-                    <div class="form-text">
-                        Укажите точно такой же ник, как и на сервере BloodyButterfly DJN
-                    </div>
                 </div>
                 <div class="form-group">
                     <label for="reg-email">Электронная почта</label>
                     <input type="email" id="reg-email" class="form-control" required>
                     <div class="form-text">
-                        На эту почту будет отправлен код подтверждения и уведомления о готовности ежедневного бонуса.
+                        На эту почту будет отправлен код подтверждения.
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="reg-password">Пароль</label>
                     <input type="password" id="reg-password" class="form-control" required>
-                    <div class="password-strength">
-                        <div class="strength-bar">
-                            <div class="strength-fill" id="password-strength"></div>
-                        </div>
-                        <span class="strength-text" id="password-text">Слабый пароль</span>
-                    </div>
                     <div class="form-text">
-                        Пароль должен содержать английские буквы, цифры и символы. Не используйте простые пароли типа 123456789!
+                        Пароль должен содержать английские буквы, цифры и символы.
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="reg-confirm-password">Подтверждение пароля</label>
                     <input type="password" id="reg-confirm-password" class="form-control" required>
-                    <div class="password-match" id="password-match">
-                        <span class="match-icon"></span>
-                        <span class="match-text">Пароли не совпадают</span>
-                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="accept-terms" required>
-                        <span class="checkmark"></span>
-                        Я принимаю <a href="#" class="link">правила сервера</a> и <a href="#" class="link">политику конфиденциальности</a>
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-block btn-primary">
-                    <span class="btn-text">Зарегистрироваться</span>
-                    <span class="btn-loader"></span>
-                </button>
+                <button type="submit" class="btn btn-block">Зарегистрироваться</button>
             </form>
-            <p class="auth-switch">
-                Уже есть аккаунт? <a href="#" class="switch-to-login">Войти</a>
-            </p>
         </div>
     </div>
 
@@ -518,56 +667,160 @@
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Поздравляем!</h2>
-            <p class="modal-subtitle">Вы получили промокод от Деда Мороза!</p>
+            <p style="text-align: center; margin-bottom: 20px;">Вы получили промокод от Деда Мороза!</p>
             <div class="promo-code">
                 <h4>Ваш промокод:</h4>
                 <div class="code" id="promo-code">BLOODY2026</div>
                 <p>Используйте его при оплате для получения скидки!</p>
             </div>
-            <div class="promo-details">
-                <div class="promo-info">
-                    <span class="info-label">Тип скидки:</span>
-                    <span class="info-value" id="promo-type">20% на все товары</span>
-                </div>
-                <div class="promo-info">
-                    <span class="info-label">Действует до:</span>
-                    <span class="info-value">31.12.2025</span>
-                </div>
-            </div>
-            <button class="btn btn-block btn-primary" id="copy-promo">
-                <span class="btn-text">Скопировать код</span>
-            </button>
+            <button class="btn btn-block" style="margin-top: 20px;">Скопировать код</button>
         </div>
     </div>
 
-    <div class="modal" id="vip-modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Поздравляем!</h2>
-            <p class="modal-subtitle">Вы получили VIP статус!</p>
-            <div class="vip-reward">
-                <div class="vip-icon">👑</div>
-                <div class="vip-info">
-                    <h4 id="vip-duration">VIP на 20 минут</h4>
-                    <p>Ваш VIP статус активирован автоматически</p>
-                </div>
-            </div>
-            <div class="vip-features">
-                <h5>Вы получили:</h5>
-                <ul>
-                    <li>Доступ к команде /fly</li>
-                    <li>Эксклюзивные эффекты частиц</li>
-                    <li>Цветной чат и ник</li>
-                    <li>Приоритет в подключении</li>
-                </ul>
-            </div>
-            <button class="btn btn-block btn-primary">Отлично!</button>
-        </div>
-    </div>
+    <script>
+        function createSnow() {
+            const snowContainer = document.querySelector('.snow-container');
+            const snowCount = 100;
+            
+            for (let i = 0; i < snowCount; i++) {
+                const snow = document.createElement('div');
+                snow.classList.add('snow');
+                
+                const size = Math.random() * 6 + 4;
+                snow.style.width = `${size}px`;
+                snow.style.height = `${size}px`;
+                snow.style.left = `${Math.random() * 100}vw`;
+                snow.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                snow.style.animationDelay = `${Math.random() * 10}s`;
+                
+                snowContainer.appendChild(snow);
+            }
+        }
 
-    <!-- Уведомления -->
-    <div class="notification-container" id="notification-container"></div>
+        function updateCountdown() {
+            const now = new Date();
+            const newYear = new Date(2026, 0, 1);
+            const diff = newYear - now;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+        }
 
-    <script src="script.js"></script>
+        function setupModals() {
+            const loginBtn = document.querySelector('.btn-login');
+            const registerBtn = document.querySelector('.btn-register');
+            const loginModal = document.getElementById('login-modal');
+            const registerModal = document.getElementById('register-modal');
+            const promoModal = document.getElementById('promo-modal');
+            const closeButtons = document.querySelectorAll('.close-modal');
+            const santa = document.getElementById('santa');
+            const claimBonusBtn = document.getElementById('claim-bonus');
+            
+            loginBtn.addEventListener('click', () => {
+                loginModal.style.display = 'flex';
+            });
+            
+            registerBtn.addEventListener('click', () => {
+                registerModal.style.display = 'flex';
+            });
+            
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    loginModal.style.display = 'none';
+                    registerModal.style.display = 'none';
+                    promoModal.style.display = 'none';
+                });
+            });
+            
+            santa.addEventListener('click', () => {
+                promoModal.style.display = 'flex';
+            });
+            
+            claimBonusBtn.addEventListener('click', () => {
+                const bonuses = document.querySelectorAll('.bonus-status');
+                bonuses.forEach(bonus => {
+                    bonus.textContent = 'Получено';
+                    bonus.classList.remove('status-available');
+                    bonus.classList.add('status-claimed');
+                });
+                
+                claimBonusBtn.textContent = 'Бонус получен';
+                claimBonusBtn.disabled = true;
+                
+                alert('Ежедневный бонус получен! Проверьте свою почту.');
+            });
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === loginModal) {
+                    loginModal.style.display = 'none';
+                }
+                if (e.target === registerModal) {
+                    registerModal.style.display = 'none';
+                }
+                if (e.target === promoModal) {
+                    promoModal.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('login-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+                
+                if (password.length < 6) {
+                    alert('Пароль должен содержать минимум 6 символов!');
+                    return;
+                }
+                
+                if (password === '123456789') {
+                    alert('Слишком легкий пароль! Используйте более сложный пароль.');
+                    return;
+                }
+                
+                alert(`Добро пожаловать, ${username}!`);
+                loginModal.style.display = 'none';
+            });
+            
+            document.getElementById('register-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('reg-username').value;
+                const email = document.getElementById('reg-email').value;
+                const password = document.getElementById('reg-password').value;
+                const confirmPassword = document.getElementById('reg-confirm-password').value;
+                
+                if (password !== confirmPassword) {
+                    alert('Пароли не совпадают!');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('Пароль должен содержать минимум 6 символов!');
+                    return;
+                }
+                
+                if (password === '123456789') {
+                    alert('Слишком легкий пароль! Используйте более сложный пароль.');
+                    return;
+                }
+                
+                alert(`Регистрация успешна! На почту ${email} отправлен код подтверждения.`);
+                registerModal.style.display = 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createSnow();
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+            setupModals();
+        });
+    </script>
 </body>
 </html>
