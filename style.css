@@ -640,3 +640,428 @@
         text-align: center;
     }
 }
+/* Стили для создателей сайта и сервера */
+.profile-creators {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.creator-card {
+    background: linear-gradient(135deg, 
+        rgba(0, 243, 255, 0.1), 
+        rgba(157, 0, 255, 0.1));
+    border: 2px solid var(--cyber-blue);
+    border-radius: 15px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: var(--transition-medium);
+}
+
+.creator-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--cyber-pink);
+    box-shadow: 0 10px 20px rgba(0, 243, 255, 0.2);
+}
+
+.creator-card:nth-child(2) {
+    border-color: var(--cyber-pink);
+    background: linear-gradient(135deg, 
+        rgba(255, 0, 255, 0.1), 
+        rgba(255, 0, 85, 0.1));
+}
+
+.creator-card:nth-child(2):hover {
+    border-color: var(--cyber-green);
+}
+
+.creator-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, 
+        var(--cyber-blue), 
+        var(--cyber-purple));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.creator-card:nth-child(2) .creator-icon {
+    background: linear-gradient(135deg, 
+        var(--cyber-pink), 
+        var(--cyber-red));
+}
+
+.creator-details {
+    flex: 1;
+}
+
+.creator-details h4 {
+    color: var(--cyber-blue);
+    font-size: 1rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.creator-card:nth-child(2) .creator-details h4 {
+    color: var(--cyber-pink);
+}
+
+.creator-signature {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.creator-name {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--cyber-green);
+    text-shadow: 0 0 10px currentColor;
+    letter-spacing: 1px;
+}
+
+.creator-card:nth-child(2) .creator-name {
+    color: var(--cyber-red);
+    text-shadow: 0 0 10px var(--cyber-red);
+}
+
+.creator-title {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Стили для кастомных аватаров */
+.avatar-option.custom-avatar {
+    grid-column: span 2;
+    width: 100%;
+    height: 120px;
+    border-radius: 15px;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.custom-avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+}
+
+.custom-avatar-container i {
+    font-size: 2.5rem;
+    color: var(--cyber-blue);
+}
+
+.custom-avatar-container span {
+    color: var(--cyber-blue);
+    font-weight: 700;
+}
+
+.custom-avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--cyber-blue);
+}
+
+.avatar-option.custom-avatar.selected .custom-avatar-img {
+    border-color: var(--cyber-green);
+    box-shadow: 0 0 20px var(--cyber-green);
+}
+
+.upload-avatar-section {
+    grid-column: span 4;
+    margin-top: 20px;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    border: 2px dashed var(--cyber-blue);
+}
+
+.upload-area {
+    text-align: center;
+    padding: 40px 20px;
+    transition: var(--transition-fast);
+}
+
+.upload-area.dragover {
+    background: rgba(0, 243, 255, 0.1);
+    border-color: var(--cyber-green);
+}
+
+.upload-area i {
+    font-size: 3rem;
+    color: var(--cyber-blue);
+    margin-bottom: 15px;
+    display: block;
+}
+
+.upload-area p {
+    color: var(--cyber-blue);
+    margin: 10px 0;
+}
+
+.upload-area span {
+    color: rgba(255, 255, 255, 0.5);
+    display: block;
+    margin: 10px 0;
+}
+
+.upload-btn {
+    background: linear-gradient(135deg, 
+        var(--cyber-purple), 
+        var(--cyber-pink));
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 15px 30px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.upload-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(157, 0, 255, 0.4);
+}
+
+.upload-note {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 15px;
+}
+
+.avatar-preview {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 2px solid var(--cyber-blue);
+}
+
+.avatar-preview h4 {
+    color: var(--cyber-blue);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.preview-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.preview-image img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--cyber-green);
+    box-shadow: 0 0 30px var(--cyber-green);
+}
+
+.remove-avatar-btn {
+    background: linear-gradient(135deg, 
+        var(--cyber-red), 
+        #ff0055);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 12px 25px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.remove-avatar-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4);
+}
+
+/* Отображение кастомного аватара в профиле */
+.avatar .custom-avatar-display {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar .custom-avatar-display img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Подпись в футере */
+.footer-signature {
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    border-top: 1px solid rgba(0, 243, 255, 0.2);
+}
+
+.signature-text {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+.signature-names {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.signature-name {
+    color: var(--cyber-blue);
+    font-weight: 700;
+}
+
+.signature-name:nth-child(2) {
+    color: var(--cyber-pink);
+}
+
+/* Добавьте этот HTML в футер перед закрывающим тегом </footer> */
+<div class="footer-signature">
+    <div class="signature-text">Разработано с ❤️ для сообщества BloodyButterfly</div>
+    <div class="signature-names">
+        <span class="signature-name">GmaowG — создатель сайта</span>
+        <span class="signature-name">KILLMAKER — создатель сервера</span>
+    </div>
+</div>
+
+/* Адаптивность для создателей */
+@media (max-width: 768px) {
+    .profile-creators {
+        grid-template-columns: 1fr;
+    }
+    
+    .avatar-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .avatar-option.custom-avatar {
+        grid-column: span 3;
+    }
+    
+    .upload-avatar-section {
+        grid-column: span 3;
+    }
+    
+    .signature-names {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+}/* Стили для информационного блока */
+.avatar-selection-info {
+    background: linear-gradient(135deg, 
+        rgba(0, 243, 255, 0.1), 
+        rgba(157, 0, 255, 0.1));
+    border: 2px solid var(--cyber-blue);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.info-icon {
+    font-size: 2rem;
+    color: var(--cyber-blue);
+}
+
+.info-text {
+    flex: 1;
+}
+
+.info-text p {
+    margin: 5px 0;
+    color: var(--cyber-blue);
+}
+
+.info-note {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+}
+
+.avatar-actions {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.cancel-avatar-btn {
+    flex: 1;
+    padding: 20px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1), 
+        rgba(255, 255, 255, 0.05));
+    border: 2px solid var(--cyber-red);
+    border-radius: 15px;
+    color: var(--cyber-red);
+    font-weight: 900;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.cancel-avatar-btn:hover {
+    background: linear-gradient(135deg, 
+        rgba(255, 0, 85, 0.2), 
+        rgba(255, 0, 255, 0.2));
+    transform: translateY(-3px);
+}
+
+.confirm-avatar-btn {
+    flex: 1;
+    padding: 20px;
+    background: linear-gradient(135deg, 
+        var(--cyber-green), 
+        #00ff9d);
+    border: none;
+    border-radius: 15px;
+    color: black;
+    font-weight: 900;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.confirm-avatar-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 255, 157, 0.4);
+}
