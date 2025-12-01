@@ -1,3 +1,326 @@
+// В объект BloodyButterfly добавьте:
+
+const BloodyButterfly = {
+    // ... остальной код ...
+    
+    config: {
+        // ... предыдущие настройки ...
+        avatars: [
+            "fa-user-astronaut", "fa-robot", "fa-user-ninja", "fa-user-secret",
+            "fa-gamepad", "fa-ghost", "fa-dragon", "fa-space-shuttle",
+            "fa-jedi", "fa-sith", "fa-helmet-battle", "fa-user-visor",
+            "fa-android", "fa-cat", "fa-dog", "fa-crow",
+            "custom" // Для кастомных аватаров
+        ],
+        customAvatarUrl: null
+    },
+    
+    // Добавьте методы для работы с кастомными аватарами
+    setupAvatarSystem() {
+        // Загрузка выбранного аватара
+        const savedAvatar = localStorage.getItem('bloodyButterflyAvatar');
+        if (savedAvatar) {
+            this.state.selectedAvatar = savedAvatar;
+        }
+        
+        // Загрузка кастомного аватара
+        const customAvatar = localStorage.getItem('bloodyButterflyCustomAvatar');
+        if (customAvatar) {
+            this.config.customAvatarUrl = customAvatar;
+        }
+        
+        this.updateAvatarDisplay();
+    },
+    
+    showAvatarModal() {
+        const modal = document.getElementById('avatarModal');
+        const grid = document.getElementById('avatarGrid');
+        
+        if (!modal || !grid) return;
+
+        // Заполнение сетки аватаров
+        let html = '';
+        
+        // Стандартные иконки
+        this.config.avatars.slice(0, -1).forEach((avatar, index) => {
+            const isSelected = avatar === this.state.selectedAvatar && !this.config.customAvatarUrl;
+            html += `
+                <div class="avatar-option ${isSelected ? 'selected' : ''}" data-avatar="${avatar}">
+                    <i class="fas ${avatar}"></i>
+                </div>
+            `;
+        });
+        
+        // Кастомный аватар (последняя позиция)
+        const isCustomSelected = this.state.selectedAvatar === 'custom' || this.config.customAvatarUrl;
+        html += `
+            <div class="avatar-option custom-avatar ${isCustomSelected ? 'selected' : ''}" data-avatar="custom">
+                <div class="custom-avatar-container">
+                    ${this.config.customAvatarUrl ? 
+                        `<img src="${this.config.customAvatarUrl}" alt="Кастомный аватар" class="custom-avatar-img">` :
+                        `<i class="fas fa-image"></i><span>Загрузить</span>`
+                    }
+                </div>
+            </div>
+            
+            <div class="upload-avatar-section" id="uploadAvatarSection" style="${isCustomSelected ? 'display: block;' : 'display: none;'}">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Перетащите изображение сюда</p>
+                    <span>или</span>
+                    <button class="upload-btn" id="uploadBtn">
+                        <i class="fas fa-folder-open"></i>
+                        Выбрать файл
+                    </button>
+                    <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+                    <p class="upload-note">Максимальный размер: 5MB</p>
+                </div>
+                
+                <div class="avatar-preview" id="avatarPreview" style="${this.config.customAvatarUrl ? 'display: block;' : 'display: none;'}">
+                    <h4>Предпросмотр:</h4>
+                    <div class="preview-image">
+                        <img src="${this.config.customAvatarUrl || ''}" alt="Предпросмотр">
+                        <button class="remove-avatar-btn" id="removeAvatarBtn">
+                            <i class="fas fa-trash"></i>
+                            Удалить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        grid.innerHTML = html;
+
+        // Добавление обработчиков выбора
+        grid.querySelectorAll('.avatar-option:not(.custom-avatar)').forEach(option => {
+            option.addEventListener('click', (e) => {
+                grid.querySelectorAll('.avatar-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                e.currentTarget.classList.add('selected');
+                
+                // Скрыть секцию загрузки если выбрана не кастомная иконка
+                document.getElementById('uploadAvatarSection').style.display = 'none';
+                this.config.customAvatarUrl = null;
+            });
+        });
+
+        // Обработчик для кастомного аватара
+        const customOption = grid.querySelector('.custom-avatar');
+        customOption.addEventListener('click', () => {
+            grid.querySelectorAll('.avatar-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            customOption.classList.add('selected');
+            document.getElementById('uploadAvatarSection').style.display = 'block';
+        });
+
+        // Обработчик кнопки загрузки
+        document.getElementById('uploadBtn')?.addEventListener('click', () => {
+            document.getElementById('avatarFileInput').click();
+        });
+
+        // Обработчик выбора файла
+        document.getElementById('avatarFileInput')?.addEventListener('change', (e) => {
+            this.handleAvatarUpload(e);
+        });
+
+        // Обработчик drag & drop
+        const uploadArea = document.getElementById('uploadArea');
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.handleAvatarFile(files[0]);
+                }
+            });
+        }
+
+        // Обработчик удаления аватара
+        document.getElementById('removeAvatarBtn')?.addEventListener('click', () => {
+            this.removeCustomAvatar();
+        });
+
+        // Показ модального окна
+        modal.classList.add('active');
+    },
+    
+    handleAvatarUpload(event) {
+        const file = event.target.files[0];
+        if (file) {
+            this.handleAvatarFile(file);
+        }
+    },
+    
+    handleAvatarFile(file) {
+        // Проверка типа файла
+        if (!file.type.match('image.*')) {
+            this.showNotification('Пожалуйста, выберите изображение', 'error');
+            return;
+        }
+        
+        // Проверка размера файла (5MB максимум)
+        if (file.size > 5 * 1024 * 1024) {
+            this.showNotification('Размер файла не должен превышать 5MB', 'error');
+            return;
+        }
+        
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            const imageUrl = e.target.result;
+            
+            // Создание превью
+            const img = new Image();
+            img.onload = () => {
+                // Создание canvas для обрезки и оптимизации
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Устанавливаем размер для аватара
+                const size = Math.min(img.width, img.height);
+                canvas.width = 200;
+                canvas.height = 200;
+                
+                // Обрезка и масштабирование
+                ctx.drawImage(
+                    img, 
+                    (img.width - size) / 2, 
+                    (img.height - size) / 2, 
+                    size, size, 
+                    0, 0, 
+                    200, 200
+                );
+                
+                // Конвертация в base64
+                const optimizedImageUrl = canvas.toDataURL('image/jpeg', 0.8);
+                
+                // Сохранение аватара
+                this.config.customAvatarUrl = optimizedImageUrl;
+                localStorage.setItem('bloodyButterflyCustomAvatar', optimizedImageUrl);
+                
+                // Обновление превью
+                const preview = document.getElementById('avatarPreview');
+                const previewImg = preview.querySelector('img');
+                if (previewImg) {
+                    previewImg.src = optimizedImageUrl;
+                    preview.style.display = 'block';
+                }
+                
+                // Выбор кастомного аватара
+                const customOption = document.querySelector('.custom-avatar');
+                const customContainer = customOption.querySelector('.custom-avatar-container');
+                
+                customContainer.innerHTML = `<img src="${optimizedImageUrl}" alt="Кастомный аватар" class="custom-avatar-img">`;
+                
+                this.showNotification('Аватар успешно загружен!', 'success');
+            };
+            
+            img.src = imageUrl;
+        };
+        
+        reader.readAsDataURL(file);
+    },
+    
+    removeCustomAvatar() {
+        this.config.customAvatarUrl = null;
+        localStorage.removeItem('bloodyButterflyCustomAvatar');
+        
+        // Обновление интерфейса
+        const preview = document.getElementById('avatarPreview');
+        if (preview) {
+            preview.style.display = 'none';
+        }
+        
+        const customOption = document.querySelector('.custom-avatar');
+        if (customOption) {
+            const customContainer = customOption.querySelector('.custom-avatar-container');
+            customContainer.innerHTML = '<i class="fas fa-image"></i><span>Загрузить</span>';
+        }
+        
+        this.showNotification('Кастомный аватар удален', 'info');
+    },
+    
+    changeAvatar() {
+        let selectedAvatar = this.state.selectedAvatar;
+        const selectedOption = document.querySelector('.avatar-option.selected');
+        
+        if (!selectedOption) {
+            this.showNotification('Выберите аватар', 'warning');
+            return;
+        }
+        
+        const avatarType = selectedOption.dataset.avatar;
+        
+        if (avatarType === 'custom') {
+            if (!this.config.customAvatarUrl) {
+                this.showNotification('Загрузите изображение для кастомного аватара', 'warning');
+                return;
+            }
+            selectedAvatar = 'custom';
+        } else {
+            selectedAvatar = avatarType;
+        }
+        
+        this.state.selectedAvatar = selectedAvatar;
+        
+        // Сохранение
+        localStorage.setItem('bloodyButterflyAvatar', selectedAvatar);
+        
+        // Обновление отображения
+        this.updateAvatarDisplay();
+        
+        // Закрытие модального окна
+        this.hideAvatarModal();
+        
+        this.showNotification('Аватар успешно изменен!', 'success');
+    },
+    
+    updateAvatarDisplay() {
+        const avatarElement = document.getElementById('currentAvatar');
+        if (avatarElement) {
+            const icon = avatarElement.querySelector('i');
+            const avatarGlow = avatarElement.querySelector('.avatar-glow');
+            
+            if (this.state.selectedAvatar === 'custom' && this.config.customAvatarUrl) {
+                // Отображение кастомного аватара
+                if (!avatarElement.querySelector('.custom-avatar-display')) {
+                    const customDisplay = document.createElement('div');
+                    customDisplay.className = 'custom-avatar-display';
+                    customDisplay.innerHTML = `<img src="${this.config.customAvatarUrl}" alt="Аватар">`;
+                    avatarElement.appendChild(customDisplay);
+                }
+                
+                if (icon) icon.style.display = 'none';
+                if (avatarGlow) avatarGlow.style.display = 'block';
+            } else {
+                // Отображение иконки
+                const customDisplay = avatarElement.querySelector('.custom-avatar-display');
+                if (customDisplay) customDisplay.remove();
+                
+                if (icon) {
+                    icon.style.display = 'block';
+                    icon.className = `fas ${this.state.selectedAvatar}`;
+                }
+                if (avatarGlow) avatarGlow.style.display = 'block';
+            }
+        }
+    },
+    
+    // ... остальной код ...
+};
 // Основной модуль сайта
 const BloodyButterfly = {
     // Конфигурация
