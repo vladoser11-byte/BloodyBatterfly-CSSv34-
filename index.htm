@@ -3,824 +3,2352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BloodyButterfly - Новогодний сервер</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #0a0a2a, #1a1a4a);
-            color: #fff;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        .background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .snow {
-            position: absolute;
-            top: -10px;
-            width: 8px;
-            height: 8px;
-            background: #fff;
-            border-radius: 50%;
-            filter: blur(0.5px);
-            animation: snowfall linear infinite;
-        }
-
-        @keyframes snowfall {
-            0% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) translateX(20px);
-                opacity: 0;
-            }
-        }
-
-        .village {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 30%;
-            background: 
-                linear-gradient(75deg, transparent 45%, #2d2d2d 45%, #2d2d2d 50%, #3d3d3d 50%, #3d3d3d 55%, transparent 55%) 50px 60px,
-                linear-gradient(-75deg, transparent 45%, #2d2d2d 45%, #2d2d2d 50%, #3d3d3d 50%, #3d3d3d 55%, transparent 55%) 150px 40px,
-                linear-gradient(80deg, transparent 40%, #252525 40%, #252525 45%, #353535 45%, #353535 50%, transparent 50%) 250px 70px;
-            background-size: 300px 100px;
-            background-repeat: repeat-x;
-        }
-
-        .santa {
-            position: absolute;
-            top: 20%;
-            right: -100px;
-            width: 80px;
-            height: 100px;
-            background: 
-                radial-gradient(circle at 50% 30%, #f9c7c7 20px, transparent 20px),
-                linear-gradient(to bottom, #c41e3a 0px 40px, #3a3a3a 40px 70px),
-                linear-gradient(135deg, transparent 0px, #c41e3a 0px 20px, transparent 20px),
-                linear-gradient(-135deg, transparent 0px, #c41e3a 0px 20px, transparent 20px);
-            animation: santaFly 25s linear infinite;
-            cursor: pointer;
-            z-index: 100;
-            border-radius: 40% 40% 30% 30%;
-        }
-
-        .santa::before {
-            content: '';
-            position: absolute;
-            top: 25px;
-            left: 20px;
-            width: 8px;
-            height: 8px;
-            background: #000;
-            border-radius: 50%;
-        }
-
-        .santa::after {
-            content: '';
-            position: absolute;
-            top: 25px;
-            right: 20px;
-            width: 8px;
-            height: 8px;
-            background: #000;
-            border-radius: 50%;
-        }
-
-        @keyframes santaFly {
-            0% {
-                transform: translateX(100vw) translateY(0);
-            }
-            100% {
-                transform: translateX(-100px) translateY(0);
-            }
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .logo h1 {
-            font-size: 2.5rem;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .logo span {
-            color: #ccc;
-            font-size: 1.1rem;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 30px;
-        }
-
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        nav a:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .countdown {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .countdown h2 {
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            text-align: center;
-            color: #fff;
-        }
-
-        .timer {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .time-unit {
-            text-align: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .time-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #fff;
-            display: block;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .time-label {
-            font-size: 0.9rem;
-            color: #ccc;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-
-        .progress {
-            height: 100%;
-            background: #fff;
-            width: 99.8%;
-            border-radius: 4px;
-        }
-
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .widget {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .widget h3 {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            color: #fff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
-        }
-
-        .server-info {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .info-item:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #ccc;
-        }
-
-        .info-value {
-            color: #fff;
-            font-weight: 500;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .btn-block {
-            display: block;
-            width: 100%;
-        }
-
-        .bonus-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .bonus-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .bonus-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .bonus-name {
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .bonus-chance {
-            font-size: 0.8rem;
-            color: #ccc;
-        }
-
-        .bonus-status {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .status-available {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .status-claimed {
-            background: rgba(255, 255, 255, 0.05);
-            color: #ccc;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: rgba(26, 26, 74, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            width: 90%;
-            max-width: 400px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #ccc;
-        }
-
-        .modal h2 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #fff;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #ccc;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            color: #fff;
-            font-size: 1rem;
-        }
-
-        .form-text {
-            font-size: 0.8rem;
-            color: #999;
-            margin-top: 5px;
-        }
-
-        .alert {
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-        }
-
-        .alert-warning {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
-
-        .promo-code {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .promo-code h4 {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: #fff;
-        }
-
-        .promo-code .code {
-            font-size: 1.5rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            color: #fff;
-            font-family: monospace;
-        }
-
-        footer {
-            text-align: center;
-            padding: 30px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 50px;
-            color: #ccc;
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            header {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-            
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 15px;
-            }
-            
-            .timer {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .santa {
-                width: 60px;
-                height: 80px;
-            }
-        }
-    </style>
+    <title>BloodyButterfly DJN - Новогодний игровой сервер</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="background">
-        <div class="snow-container"></div>
-        <div class="village"></div>
-        <div class="santa" id="santa"></div>
-    </div>
+    <!-- Главный контейнер -->
+    <div class="main-container">
+        
+        <!-- Фоновая анимация -->
+        <div class="background-animation">
+            <div class="particles-container" id="particles"></div>
+            <div class="snowflakes-container" id="snowflakes"></div>
+            <div class="gradient-overlay"></div>
+        </div>
 
-    <div class="container">
-        <header>
-            <div class="logo">
-                <h1>BloodyButterfly</h1>
-                <span>DJN • ClientMod V34</span>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#">Главная</a></li>
-                    <li><a href="#">Донат</a></li>
-                    <li><a href="#">Бонусы</a></li>
-                    <li><a href="#" class="btn-login">Вход</a></li>
-                    <li><a href="#" class="btn-register">Регистрация</a></li>
-                </ul>
-            </nav>
-        </header>
-
-        <div class="main-content">
-            <div class="countdown">
-                <h2>До Нового 2026 Года осталось:</h2>
-                <div class="timer">
-                    <div class="time-unit">
-                        <span class="time-value" id="days">30</span>
-                        <span class="time-label">дней</span>
-                    </div>
-                    <div class="time-unit">
-                        <span class="time-value" id="hours">21</span>
-                        <span class="time-label">часов</span>
-                    </div>
-                    <div class="time-unit">
-                        <span class="time-value" id="minutes">23</span>
-                        <span class="time-label">минут</span>
-                    </div>
-                    <div class="time-unit">
-                        <span class="time-value" id="seconds">39</span>
-                        <span class="time-label">секунд</span>
-                    </div>
+        <!-- Уведомление о куки -->
+        <div class="cookie-consent" id="cookieConsent">
+            <div class="cookie-content">
+                <div class="cookie-icon">
+                    <i class="fas fa-cookie-bite"></i>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress"></div>
+                <div class="cookie-text">
+                    <h4>Мы используем куки</h4>
+                    <p>Этот сайт использует файлы cookie для улучшения работы. Продолжая использовать сайт, вы соглашаетесь с этим.</p>
                 </div>
-                <p style="text-align: center; margin-top: 15px; color: #ccc;">Готовность: 99.8%</p>
-            </div>
-
-            <div class="sidebar">
-                <div class="widget">
-                    <h3>Информация о сервере</h3>
-                    <div class="server-info">
-                        <div class="info-item">
-                            <span class="info-label">Статус:</span>
-                            <span class="info-value">Онлайн</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Игроков:</span>
-                            <span class="info-value">127/200</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Версия:</span>
-                            <span class="info-value">ClientMod V34</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Режим:</span>
-                            <span class="info-value">Декант</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="widget">
-                    <h3>Ежедневный бонус</h3>
-                    <div class="bonus-container">
-                        <div class="bonus-item">
-                            <div class="bonus-info">
-                                <span class="bonus-name">VIP на 10 минут</span>
-                                <span class="bonus-chance">Шанс: 50%</span>
-                            </div>
-                            <span class="bonus-status status-available">Доступно</span>
-                        </div>
-                        <div class="bonus-item">
-                            <div class="bonus-info">
-                                <span class="bonus-name">Промокод 10% скидка</span>
-                                <span class="bonus-chance">Шанс: 70%</span>
-                            </div>
-                            <span class="bonus-status status-available">Доступно</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-block" id="claim-bonus">Получить бонус</button>
-                </div>
-
-                <div class="widget">
-                    <h3>Быстрые действия</h3>
-                    <button class="btn btn-block" style="margin-bottom: 10px;">Скачать лаунчер</button>
-                    <button class="btn btn-block" style="margin-bottom: 10px;">Техподдержка</button>
-                    <button class="btn btn-block">Наш Discord</button>
+                <div class="cookie-actions">
+                    <button class="btn btn-outline btn-sm" id="cookieReject">Отклонить</button>
+                    <button class="btn btn-primary btn-sm" id="cookieAccept">Принять все</button>
                 </div>
             </div>
         </div>
 
-        <footer>
-            <p>BloodyButterfly DJN &copy; 2025. Все права защищены.</p>
-            <p>ClientMod V34 - Новогоднее обновление</p>
+        <!-- Лоадер -->
+        <div class="page-loader" id="pageLoader">
+            <div class="loader-content">
+                <div class="loader-logo">
+                    <div class="logo-pulse">
+                        <i class="fas fa-butterfly"></i>
+                    </div>
+                </div>
+                <div class="loader-text">
+                    <span class="loading-text">Загрузка сервера</span>
+                    <div class="loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="loader-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="loaderProgress"></div>
+                    </div>
+                    <div class="progress-text">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секретный сюрприз (появляется случайно) -->
+        <div class="surprise-container" id="surpriseContainer" style="display: none;">
+            <div class="surprise-content">
+                <div class="surprise-header">
+                    <div class="surprise-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3 class="surprise-title">Секретный сюрприз!</h3>
+                    <button class="surprise-close" id="surpriseClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="surprise-body">
+                    <p class="surprise-message">Вы нашли секретный сюрприз! Получите эксклюзивный промокод.</p>
+                    <div class="surprise-code" id="surpriseCode">
+                        <span class="code-value">BLOODY-SECRET-2026</span>
+                        <div class="code-discount">50% скидка</div>
+                    </div>
+                    <div class="surprise-info">
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Действует 24 часа</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-user"></i>
+                            <span>Только для вас</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-block" id="claimSurprise">
+                        <i class="fas fa-gift"></i> Забрать промокод
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Шапка сайта -->
+        <header class="main-header">
+            <div class="header-container">
+                <div class="header-logo">
+                    <div class="logo-wrapper">
+                        <div class="logo-icon">
+                            <i class="fas fa-butterfly"></i>
+                            <div class="logo-glow"></div>
+                        </div>
+                        <div class="logo-text">
+                            <h1 class="logo-title">BloodyButterfly</h1>
+                            <div class="logo-subtitle">
+                                <span class="server-name">DJN Server</span>
+                                <span class="version">ClientMod V34</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="main-navigation">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="#home" class="nav-link active" data-section="home">
+                                <i class="fas fa-home"></i>
+                                <span class="link-text">Главная</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#donate" class="nav-link" data-section="donate">
+                                <i class="fas fa-gem"></i>
+                                <span class="link-text">Донат</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#bonuses" class="nav-link" data-section="bonuses">
+                                <i class="fas fa-gifts"></i>
+                                <span class="link-text">Бонусы</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#stats" class="nav-link" data-section="stats">
+                                <i class="fas fa-chart-line"></i>
+                                <span class="link-text">Статистика</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#support" class="nav-link" data-section="support">
+                                <i class="fas fa-headset"></i>
+                                <span class="link-text">Поддержка</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#rules" class="nav-link" data-section="rules">
+                                <i class="fas fa-book"></i>
+                                <span class="link-text">Правила</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="header-actions">
+                    <div class="server-status">
+                        <div class="status-indicator online">
+                            <div class="status-pulse"></div>
+                        </div>
+                        <div class="status-info">
+                            <span class="status-text">Сервер онлайн</span>
+                            <span class="players-count">
+                                <i class="fas fa-users"></i>
+                                <span id="onlinePlayers">127</span>/200
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="auth-section">
+                        <button class="btn btn-login" id="headerLogin">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Вход</span>
+                        </button>
+                        <button class="btn btn-primary btn-register" id="headerRegister">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Регистрация</span>
+                        </button>
+                    </div>
+
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Мобильное меню -->
+            <div class="mobile-menu" id="mobileMenu">
+                <div class="mobile-menu-header">
+                    <div class="mobile-logo">
+                        <i class="fas fa-butterfly"></i>
+                        <span>BloodyButterfly</span>
+                    </div>
+                    <button class="mobile-menu-close" id="mobileMenuClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <nav class="mobile-nav">
+                    <ul class="mobile-nav-list">
+                        <li><a href="#home" class="mobile-nav-link active" data-section="home">
+                            <i class="fas fa-home"></i> Главная
+                        </a></li>
+                        <li><a href="#donate" class="mobile-nav-link" data-section="donate">
+                            <i class="fas fa-gem"></i> Донат
+                        </a></li>
+                        <li><a href="#bonuses" class="mobile-nav-link" data-section="bonuses">
+                            <i class="fas fa-gifts"></i> Бонусы
+                        </a></li>
+                        <li><a href="#stats" class="mobile-nav-link" data-section="stats">
+                            <i class="fas fa-chart-line"></i> Статистика
+                        </a></li>
+                        <li><a href="#support" class="mobile-nav-link" data-section="support">
+                            <i class="fas fa-headset"></i> Поддержка
+                        </a></li>
+                        <li><a href="#rules" class="mobile-nav-link" data-section="rules">
+                            <i class="fas fa-book"></i> Правила
+                        </a></li>
+                    </ul>
+                </nav>
+                <div class="mobile-auth">
+                    <button class="btn btn-block btn-login" id="mobileLogin">
+                        <i class="fas fa-sign-in-alt"></i> Вход в аккаунт
+                    </button>
+                    <button class="btn btn-block btn-primary btn-register" id="mobileRegister">
+                        <i class="fas fa-user-plus"></i> Регистрация
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            
+            <!-- Секция: Главная -->
+            <section id="home" class="section active">
+                <div class="section-container">
+                    <div class="hero-section">
+                        <div class="hero-content">
+                            <div class="hero-badge">
+                                <span class="badge-text">Новогоднее обновление 2026</span>
+                                <div class="badge-sparkle"></div>
+                            </div>
+                            
+                            <h2 class="hero-title">
+                                Добро пожаловать на
+                                <span class="highlight">BloodyButterfly</span>
+                            </h2>
+                            
+                            <p class="hero-description">
+                                Самый атмосферный игровой сервер с модификацией ClientMod V34. 
+                                Присоединяйтесь к тысячам игроков в увлекательном зимнем приключении.
+                            </p>
+                            
+                            <div class="hero-features">
+                                <div class="feature">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <div class="feature-text">
+                                        <h4>Высокая производительность</h4>
+                                        <p>99.8% аптайм сервера</p>
+                                    </div>
+                                </div>
+                                <div class="feature">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="feature-text">
+                                        <h4>Защита от читов</h4>
+                                        <p>Передовая система античита</p>
+                                    </div>
+                                </div>
+                                <div class="feature">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="feature-text">
+                                        <h4>Активное сообщество</h4>
+                                        <p>Более 1000 активных игроков</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="hero-actions">
+                                <button class="btn btn-primary btn-xl btn-download-launcher">
+                                    <i class="fas fa-download"></i>
+                                    <span>Скачать лаунчер</span>
+                                    <div class="btn-glow"></div>
+                                </button>
+                                <button class="btn btn-outline btn-xl btn-watch-trailer">
+                                    <i class="fas fa-play-circle"></i>
+                                    <span>Смотреть трейлер</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="hero-visual">
+                            <div class="countdown-widget">
+                                <h3 class="countdown-title">
+                                    <i class="fas fa-snowflake"></i>
+                                    До Нового 2026 года
+                                </h3>
+                                
+                                <div class="countdown-timer">
+                                    <div class="time-block">
+                                        <div class="time-value" id="countdownDays">30</div>
+                                        <div class="time-label">Дней</div>
+                                    </div>
+                                    <div class="time-separator">:</div>
+                                    <div class="time-block">
+                                        <div class="time-value" id="countdownHours">21</div>
+                                        <div class="time-label">Часов</div>
+                                    </div>
+                                    <div class="time-separator">:</div>
+                                    <div class="time-block">
+                                        <div class="time-value" id="countdownMinutes">23</div>
+                                        <div class="time-label">Минут</div>
+                                    </div>
+                                    <div class="time-separator">:</div>
+                                    <div class="time-block">
+                                        <div class="time-value" id="countdownSeconds">39</div>
+                                        <div class="time-label">Секунд</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="countdown-progress">
+                                    <div class="progress-info">
+                                        <span>Готовность сервера:</span>
+                                        <span class="progress-percent">99.8%</span>
+                                    </div>
+                                    <div class="progress-track">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 99.8%"></div>
+                                            <div class="progress-glow"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="server-stats">
+                                    <div class="stat">
+                                        <div class="stat-icon">
+                                            <i class="fas fa-user-clock"></i>
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-value" id="uptimeStat">99.8%</div>
+                                            <div class="stat-label">Аптайм</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-value" id="monthsStat">12</div>
+                                            <div class="stat-label">Месяцев работы</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: Донат -->
+            <section id="donate" class="section">
+                <div class="section-container">
+                    <div class="section-header">
+                        <div class="section-badge">
+                            <i class="fas fa-gem"></i>
+                            <span>Поддержка сервера</span>
+                        </div>
+                        <h2 class="section-title">Премиум привилегии</h2>
+                        <p class="section-description">
+                            Выберите подходящий пакет и получите эксклюзивные возможности на сервере
+                        </p>
+                    </div>
+                    
+                    <div class="donation-tabs">
+                        <div class="tabs-header">
+                            <button class="tab-btn active" data-tab="monthly">Ежемесячные</button>
+                            <button class="tab-btn" data-tab="permanent">Постоянные</button>
+                            <button class="tab-btn" data-tab="coins">Игровые монеты</button>
+                        </div>
+                        
+                        <div class="tabs-content">
+                            <!-- Ежемесячные пакеты -->
+                            <div class="tab-pane active" id="monthly-tab">
+                                <div class="packages-grid">
+                                    <div class="package-card">
+                                        <div class="package-header">
+                                            <div class="package-badge basic">Базовый</div>
+                                            <div class="package-price">
+                                                <span class="price-amount">299</span>
+                                                <span class="price-currency">₽</span>
+                                                <span class="price-period">/месяц</span>
+                                            </div>
+                                        </div>
+                                        <div class="package-features">
+                                            <ul>
+                                                <li><i class="fas fa-check"></i> Префикс [VIP] в чате</li>
+                                                <li><i class="fas fa-check"></i> Доступ к /hat и /fix</li>
+                                                <li><i class="fas fa-check"></i> Цветной никнейм</li>
+                                                <li><i class="fas fa-check"></i> 1000 игровых монет</li>
+                                                <li><i class="fas fa-check"></i> Ежемесячный набор</li>
+                                                <li><i class="fas fa-times"></i> Команда /fly</li>
+                                                <li><i class="fas fa-times"></i> Приватные варпы</li>
+                                            </ul>
+                                        </div>
+                                        <button class="btn btn-block btn-purchase" data-package="monthly-basic">
+                                            <i class="fas fa-shopping-cart"></i> Купить за 299₽
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="package-card featured">
+                                        <div class="package-badge popular">Популярный</div>
+                                        <div class="package-header">
+                                            <div class="package-badge premium">Премиум</div>
+                                            <div class="package-price">
+                                                <span class="price-amount">799</span>
+                                                <span class="price-currency">₽</span>
+                                                <span class="price-period">/месяц</span>
+                                            </div>
+                                        </div>
+                                        <div class="package-features">
+                                            <ul>
+                                                <li><i class="fas fa-check"></i> Все из Базового пакета</li>
+                                                <li><i class="fas fa-check"></i> Команда /fly</li>
+                                                <li><i class="fas fa-check"></i> Эффекты частиц</li>
+                                                <li><i class="fas fa-check"></i> 5000 игровых монет</li>
+                                                <li><i class="fas fa-check"></i> 3 приватных варпа</li>
+                                                <li><i class="fas fa-check"></i> Приоритет в подключении</li>
+                                                <li><i class="fas fa-check"></i> Ежемесячный сундук</li>
+                                            </ul>
+                                        </div>
+                                        <button class="btn btn-primary btn-block btn-purchase" data-package="monthly-premium">
+                                            <i class="fas fa-crown"></i> Купить за 799₽
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="package-card">
+                                        <div class="package-header">
+                                            <div class="package-badge ultimate">Ультимативный</div>
+                                            <div class="package-price">
+                                                <span class="price-amount">1499</span>
+                                                <span class="price-currency">₽</span>
+                                                <span class="price-period">/месяц</span>
+                                            </div>
+                                        </div>
+                                        <div class="package-features">
+                                            <ul>
+                                                <li><i class="fas fa-check"></i> Все из Премиум пакета</li>
+                                                <li><i class="fas fa-check"></i> Эксклюзивный префикс</li>
+                                                <li><i class="fas fa-check"></i> Неограниченные варпы</li>
+                                                <li><i class="fas fa-check"></i> 15000 игровых монет</li>
+                                                <li><i class="fas fa-check"></i> Ранний доступ к обновлениям</li>
+                                                <li><i class="fas fa-check"></i> Персональная поддержка</li>
+                                                <li><i class="fas fa-check"></i> Участие в выборах</li>
+                                            </ul>
+                                        </div>
+                                        <button class="btn btn-block btn-purchase" data-package="monthly-ultimate">
+                                            <i class="fas fa-star"></i> Купить за 1499₽
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Постоянные пакеты -->
+                            <div class="tab-pane" id="permanent-tab">
+                                <div class="packages-grid">
+                                    <div class="package-card">
+                                        <div class="package-header">
+                                            <div class="package-badge basic">Постоянный VIP</div>
+                                            <div class="package-price">
+                                                <span class="price-amount">1999</span>
+                                                <span class="price-currency">₽</span>
+                                                <span class="price-period">однократно</span>
+                                            </div>
+                                        </div>
+                                        <div class="package-features">
+                                            <ul>
+                                                <li><i class="fas fa-check"></i> Вечный VIP статус</li>
+                                                <li><i class="fas fa-check"></i> Все возможности VIP</li>
+                                                <li><i class="fas fa-check"></i> Эксклюзивная плащ</li>
+                                                <li><i class="fas fa-check"></i> 10000 игровых монет</li>
+                                                <li><i class="fas fa-check"></i> Персональный скин</li>
+                                                <li><i class="fas fa-times"></i> Ежемесячные бонусы</li>
+                                            </ul>
+                                        </div>
+                                        <button class="btn btn-block btn-purchase" data-package="perm-vip">
+                                            <i class="fas fa-infinity"></i> Купить за 1999₽
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="package-card featured">
+                                        <div class="package-badge popular">Выгодный</div>
+                                        <div class="package-header">
+                                            <div class="package-badge premium">Постоянный Премиум</div>
+                                            <div class="package-price">
+                                                <span class="price-amount">4999</span>
+                                                <span class="price-currency">₽</span>
+                                                <span class="price-period">однократно</span>
+                                            </div>
+                                        </div>
+                                        <div class="package-features">
+                                            <ul>
+                                                <li><i class="fas fa-check"></i> Вечный Премиум статус</li>
+                                                <li><i class="fas fa-check"></i> Все возможности Премиум</li>
+                                                <li><i class="fas fa-check"></i> Эксклюзивные эффекты</li>
+                                                <li><i class="fas fa-check"></i> 50000 игровых монет</li>
+                                                <li><i class="fas fa-check"></i> Ежемесячные бонусы</li>
+                                                <li><i class="fas fa-check"></i> Уникальный титул</li>
+                                            </ul>
+                                        </div>
+                                        <button class="btn btn-primary btn-block btn-purchase" data-package="perm-premium">
+                                            <i class="fas fa-crown"></i> Купить за 4999₽
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="package-card">
+                                        <div class="package-header">
+                                            <div class="package-badge ultimate">Легендарный</div>
+                                            <div class="package-price">
+                                                <span class="price-amount">9999</span>
+                                                <span class="price-currency">₽</span>
+                                                <span class="price-period">однократно</span>
+                                            </div>
+                                        </div>
+                                        <div class="package-features">
+                                            <ul>
+                                                <li><i class="fas fa-check"></i> Вечный Ультимативный статус</li>
+                                                <li><i class="fas fa-check"></i> Все возможности</li>
+                                                <li><i class="fas fa-check"></i> Легендарная плащ</li>
+                                                <li><i class="fas fa-check"></i> 150000 игровых монет</li>
+                                                <li><i class="fas fa-check"></i> Ежемесячные сундуки</li>
+                                                <li><i class="fas fa-check"></i> Доступ к бета-тестам</li>
+                                            </ul>
+                                        </div>
+                                        <button class="btn btn-block btn-purchase" data-package="perm-ultimate">
+                                            <i class="fas fa-trophy"></i> Купить за 9999₽
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Игровые монеты -->
+                            <div class="tab-pane" id="coins-tab">
+                                <div class="coins-grid">
+                                    <div class="coin-package">
+                                        <div class="coin-amount">1,000</div>
+                                        <div class="coin-price">99 ₽</div>
+                                        <div class="coin-bonus">+0 бонус</div>
+                                        <button class="btn btn-outline btn-block" data-coins="1000">
+                                            Купить
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="coin-package">
+                                        <div class="coin-amount">5,500</div>
+                                        <div class="coin-price">399 ₽</div>
+                                        <div class="coin-bonus">+500 бонус</div>
+                                        <button class="btn btn-outline btn-block" data-coins="5500">
+                                            Купить
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="coin-package popular">
+                                        <div class="coin-badge">Выгодно</div>
+                                        <div class="coin-amount">12,000</div>
+                                        <div class="coin-price">799 ₽</div>
+                                        <div class="coin-bonus">+2,000 бонус</div>
+                                        <button class="btn btn-primary btn-block" data-coins="12000">
+                                            Купить
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="coin-package">
+                                        <div class="coin-amount">25,000</div>
+                                        <div class="coin-price">1,499 ₽</div>
+                                        <div class="coin-bonus">+5,000 бонус</div>
+                                        <button class="btn btn-outline btn-block" data-coins="25000">
+                                            Купить
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="coin-package">
+                                        <div class="coin-amount">50,000</div>
+                                        <div class="coin-price">2,699 ₽</div>
+                                        <div class="coin-bonus">+10,000 бонус</div>
+                                        <button class="btn btn-outline btn-block" data-coins="50000">
+                                            Купить
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="coin-package">
+                                        <div class="coin-amount">100,000</div>
+                                        <div class="coin-price">4,999 ₽</div>
+                                        <div class="coin-bonus">+25,000 бонус</div>
+                                        <button class="btn btn-outline btn-block" data-coins="100000">
+                                            Купить
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-methods">
+                        <h3 class="methods-title">Способы оплаты</h3>
+                        <div class="methods-grid">
+                            <div class="method-card">
+                                <div class="method-icon">
+                                    <i class="fab fa-cc-visa"></i>
+                                </div>
+                                <span class="method-name">Visa / MasterCard</span>
+                            </div>
+                            <div class="method-card">
+                                <div class="method-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <span class="method-name">Мобильная оплата</span>
+                            </div>
+                            <div class="method-card">
+                                <div class="method-icon">
+                                    <i class="fab fa-qiwi"></i>
+                                </div>
+                                <span class="method-name">QIWI</span>
+                            </div>
+                            <div class="method-card">
+                                <div class="method-icon">
+                                    <i class="fab fa-yandex"></i>
+                                </div>
+                                <span class="method-name">ЮMoney</span>
+                            </div>
+                            <div class="method-card">
+                                <div class="method-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <span class="method-name">Промокод</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: Бонусы -->
+            <section id="bonuses" class="section">
+                <div class="section-container">
+                    <div class="section-header">
+                        <div class="section-badge">
+                            <i class="fas fa-gifts"></i>
+                            <span>Награды и бонусы</span>
+                        </div>
+                        <h2 class="section-title">Получайте награды каждый день</h2>
+                        <p class="section-description">
+                            Ежедневные бонусы, промокоды и специальные предложения только для вас
+                        </p>
+                    </div>
+                    
+                    <div class="bonuses-grid">
+                        <!-- Ежедневный бонус -->
+                        <div class="bonus-card daily-bonus">
+                            <div class="bonus-header">
+                                <div class="bonus-icon">
+                                    <i class="fas fa-calendar-day"></i>
+                                </div>
+                                <div class="bonus-title">
+                                    <h3>Ежедневный бонус</h3>
+                                    <div class="bonus-subtitle">Заходите каждый день</div>
+                                </div>
+                                <div class="bonus-status available">
+                                    <i class="fas fa-gift"></i>
+                                    <span>Доступно</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bonus-content">
+                                <div class="bonus-prize">
+                                    <div class="prize-item">
+                                        <div class="prize-icon">
+                                            <i class="fas fa-crown"></i>
+                                        </div>
+                                        <div class="prize-info">
+                                            <div class="prize-name">VIP статус</div>
+                                            <div class="prize-chances">
+                                                <span class="chance">10 мин - 50%</span>
+                                                <span class="chance">20 мин - 25%</span>
+                                                <span class="chance">30 мин - 15%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="prize-item">
+                                        <div class="prize-icon">
+                                            <i class="fas fa-ticket-alt"></i>
+                                        </div>
+                                        <div class="prize-info">
+                                            <div class="prize-name">Промокод на скидку</div>
+                                            <div class="prize-chances">
+                                                <span class="chance">10% - 70%</span>
+                                                <span class="chance">20% - 20%</span>
+                                                <span class="chance">30% - 5%</span>
+                                                <span class="chance">40% - 1%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bonus-timer">
+                                    <div class="timer-info">
+                                        <i class="fas fa-clock"></i>
+                                        <span>Следующий бонус через:</span>
+                                    </div>
+                                    <div class="timer-display" id="dailyBonusTimer">
+                                        <span class="time-value">23</span>:<span class="time-value">59</span>:<span class="time-value">59</span>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-primary btn-block btn-claim-bonus" id="claimDailyBonus">
+                                    <i class="fas fa-gift"></i>
+                                    <span class="btn-text">Получить ежедневный бонус</span>
+                                    <div class="btn-loader" style="display: none;"></div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Еженедельные награды -->
+                        <div class="bonus-card weekly-rewards">
+                            <div class="bonus-header">
+                                <div class="bonus-icon">
+                                    <i class="fas fa-calendar-week"></i>
+                                </div>
+                                <div class="bonus-title">
+                                    <h3>Еженедельные награды</h3>
+                                    <div class="bonus-subtitle">Войдите 7 дней подряд</div>
+                                </div>
+                                <div class="bonus-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 42%"></div>
+                                    </div>
+                                    <span class="progress-text">3/7 дней</span>
+                                </div>
+                            </div>
+                            
+                            <div class="weekly-calendar">
+                                <div class="calendar-header">
+                                    <span>Пн</span>
+                                    <span>Вт</span>
+                                    <span>Ср</span>
+                                    <span>Чт</span>
+                                    <span>Пт</span>
+                                    <span>Сб</span>
+                                    <span>Вс</span>
+                                </div>
+                                <div class="calendar-days">
+                                    <div class="day claimed">
+                                        <div class="day-number">1</div>
+                                        <div class="day-reward">
+                                            <i class="fas fa-coins"></i>
+                                        </div>
+                                    </div>
+                                    <div class="day claimed">
+                                        <div class="day-number">2</div>
+                                        <div class="day-reward">
+                                            <i class="fas fa-box"></i>
+                                        </div>
+                                    </div>
+                                    <div class="day claimed">
+                                        <div class="day-number">3</div>
+                                        <div class="day-reward">
+                                            <i class="fas fa-key"></i>
+                                        </div>
+                                    </div>
+                                    <div class="day current">
+                                        <div class="day-number">4</div>
+                                        <div class="day-reward">
+                                            <i class="fas fa-gem"></i>
+                                        </div>
+                                        <div class="day-status">Сегодня</div>
+                                    </div>
+                                    <div class="day upcoming">
+                                        <div class="day-number">5</div>
+                                        <div class="day-reward">
+                                            <i class="fas fa-crown"></i>
+                                        </div>
+                                    </div>
+                                    <div class="day upcoming">
+                                        <div class="day-number">6</div>
+                                        <div class="day-reward">
+                                            <i class="fas fa-trophy"></i>
+                                        </div>
+                                    </div>
+                                    <div class="day upcoming">
+                                        <div class="day-number">7</div>
+                                        <div class="day-reward">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="weekly-prizes">
+                                <div class="prize">
+                                    <div class="prize-day">День 7</div>
+                                    <div class="prize-content">
+                                        <div class="prize-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="prize-details">
+                                            <div class="prize-name">Легендарный набор</div>
+                                            <div class="prize-description">VIP на 1 час + 5000 монет</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Специальные промокоды -->
+                        <div class="bonus-card promo-codes">
+                            <div class="bonus-header">
+                                <div class="bonus-icon">
+                                    <i class="fas fa-tags"></i>
+                                </div>
+                                <div class="bonus-title">
+                                    <h3>Активные промокоды</h3>
+                                    <div class="bonus-subtitle">Введите и получите награды</div>
+                                </div>
+                            </div>
+                            
+                            <div class="promo-content">
+                                <div class="promo-input-group">
+                                    <input type="text" 
+                                           class="promo-input" 
+                                           id="promoInput"
+                                           placeholder="Введите промокод"
+                                           maxlength="20">
+                                    <button class="btn btn-primary" id="activatePromo">
+                                        <i class="fas fa-check"></i> Активировать
+                                    </button>
+                                </div>
+                                
+                                <div class="active-promos">
+                                    <div class="promo-item active">
+                                        <div class="promo-code">NEWYEAR2026</div>
+                                        <div class="promo-reward">
+                                            <i class="fas fa-gift"></i>
+                                            <span>Новогодний набор</span>
+                                        </div>
+                                        <div class="promo-status">Активен</div>
+                                    </div>
+                                    <div class="promo-item expired">
+                                        <div class="promo-code">BLOODYVIP</div>
+                                        <div class="promo-reward">
+                                            <i class="fas fa-crown"></i>
+                                            <span>VIP на 30 мин</span>
+                                        </div>
+                                        <div class="promo-status">Истек</div>
+                                    </div>
+                                    <div class="promo-item upcoming">
+                                        <div class="promo-code">SECRET26</div>
+                                        <div class="promo-reward">
+                                            <i class="fas fa-question"></i>
+                                            <span>Секретный сюрприз</span>
+                                        </div>
+                                        <div class="promo-status">Скоро</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="promo-history">
+                                    <h4>История промокодов</h4>
+                                    <div class="history-list">
+                                        <div class="history-item">
+                                            <div class="history-date">25.12.2025</div>
+                                            <div class="history-code">XMASGIFT</div>
+                                            <div class="history-reward">VIP 20 мин</div>
+                                            <div class="history-status claimed">
+                                                <i class="fas fa-check"></i>
+                                            </div>
+                                        </div>
+                                        <div class="history-item">
+                                            <div class="history-date">24.12.2025</div>
+                                            <div class="history-code">WINTER25</div>
+                                            <div class="history-reward">1000 монет</div>
+                                            <div class="history-status claimed">
+                                                <i class="fas fa-check"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Бонус за рефералов -->
+                        <div class="bonus-card referral-bonus">
+                            <div class="bonus-header">
+                                <div class="bonus-icon">
+                                    <i class="fas fa-user-friends"></i>
+                                </div>
+                                <div class="bonus-title">
+                                    <h3>Пригласите друга</h3>
+                                    <div class="bonus-subtitle">Получите бонусы за каждого</div>
+                                </div>
+                            </div>
+                            
+                            <div class="referral-content">
+                                <div class="referral-stats">
+                                    <div class="stat">
+                                        <div class="stat-value" id="referralCount">3</div>
+                                        <div class="stat-label">Приглашено</div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-value" id="referralEarned">1500</div>
+                                        <div class="stat-label">Заработано</div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-value" id="referralAvailable">2</div>
+                                        <div class="stat-label">Доступно</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="referral-link">
+                                    <div class="link-label">Ваша реферальная ссылка:</div>
+                                    <div class="link-container">
+                                        <input type="text" 
+                                               class="referral-input" 
+                                               id="referralLink"
+                                               value="https://bloodybutterfly.ru/ref/abc123"
+                                               readonly>
+                                        <button class="btn btn-copy" id="copyReferralLink">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="referral-rewards">
+                                    <h4>Награды за приглашение:</h4>
+                                    <ul>
+                                        <li>
+                                            <i class="fas fa-check"></i>
+                                            <span>За каждого друга: 500 монет</span>
+                                        </li>
+                                        <li>
+                                            <i class="fas fa-check"></i>
+                                            <span>5 друзей: VIP на 1 час</span>
+                                        </li>
+                                        <li>
+                                            <i class="fas fa-check"></i>
+                                            <span>10 друзей: Премиум на 1 день</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="achievements-section">
+                        <h3 class="achievements-title">Достижения</h3>
+                        <div class="achievements-grid">
+                            <div class="achievement unlocked">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="achievement-content">
+                                    <div class="achievement-name">Новичок</div>
+                                    <div class="achievement-description">Зарегистрируйтесь на сервере</div>
+                                </div>
+                                <div class="achievement-reward">
+                                    <i class="fas fa-coins"></i>
+                                    <span>100 монет</span>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement unlocked">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="achievement-content">
+                                    <div class="achievement-name">Постоянный игрок</div>
+                                    <div class="achievement-description">Войдите 7 дней подряд</div>
+                                </div>
+                                <div class="achievement-reward">
+                                    <i class="fas fa-gem"></i>
+                                    <span>VIP 1 час</span>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement locked">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="achievement-content">
+                                    <div class="achievement-name">Социальный</div>
+                                    <div class="achievement-description">Пригласите 5 друзей</div>
+                                </div>
+                                <div class="achievement-reward">
+                                    <i class="fas fa-crown"></i>
+                                    <span>Премиум 1 день</span>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement locked">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-donate"></i>
+                                </div>
+                                <div class="achievement-content">
+                                    <div class="achievement-name">Спонсор</div>
+                                    <div class="achievement-description">Купите любой донат</div>
+                                </div>
+                                <div class="achievement-reward">
+                                    <i class="fas fa-star"></i>
+                                    <span>Эксклюзивный скин</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: Статистика -->
+            <section id="stats" class="section">
+                <div class="section-container">
+                    <div class="section-header">
+                        <div class="section-badge">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Статистика сервера</span>
+                        </div>
+                        <h2 class="section-title">Статистика в реальном времени</h2>
+                        <p class="section-description">
+                            Актуальная информация об активности на сервере
+                        </p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card main">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Игроки онлайн</h3>
+                                    <div class="stat-subtitle">В реальном времени</div>
+                                </div>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="livePlayers">127</div>
+                                <div class="stat-progress">
+                                    <div class="progress-label">
+                                        <span>Максимум сегодня:</span>
+                                        <span class="progress-max">145</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 87%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Аптайм</h3>
+                                    <div class="stat-subtitle">Стабильность сервера</div>
+                                </div>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">99.8%</div>
+                                <div class="stat-trend up">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+0.2% за месяц</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Время работы</h3>
+                                    <div class="stat-subtitle">Сервер запущен</div>
+                                </div>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">12</div>
+                                <div class="stat-label">месяцев</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Новые игроки</h3>
+                                    <div class="stat-subtitle">За последние 24 часа</div>
+                                </div>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">42</div>
+                                <div class="stat-trend up">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>+15% за неделю</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-gamepad"></i>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Активность</h3>
+                                    <div class="stat-subtitle">Среднее время игры</div>
+                                </div>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">3.5</div>
+                                <div class="stat-label">часа</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-gem"></i>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Донат</h3>
+                                    <div class="stat-subtitle">За последний месяц</div>
+                                </div>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">24,500</div>
+                                <div class="stat-label">₽</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-section">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Онлайн игроков (24 часа)</h3>
+                                <div class="chart-legend">
+                                    <span class="legend-item">
+                                        <div class="legend-color" style="background: #3a86ff"></div>
+                                        <span>Онлайн</span>
+                                    </span>
+                                    <span class="legend-item">
+                                        <div class="legend-color" style="background: #8338ec"></div>
+                                        <span>Максимум</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="onlineChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Распределение игроков</h3>
+                                <div class="chart-legend">
+                                    <span class="legend-item">
+                                        <div class="legend-color" style="background: #ff006e"></div>
+                                        <span>VIP</span>
+                                    </span>
+                                    <span class="legend-item">
+                                        <div class="legend-color" style="background: #fb5607"></div>
+                                        <span>Премиум</span>
+                                    </span>
+                                    <span class="legend-item">
+                                        <div class="legend-color" style="background: #ffbe0b"></div>
+                                        <span>Обычные</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="playersChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="leaderboards-section">
+                        <h3 class="leaderboards-title">Топ игроков</h3>
+                        <div class="leaderboards-tabs">
+                            <button class="leaderboard-tab active" data-leaderboard="online">По онлайн</button>
+                            <button class="leaderboard-tab" data-leaderboard="donate">По донату</button>
+                            <button class="leaderboard-tab" data-leaderboard="activity">По активности</button>
+                        </div>
+                        
+                        <div class="leaderboards-content">
+                            <div class="leaderboard active" id="online-leaderboard">
+                                <div class="leaderboard-header">
+                                    <div class="rank">#</div>
+                                    <div class="player">Игрок</div>
+                                    <div class="value">Онлайн</div>
+                                </div>
+                                <div class="leaderboard-list">
+                                    <div class="leaderboard-item">
+                                        <div class="rank">1</div>
+                                        <div class="player">
+                                            <div class="player-avatar">
+                                                <i class="fas fa-crown"></i>
+                                            </div>
+                                            <div class="player-info">
+                                                <div class="player-name">BloodyMaster</div>
+                                                <div class="player-rank vip">VIP</div>
+                                            </div>
+                                        </div>
+                                        <div class="value">
+                                            <i class="fas fa-clock"></i>
+                                            <span>356 ч</span>
+                                        </div>
+                                    </div>
+                                    <div class="leaderboard-item">
+                                        <div class="rank">2</div>
+                                        <div class="player">
+                                            <div class="player-avatar">
+                                                <i class="fas fa-gem"></i>
+                                            </div>
+                                            <div class="player-info">
+                                                <div class="player-name">NewYearGamer</div>
+                                                <div class="player-rank premium">Премиум</div>
+                                            </div>
+                                        </div>
+                                        <div class="value">
+                                            <i class="fas fa-clock"></i>
+                                            <span>289 ч</span>
+                                        </div>
+                                    </div>
+                                    <div class="leaderboard-item">
+                                        <div class="rank">3</div>
+                                        <div class="player">
+                                            <div class="player-avatar">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div class="player-info">
+                                                <div class="player-name">WinterPlayer</div>
+                                                <div class="player-rank">Обычный</div>
+                                            </div>
+                                        </div>
+                                        <div class="value">
+                                            <i class="fas fa-clock"></i>
+                                            <span>245 ч</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="leaderboard" id="donate-leaderboard">
+                                <div class="leaderboard-header">
+                                    <div class="rank">#</div>
+                                    <div class="player">Игрок</div>
+                                    <div class="value">Донат</div>
+                                </div>
+                                <div class="leaderboard-list">
+                                    <div class="leaderboard-item">
+                                        <div class="rank">1</div>
+                                        <div class="player">
+                                            <div class="player-avatar">
+                                                <i class="fas fa-trophy"></i>
+                                            </div>
+                                            <div class="player-info">
+                                                <div class="player-name">TopDonator</div>
+                                                <div class="player-rank ultimate">Легенда</div>
+                                            </div>
+                                        </div>
+                                        <div class="value">
+                                            <i class="fas fa-ruble-sign"></i>
+                                            <span>15,000 ₽</span>
+                                        </div>
+                                    </div>
+                                    <div class="leaderboard-item">
+                                        <div class="rank">2</div>
+                                        <div class="player">
+                                            <div class="player-avatar">
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                            <div class="player-info">
+                                                <div class="player-name">GemGiver</div>
+                                                <div class="player-rank premium">Премиум</div>
+                                            </div>
+                                        </div>
+                                        <div class="value">
+                                            <i class="fas fa-ruble-sign"></i>
+                                            <span>9,500 ₽</span>
+                                        </div>
+                                    </div>
+                                    <div class="leaderboard-item">
+                                        <div class="rank">3</div>
+                                        <div class="player">
+                                            <div class="player-avatar">
+                                                <i class="fas fa-medal"></i>
+                                            </div>
+                                            <div class="player-info">
+                                                <div class="player-name">Supporter</div>
+                                                <div class="player-rank vip">VIP</div>
+                                            </div>
+                                        </div>
+                                        <div class="value">
+                                            <i class="fas fa-ruble-sign"></i>
+                                            <span>7,200 ₽</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: Поддержка -->
+            <section id="support" class="section">
+                <div class="section-container">
+                    <div class="section-header">
+                        <div class="section-badge">
+                            <i class="fas fa-headset"></i>
+                            <span>Техническая поддержка</span>
+                        </div>
+                        <h2 class="section-title">Мы всегда готовы помочь</h2>
+                        <p class="section-description">
+                            Быстрая помощь по любым вопросам, связанным с сервером
+                        </p>
+                    </div>
+                    
+                    <div class="support-grid">
+                        <div class="support-card">
+                            <div class="support-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <h3>FAQ</h3>
+                            <p>Ответы на часто задаваемые вопросы</p>
+                            <button class="btn btn-block btn-outline" id="openFaq">
+                                <i class="fas fa-book-open"></i> Открыть FAQ
+                            </button>
+                        </div>
+                        
+                        <div class="support-card">
+                            <div class="support-icon">
+                                <i class="fas fa-bug"></i>
+                            </div>
+                            <h3>Сообщить о баге</h3>
+                            <p>Нашли ошибку? Сообщите нам!</p>
+                            <button class="btn btn-block btn-outline" id="reportBug">
+                                <i class="fas fa-exclamation-triangle"></i> Сообщить
+                            </button>
+                        </div>
+                        
+                        <div class="support-card">
+                            <div class="support-icon">
+                                <i class="fab fa-discord"></i>
+                            </div>
+                            <h3>Discord сервер</h3>
+                            <p>Присоединяйтесь к нашему сообществу</p>
+                            <button class="btn btn-block btn-discord" id="joinDiscord">
+                                <i class="fab fa-discord"></i> Перейти
+                            </button>
+                        </div>
+                        
+                        <div class="support-card">
+                            <div class="support-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h3>Написать нам</h3>
+                            <p>Отправьте письмо напрямую</p>
+                            <button class="btn btn-block btn-outline" id="contactEmail">
+                                <i class="fas fa-paper-plane"></i> Написать
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="support-form-container">
+                        <h3 class="form-title">Форма обратной связи</h3>
+                        <form id="supportForm" class="support-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="supportName">
+                                        <i class="fas fa-user"></i> Ваше имя
+                                    </label>
+                                    <input type="text" 
+                                           id="supportName" 
+                                           class="form-control"
+                                           placeholder="Введите ваше имя"
+                                           required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="supportEmail">
+                                        <i class="fas fa-envelope"></i> Email
+                                    </label>
+                                    <input type="email" 
+                                           id="supportEmail" 
+                                           class="form-control"
+                                           placeholder="example@mail.ru"
+                                           required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="supportCategory">
+                                    <i class="fas fa-tag"></i> Категория проблемы
+                                </label>
+                                <select id="supportCategory" class="form-control" required>
+                                    <option value="">Выберите категорию</option>
+                                    <option value="technical">Техническая проблема</option>
+                                    <option value="payment">Проблема с оплатой</option>
+                                    <option value="account">Проблема с аккаунтом</option>
+                                    <option value="suggestion">Предложение</option>
+                                    <option value="other">Другое</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="supportSubject">
+                                    <i class="fas fa-heading"></i> Тема сообщения
+                                </label>
+                                <input type="text" 
+                                       id="supportSubject" 
+                                       class="form-control"
+                                       placeholder="Краткое описание проблемы"
+                                       required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="supportMessage">
+                                    <i class="fas fa-comment-alt"></i> Подробное описание
+                                </label>
+                                <textarea id="supportMessage" 
+                                          class="form-control"
+                                          rows="5"
+                                          placeholder="Опишите вашу проблему максимально подробно..."
+                                          required></textarea>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i> Отправить сообщение
+                                </button>
+                                <button type="button" class="btn btn-outline" id="supportCancel">
+                                    <i class="fas fa-times"></i> Отмена
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="support-info">
+                        <h3>Контактная информация</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4>Email</h4>
+                                    <p>support@bloodybutterfly.ru</p>
+                                    <small>Время ответа: до 24 часов</small>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fab fa-discord"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4>Discord</h4>
+                                    <p>discord.gg/bloodybutterfly</p>
+                                    <small>Онлайн поддержка в реальном времени</small>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="info-content">
+                                    <h4>Часы работы</h4>
+                                    <p>Круглосуточно, 7 дней в неделю</p>
+                                    <small>Мы всегда на связи</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: Правила -->
+            <section id="rules" class="section">
+                <div class="section-container">
+                    <div class="section-header">
+                        <div class="section-badge">
+                            <i class="fas fa-book"></i>
+                            <span>Правила сервера</span>
+                        </div>
+                        <h2 class="section-title">Правила поведения на сервере</h2>
+                        <p class="section-description">
+                            Соблюдайте правила для комфортной игры всех участников
+                        </p>
+                    </div>
+                    
+                    <div class="rules-container">
+                        <div class="rules-toc">
+                            <h3>Содержание</h3>
+                            <ul class="toc-list">
+                                <li><a href="#rule1" class="toc-link">Основные правила</a></li>
+                                <li><a href="#rule2" class="toc-link">Правила чата</a></li>
+                                <li><a href="#rule3" class="toc-link">Игровой процесс</a></li>
+                                <li><a href="#rule4" class="toc-link">Наказания</a></li>
+                                <li><a href="#rule5" class="toc-link">Донат и возвраты</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="rules-content">
+                            <div class="rule-section" id="rule1">
+                                <h3 class="rule-title">
+                                    <span class="rule-number">1</span>
+                                    Основные правила
+                                </h3>
+                                <div class="rule-items">
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-user-shield"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Уважение к другим игрокам</h4>
+                                            <p>Запрещены оскорбления, угрозы, дискриминация по любым признакам.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-ban"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Запрет читов и эксплоитов</h4>
+                                            <p>Использование любых программ, дающих нечестное преимущество.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-gavel"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Соблюдение законов</h4>
+                                            <p>Запрещена любая противоправная деятельность и контент.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="rule-section" id="rule2">
+                                <h3 class="rule-title">
+                                    <span class="rule-number">2</span>
+                                    Правила чата
+                                </h3>
+                                <div class="rule-items">
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-comment-slash"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Без спама и флуда</h4>
+                                            <p>Не повторяйте одно и то же сообщение, не флудите.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-ad"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Без рекламы</h4>
+                                            <p>Запрещена реклама других серверов, ресурсов, товаров.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-language"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Язык общения</h4>
+                                            <p>Основной язык - русский. Английский разрешен в отдельных случаях.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="rule-section" id="rule3">
+                                <h3 class="rule-title">
+                                    <span class="rule-number">3</span>
+                                    Игровой процесс
+                                </h3>
+                                <div class="rule-items">
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-user-secret"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Честная игра</h4>
+                                            <p>Запрещены багоюз, гриферство, помехи другим игрокам.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-hands-helping"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Взаимопомощь</h4>
+                                            <p>Помогайте новичкам, не обманывайте других игроков.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-user-tag"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Никнеймы и скины</h4>
+                                            <p>Запрещены оскорбительные и провокационные ники/скины.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="rule-section" id="rule4">
+                                <h3 class="rule-title">
+                                    <span class="rule-number">4</span>
+                                    Наказания
+                                </h3>
+                                <div class="rule-items">
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-volume-mute"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Мут (заглушение)</h4>
+                                            <p>Нарушение правил чата - от 1 часа до 7 дней.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-ban"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Бан (блокировка)</h4>
+                                            <p>Использование читов, серьезные нарушения - от 7 дней до перманентно.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Предупреждения</h4>
+                                            <p>3 предупреждения = бан на 7 дней. Сбрасываются через 30 дней.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="rule-section" id="rule5">
+                                <h3 class="rule-title">
+                                    <span class="rule-number">5</span>
+                                    Донат и возвраты
+                                </h3>
+                                <div class="rule-items">
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-exchange-alt"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Возврат средств</h4>
+                                            <p>Возврат возможен в течение 14 дней при технических проблемах.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Безопасность</h4>
+                                            <p>Мы не несем ответственности за аккаунты, взломанные из-за слабого пароля.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rule-item">
+                                        <div class="rule-icon">
+                                            <i class="fas fa-gavel"></i>
+                                        </div>
+                                        <div class="rule-text">
+                                            <h4>Изменение условий</h4>
+                                            <p>Администрация оставляет за собой право изменять правила без предупреждения.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="rules-acceptance">
+                        <div class="acceptance-box">
+                            <div class="acceptance-icon">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div class="acceptance-content">
+                                <h3>Согласие с правилами</h3>
+                                <p>Продолжая использовать сервер, вы подтверждаете, что ознакомились и согласны со всеми правилами.</p>
+                            </div>
+                            <button class="btn btn-primary" id="acceptRules">
+                                <i class="fas fa-check"></i> Я принимаю правила
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Футер -->
+        <footer class="main-footer">
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="footer-brand">
+                        <div class="footer-logo">
+                            <i class="fas fa-butterfly"></i>
+                            <div class="logo-text">
+                                <h3>BloodyButterfly</h3>
+                                <span>Игровой сервер</span>
+                            </div>
+                        </div>
+                        <p class="footer-description">
+                            Лучший новогодний сервер с модификацией ClientMod V34. 
+                            Присоединяйтесь к нашему сообществу!
+                        </p>
+                        <div class="footer-social">
+                            <a href="#" class="social-link discord">
+                                <i class="fab fa-discord"></i>
+                            </a>
+                            <a href="#" class="social-link vk">
+                                <i class="fab fa-vk"></i>
+                            </a>
+                            <a href="#" class="social-link youtube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="#" class="social-link telegram">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-links">
+                        <div class="link-column">
+                            <h4>Навигация</h4>
+                            <ul>
+                                <li><a href="#home">Главная</a></li>
+                                <li><a href="#donate">Донат</a></li>
+                                <li><a href="#bonuses">Бонусы</a></li>
+                                <li><a href="#stats">Статистика</a></li>
+                                <li><a href="#support">Поддержка</a></li>
+                                <li><a href="#rules">Правила</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="link-column">
+                            <h4>Полезное</h4>
+                            <ul>
+                                <li><a href="#" class="btn-download-launcher">Скачать лаунчер</a></li>
+                                <li><a href="#" id="footerFaq">FAQ</a></li>
+                                <li><a href="#" id="footerBug">Сообщить о баге</a></li>
+                                <li><a href="#" id="footerDiscord">Discord сервер</a></li>
+                                <li><a href="#" id="footerGuide">Как начать играть</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="link-column">
+                            <h4>Информация</h4>
+                            <ul>
+                                <li><a href="#" data-modal="terms">Пользовательское соглашение</a></li>
+                                <li><a href="#" data-modal="privacy">Политика конфиденциальности</a></li>
+                                <li><a href="#" data-modal="refund">Возврат средств</a></li>
+                                <li><a href="#" data-modal="contact">Контакты</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="link-column">
+                            <h4>Контакты</h4>
+                            <ul class="contact-list">
+                                <li>
+                                    <i class="fas fa-envelope"></i>
+                                    <span>support@bloodybutterfly.ru</span>
+                                </li>
+                                <li>
+                                    <i class="fab fa-discord"></i>
+                                    <span>discord.gg/bloodybutterfly</span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-server"></i>
+                                    <span>play.bloodybutterfly.ru</span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Россия, Москва</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-middle">
+                    <div class="server-info">
+                        <div class="info-item">
+                            <i class="fas fa-users"></i>
+                            <div class="info-content">
+                                <div class="info-value" id="footerPlayers">127</div>
+                                <div class="info-label">Игроков онлайн</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <div class="info-content">
+                                <div class="info-value">99.8%</div>
+                                <div class="info-label">Аптайм сервера</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <div class="info-content">
+                                <div class="info-value">12</div>
+                                <div class="info-label">Месяцев работы</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <i class="fas fa-code-branch"></i>
+                            <div class="info-content">
+                                <div class="info-value">V34</div>
+                                <div class="info-label">Версия ClientMod</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <div class="copyright">
+                        <p>&copy; 2025 BloodyButterfly DJN. Все права защищены.</p>
+                        <p>ClientMod V34 - Новогоднее обновление 2026</p>
+                    </div>
+                    
+                    <div class="footer-actions">
+                        <button class="btn btn-outline btn-sm" id="scrollToTop">
+                            <i class="fas fa-arrow-up"></i> Наверх
+                        </button>
+                        <button class="btn btn-outline btn-sm" id="changeTheme">
+                            <i class="fas fa-moon"></i> Тема
+                        </button>
+                    </div>
+                </div>
+            </div>
         </footer>
     </div>
 
-    <div class="modal" id="login-modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Вход на сервер</h2>
-            <div class="alert alert-warning">
-                <strong>Внимание!</strong> Используйте тот же ник, что и на сервере!
+    <!-- Модальные окна -->
+    
+    <!-- Модальное окно входа -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Вход в аккаунт
+                </h2>
+                <button class="modal-close" data-modal="loginModal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="login-username">Никнейм на сервере</label>
-                    <input type="text" id="login-username" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-password">Пароль</label>
-                    <input type="password" id="login-password" class="form-control" required>
-                    <div class="form-text">
-                        Пароль должен содержать английские буквы, цифры и символы.
+            
+            <div class="modal-body">
+                <div class="alert alert-warning modal-alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="alert-content">
+                        <strong>Внимание!</strong> Используйте тот же никнейм, что и на игровом сервере.
+                        В противном случае аккаунт не будет привязан!
                     </div>
                 </div>
-                <button type="submit" class="btn btn-block">Войти</button>
-            </form>
+                
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginUsername">
+                            <i class="fas fa-user"></i>
+                            Никнейм на сервере
+                        </label>
+                        <div class="input-with-icon">
+                            <input type="text" 
+                                   id="loginUsername" 
+                                   class="form-control"
+                                   placeholder="Ваш игровой никнейм"
+                                   required
+                                   minlength="3"
+                                   maxlength="16">
+                            <div class="input-icon">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                        </div>
+                        <div class="form-text">
+                            Введите точно такой же никнейм, как на сервере BloodyButterfly DJN
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">
+                            <i class="fas fa-lock"></i>
+                            Пароль
+                        </label>
+                        <div class="password-field">
+                            <input type="password" 
+                                   id="loginPassword" 
+                                   class="form-control"
+                                   placeholder="Введите ваш пароль"
+                                   required
+                                   minlength="12">
+                            <button type="button" class="password-toggle">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="password-strength-meter">
+                            <div class="strength-labels">
+                                <span>Сложность пароля:</span>
+                                <span class="strength-value" id="loginStrength">Очень слабый</span>
+                            </div>
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="loginStrengthFill"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="password-requirements" id="loginRequirements">
+                            <div class="requirement" data-type="length">
+                                <i class="fas fa-times"></i>
+                                <span>Минимум 12 символов</span>
+                            </div>
+                            <div class="requirement" data-type="uppercase">
+                                <i class="fas fa-times"></i>
+                                <span>Заглавные буквы (A-Z)</span>
+                            </div>
+                            <div class="requirement" data-type="lowercase">
+                                <i class="fas fa-times"></i>
+                                <span>Строчные буквы (a-z)</span>
+                            </div>
+                            <div class="requirement" data-type="numbers">
+                                <i class="fas fa-times"></i>
+                                <span>Цифры (0-9)</span>
+                            </div>
+                            <div class="requirement" data-type="special">
+                                <i class="fas fa-times"></i>
+                                <span>Спецсимволы (!@#$%^&*)</span>
+                            </div>
+                            <div class="requirement" data-type="common">
+                                <i class="fas fa-times"></i>
+                                <span>Не распространенный пароль</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="checkbox-option">
+                            <input type="checkbox" id="rememberSession">
+                            <span class="checkmark"></span>
+                            <span class="option-label">Запомнить меня</span>
+                        </label>
+                        
+                        <a href="#" class="forgot-link" id="forgotPassword">
+                            <i class="fas fa-key"></i>
+                            Забыли пароль?
+                        </a>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-block btn-submit" id="loginSubmit">
+                            <span class="btn-text">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Войти в аккаунт
+                            </span>
+                            <div class="btn-loader">
+                                <div class="spinner"></div>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="auth-divider">
+                        <span>или войдите с помощью</span>
+                    </div>
+                    
+                    <div class="social-auth-buttons">
+                        <button type="button" class="btn btn-social btn-discord" id="loginDiscord">
+                            <i class="fab fa-discord"></i>
+                            Discord
+                        </button>
+                        <button type="button" class="btn btn-social btn-vk" id="loginVK">
+                            <i class="fab fa-vk"></i>
+                            VK ID
+                        </button>
+                        <button type="button" class="btn btn-social btn-google" id="loginGoogle">
+                            <i class="fab fa-google"></i>
+                            Google
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="auth-switch">
+                    <span>Нет аккаунта?</span>
+                    <a href="#" class="switch-link" data-from="login" data-to="register">
+                        <i class="fas fa-user-plus"></i>
+                        Зарегистрироваться
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="modal" id="register-modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Регистрация на сервере</h2>
-            <div class="alert alert-warning">
-                <strong>Внимание!</strong> Используйте тот же ник, что и на сервере!
+    <!-- Модальное окно регистрации -->
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-user-plus"></i>
+                    Регистрация аккаунта
+                </h2>
+                <button class="modal-close" data-modal="registerModal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <form id="register-form">
-                <div class="form-group">
-                    <label for="reg-username">Никнейм на сервере</label>
-                    <input type="text" id="reg-username" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="reg-email">Электронная почта</label>
-                    <input type="email" id="reg-email" class="form-control" required>
-                    <div class="form-text">
-                        На эту почту будет отправлен код подтверждения.
+            
+            <div class="modal-body">
+                <div class="alert alert-warning modal-alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="alert-content">
+                        <strong>Важная информация!</strong> Для корректной привязки аккаунта используйте 
+                        тот же никнейм, что и на игровом сервере. Аккаунт на сайте и игровой сервер 
+                        должны иметь одинаковые никнеймы!
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="reg-password">Пароль</label>
-                    <input type="password" id="reg-password" class="form-control" required>
-                    <div class="form-text">
-                        Пароль должен содержать английские буквы, цифры и символы.
+                
+                <form id="registerForm" class="auth-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="registerUsername">
+                                <i class="fas fa-user"></i>
+                                Никнейм на сервере
+                            </label>
+                            <div class="input-with-icon">
+                                <input type="text" 
+                                       id="registerUsername" 
+                                       class="form-control"
+                                       placeholder="Ваш игровой никнейм"
+                                       required
+                                       minlength="3"
+                                       maxlength="16"
+                                       pattern="[a-zA-Z0-9_]+">
+                                <div class="input-icon">
+                                    <i class="fas fa-gamepad"></i>
+                                </div>
+                            </div>
+                            <div class="form-text">
+                                Только латинские буквы, цифры и подчеркивания. Максимум 16 символов.
+                            </div>
+                            <div class="input-feedback" id="usernameFeedback"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerEmail">
+                                <i class="fas fa-envelope"></i>
+                                Электронная почта
+                            </label>
+                            <div class="input-with-icon">
+                                <input type="email" 
+                                       id="registerEmail" 
+                                       class="form-control"
+                                       placeholder="example@mail.ru"
+                                       required>
+                                <div class="input-icon">
+                                    <i class="fas fa-at"></i>
+                                </div>
+                            </div>
+                            <div class="form-text">
+                                На этот адрес будут приходить уведомления и коды подтверждения.
+                            </div>
+                            <div class="input-feedback" id="emailFeedback"></div>
+                        </div>
                     </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="registerPassword">
+                                <i class="fas fa-lock"></i>
+                                Пароль
+                            </label>
+                            <div class="password-field">
+                                <input type="password" 
+                                       id="registerPassword" 
+                                       class="form-control"
+                                       placeholder="Придумайте надежный пароль"
+                                       required
+                                       minlength="12">
+                                <button type="button" class="password-toggle">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="password-strength-meter">
+                                <div class="strength-labels">
+                                    <span>Сложность пароля:</span>
+                                    <span class="strength-value" id="registerStrength">Очень слабый</span>
+                                </div>
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="registerStrengthFill"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="password-requirements" id="registerRequirements">
+                                <div class="requirement" data-type="length">
+                                    <i class="fas fa-times"></i>
+                                    <span>Минимум 12 символов</span>
+                                </div>
+                                <div class="requirement" data-type="uppercase">
+                                    <i class="fas fa-times"></i>
+                                    <span>Заглавные буквы (A-Z)</span>
+                                </div>
+                                <div class="requirement" data-type="lowercase">
+                                    <i class="fas fa-times"></i>
+                                    <span>Строчные буквы (a-z)</span>
+                                </div>
+                                <div class="requirement" data-type="numbers">
+                                    <i class="fas fa-times"></i>
+                                    <span>Цифры (0-9)</span>
+                                </div>
+                                <div class="requirement" data-type="special">
+                                    <i class="fas fa-times"></i>
+                                    <span>Спецсимволы (!@#$%^&*)</span>
+                                </div>
+                                <div class="requirement" data-type="common">
+                                    <i class="fas fa-times"></i>
+                                    <span>Не распространенный пароль</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerConfirmPassword">
+                                <i class="fas fa-lock"></i>
+                                Подтверждение пароля
+                            </label>
+                            <div class="password-field">
+                                <input type="password" 
+                                       id="registerConfirmPassword" 
+                                       class="form-control"
+                                       placeholder="Повторите пароль"
+                                       required>
+                                <button type="button" class="password-toggle">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-match" id="passwordMatch">
+                                <i class="fas fa-times"></i>
+                                <span>Пароли не совпадают</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" id="acceptNewsletter">
+                            <span class="checkmark"></span>
+                            <span class="option-label">
+                                Получать уведомления о новых акциях и обновлениях
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-option required">
+                            <input type="checkbox" id="acceptTerms" required>
+                            <span class="checkmark"></span>
+                            <span class="option-label">
+                                Я принимаю 
+                                <a href="#" class="link" data-modal="terms">пользовательское соглашение</a>
+                                и 
+                                <a href="#" class="link" data-modal="privacy">политику конфиденциальности</a>
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="captcha-container" id="captchaContainer">
+                            <div class="captcha-label">
+                                <i class="fas fa-robot"></i>
+                                <span>Подтвердите, что вы не робот</span>
+                            </div>
+                            <div class="captcha-box">
+                                <div class="captcha-image" id="captchaImage"></div>
+                                <button type="button" class="captcha-refresh" id="refreshCaptcha">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                            <input type="text" 
+                                   id="captchaInput" 
+                                   class="form-control"
+                                   placeholder="Введите код с картинки"
+                                   required>
+                            <div class="captcha-feedback" id="captchaFeedback"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-block btn-submit" id="registerSubmit">
+                            <span class="btn-text">
+                                <i class="fas fa-user-plus"></i>
+                                Зарегистрировать аккаунт
+                            </span>
+                            <div class="btn-loader">
+                                <div class="spinner"></div>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="auth-divider">
+                        <span>или зарегистрируйтесь с помощью</span>
+                    </div>
+                    
+                    <div class="social-auth-buttons">
+                        <button type="button" class="btn btn-social btn-discord" id="registerDiscord">
+                            <i class="fab fa-discord"></i>
+                            Discord
+                        </button>
+                        <button type="button" class="btn btn-social btn-vk" id="registerVK">
+                            <i class="fab fa-vk"></i>
+                            VK ID
+                        </button>
+                        <button type="button" class="btn btn-social btn-google" id="registerGoogle">
+                            <i class="fab fa-google"></i>
+                            Google
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="auth-switch">
+                    <span>Уже есть аккаунт?</span>
+                    <a href="#" class="switch-link" data-from="register" data-to="login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Войти
+                    </a>
                 </div>
-                <div class="form-group">
-                    <label for="reg-confirm-password">Подтверждение пароля</label>
-                    <input type="password" id="reg-confirm-password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-block">Зарегистрироваться</button>
-            </form>
+            </div>
         </div>
     </div>
 
-    <div class="modal" id="promo-modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Поздравляем!</h2>
-            <p style="text-align: center; margin-bottom: 20px;">Вы получили промокод от Деда Мороза!</p>
-            <div class="promo-code">
-                <h4>Ваш промокод:</h4>
-                <div class="code" id="promo-code">BLOODY2026</div>
-                <p>Используйте его при оплате для получения скидки!</p>
+    <!-- Модальное окно промокода (сюрприз) -->
+    <div class="modal-overlay" id="surpriseModal">
+        <div class="modal-container modal-sm">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-gift"></i>
+                    Секретный сюрприз!
+                </h2>
+                <button class="modal-close" data-modal="surpriseModal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <button class="btn btn-block" style="margin-top: 20px;">Скопировать код</button>
+            
+            <div class="modal-body">
+                <div class="surprise-modal-content">
+                    <div class="surprise-icon-large">
+                        <i class="fas fa-gift"></i>
+                        <div class="surprise-sparkles">
+                            <div class="sparkle"></div>
+                            <div class="sparkle"></div>
+                            <div class="sparkle"></div>
+                            <div class="sparkle"></div>
+                            <div class="sparkle"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="surprise-message">
+                        <h3>Поздравляем!</h3>
+                        <p>Вы нашли секретный сюрприз и получаете эксклюзивный промокод!</p>
+                    </div>
+                    
+                    <div class="promo-code-display">
+                        <div class="promo-code-label">Ваш промокод:</div>
+                        <div class="promo-code-value" id="surprisePromoCode">BLOODY-SECRET-2026</div>
+                        <div class="promo-discount" id="surpriseDiscount">50% скидка на все товары</div>
+                    </div>
+                    
+                    <div class="promo-details">
+                        <div class="detail-item">
+                            <i class="fas fa-user-check"></i>
+                            <span>Активирован для: <strong id="surpriseUser">Вашего аккаунта</strong></span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Действует до: <strong id="surpriseExpiry">31.12.2025 23:59</strong></span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-tag"></i>
+                            <span>Тип: <strong id="surpriseType">Промокод на скидку</strong></span>
+                        </div>
+                    </div>
+                    
+                    <div class="surprise-actions">
+                        <button class="btn btn-primary btn-block" id="copySurprisePromo">
+                            <i class="fas fa-copy"></i>
+                            Скопировать промокод
+                        </button>
+                        <button class="btn btn-outline btn-block" data-modal="surpriseModal">
+                            <i class="fas fa-check"></i>
+                            Продолжить
+                        </button>
+                    </div>
+                    
+                    <div class="surprise-note">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Промокод автоматически применен к вашему аккаунту</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script>
-        function createSnow() {
-            const snowContainer = document.querySelector('.snow-container');
-            const snowCount = 100;
-            
-            for (let i = 0; i < snowCount; i++) {
-                const snow = document.createElement('div');
-                snow.classList.add('snow');
-                
-                const size = Math.random() * 6 + 4;
-                snow.style.width = `${size}px`;
-                snow.style.height = `${size}px`;
-                snow.style.left = `${Math.random() * 100}vw`;
-                snow.style.animationDuration = `${Math.random() * 10 + 10}s`;
-                snow.style.animationDelay = `${Math.random() * 10}s`;
-                
-                snowContainer.appendChild(snow);
-            }
-        }
+    <!-- Уведомления -->
+    <div class="notifications-container" id="notificationsContainer"></div>
 
-        function updateCountdown() {
-            const now = new Date();
-            const newYear = new Date(2026, 0, 1);
-            const diff = newYear - now;
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            document.getElementById('days').textContent = days;
-            document.getElementById('hours').textContent = hours;
-            document.getElementById('minutes').textContent = minutes;
-            document.getElementById('seconds').textContent = seconds;
-        }
-
-        function setupModals() {
-            const loginBtn = document.querySelector('.btn-login');
-            const registerBtn = document.querySelector('.btn-register');
-            const loginModal = document.getElementById('login-modal');
-            const registerModal = document.getElementById('register-modal');
-            const promoModal = document.getElementById('promo-modal');
-            const closeButtons = document.querySelectorAll('.close-modal');
-            const santa = document.getElementById('santa');
-            const claimBonusBtn = document.getElementById('claim-bonus');
-            
-            loginBtn.addEventListener('click', () => {
-                loginModal.style.display = 'flex';
-            });
-            
-            registerBtn.addEventListener('click', () => {
-                registerModal.style.display = 'flex';
-            });
-            
-            closeButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    loginModal.style.display = 'none';
-                    registerModal.style.display = 'none';
-                    promoModal.style.display = 'none';
-                });
-            });
-            
-            santa.addEventListener('click', () => {
-                promoModal.style.display = 'flex';
-            });
-            
-            claimBonusBtn.addEventListener('click', () => {
-                const bonuses = document.querySelectorAll('.bonus-status');
-                bonuses.forEach(bonus => {
-                    bonus.textContent = 'Получено';
-                    bonus.classList.remove('status-available');
-                    bonus.classList.add('status-claimed');
-                });
-                
-                claimBonusBtn.textContent = 'Бонус получен';
-                claimBonusBtn.disabled = true;
-                
-                alert('Ежедневный бонус получен! Проверьте свою почту.');
-            });
-            
-            window.addEventListener('click', (e) => {
-                if (e.target === loginModal) {
-                    loginModal.style.display = 'none';
-                }
-                if (e.target === registerModal) {
-                    registerModal.style.display = 'none';
-                }
-                if (e.target === promoModal) {
-                    promoModal.style.display = 'none';
-                }
-            });
-            
-            document.getElementById('login-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const username = document.getElementById('login-username').value;
-                const password = document.getElementById('login-password').value;
-                
-                if (password.length < 6) {
-                    alert('Пароль должен содержать минимум 6 символов!');
-                    return;
-                }
-                
-                if (password === '123456789') {
-                    alert('Слишком легкий пароль! Используйте более сложный пароль.');
-                    return;
-                }
-                
-                alert(`Добро пожаловать, ${username}!`);
-                loginModal.style.display = 'none';
-            });
-            
-            document.getElementById('register-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const username = document.getElementById('reg-username').value;
-                const email = document.getElementById('reg-email').value;
-                const password = document.getElementById('reg-password').value;
-                const confirmPassword = document.getElementById('reg-confirm-password').value;
-                
-                if (password !== confirmPassword) {
-                    alert('Пароли не совпадают!');
-                    return;
-                }
-                
-                if (password.length < 6) {
-                    alert('Пароль должен содержать минимум 6 символов!');
-                    return;
-                }
-                
-                if (password === '123456789') {
-                    alert('Слишком легкий пароль! Используйте более сложный пароль.');
-                    return;
-                }
-                
-                alert(`Регистрация успешна! На почту ${email} отправлен код подтверждения.`);
-                registerModal.style.display = 'none';
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            createSnow();
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-            setupModals();
-        });
-    </script>
+    <!-- Скрипты -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
