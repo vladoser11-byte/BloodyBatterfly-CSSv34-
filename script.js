@@ -2,34 +2,44 @@
 const BloodyButterfly = {
     // Конфигурация
     config: {
-        apiUrl: 'https://api.bloodybutterfly.ru',
-        version: 'ClientMod V34',
-        year: 2026,
-        defaultPromocode: 'BLOODY2026-VIP'
+        telegramChannel: "https://t.me/bloodybutterfly_official",
+        promocodes: [
+            { code: "BloodyBatterfly2026NewYers", discount: 20, type: "newyear" },
+            { code: "GmaowG-thans)", discount: 15, type: "creator" },
+            { code: "KILLMAKERHappyNewYers", discount: 25, type: "creator" },
+            { code: "HappyNewYers", discount: 10, type: "newyear" },
+            { code: "Meow", discount: 5, type: "special" },
+            { code: "Bloody", discount: 30, type: "vip" },
+            { code: "[BloodyBatteflytimeTOplay]", discount: 40, type: "special" },
+            { code: "youSOgoodPlayer", discount: 15, type: "player" },
+            { code: "2025-2026", discount: 10, type: "newyear" },
+            { code: "Deeeeeeeep", discount: 35, type: "special" }
+        ],
+        defaultDiscount: 10, // Скидка для зарегистрированных пользователей
+        avatars: [
+            "fa-user-astronaut", "fa-robot", "fa-user-ninja", "fa-user-secret",
+            "fa-gamepad", "fa-ghost", "fa-dragon", "fa-space-shuttle",
+            "fa-jedi", "fa-sith", "fa-helmet-battle", "fa-user-visor",
+            "fa-android", "fa-cat", "fa-dog", "fa-crow"
+        ]
     },
 
     // Состояние приложения
     state: {
         user: null,
         isAuthenticated: false,
-        notifications: [],
-        activeTab: 'home',
-        dailyBonusClaimed: false,
-        promocodeActivated: false,
-        vipStatus: null,
-        userBalance: 0,
-        serverStats: {
-            online: 1278,
-            giftsToday: 356
-        }
+        emailVerified: false,
+        userDiscount: 0,
+        selectedAvatar: "fa-user-astronaut",
+        usedPromocodes: [],
+        activePromocodes: []
     },
 
     // Инициализация
     init() {
-        console.log(`🎄 BloodyButterfly Server ${this.config.version} - Новый Год ${this.config.year} 🎄`);
+        console.log("🎮 BloodyButterfly Server - ClientMod V34 🎮");
         
         this.setupEventListeners();
-        this.setupSantaAnimation();
         this.setupBackgroundEffects();
         this.checkAuthStatus();
         this.updateServerStats();
@@ -37,11 +47,12 @@ const BloodyButterfly = {
         this.setupNotifications();
         this.setupBonusSystem();
         this.setupPasswordValidation();
+        this.setupPromocodeSystem();
+        this.setupAvatarSystem();
         
-        // Запуск анимаций
         this.startAnimations();
         
-        console.log('✅ Сайт инициализирован успешно!');
+        console.log("✅ Система инициализирована успешно!");
     },
 
     // Настройка обработчиков событий
@@ -67,132 +78,579 @@ const BloodyButterfly = {
         document.getElementById('claimBonus').addEventListener('click', () => this.claimDailyBonus());
 
         // Промокоды
-        document.querySelector('.activate-btn').addEventListener('click', () => this.activatePromocode());
-        document.querySelector('.copy-btn').addEventListener('click', () => this.copyPromocode());
+        document.getElementById('activatePromocodeBtn').addEventListener('click', () => this.activateManualPromocode());
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => this.copyPromocode());
+        });
 
-        // Дед Мороз
-        document.getElementById('santa').addEventListener('click', () => this.showPromocodeModal());
+        // Промокодный дроп
+        document.getElementById('promocodeDrop').addEventListener('click', () => this.showRandomPromocode());
+
+        // Кнопки доната (переход в Telegram)
+        document.querySelectorAll('.buy-btn[data-package]').forEach(btn => {
+            btn.addEventListener('click', (e) => this.handleDonateClick(e));
+        });
+
+        // Профиль
+        document.getElementById('changeAvatarBtn').addEventListener('click', () => this.showAvatarModal());
+        document.getElementById('changeNicknameBtn').addEventListener('click', () => this.showNicknameModal());
+        document.getElementById('changePasswordBtn').addEventListener('click', () => this.showPasswordModal());
+        document.getElementById('verifyEmailBtn').addEventListener('click', () => this.showEmailModal());
+
+        // Модальные окна
+        document.querySelectorAll('.close-modal-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const modal = e.target.dataset.modal;
+                this.hideModal(modal);
+            });
+        });
 
         // Закрытие модальных окон
         document.querySelector('.close-modal').addEventListener('click', () => this.hidePromocodeModal());
+        document.querySelector('.close-avatar').addEventListener('click', () => this.hideAvatarModal());
 
-        // Обработка нажатий вне модальных окон
-        window.addEventListener('click', (e) => this.handleOutsideClick(e));
+        // Подтверждение изменений
+        document.getElementById('submitNicknameChange')?.addEventListener('click', () => this.changeNickname());
+        document.getElementById('submitPasswordChange')?.addEventListener('click', () => this.changePassword());
+        document.getElementById('submitVerificationCode')?.addEventListener('click', () => this.verifyEmail());
+        document.getElementById('resendVerificationCode')?.addEventListener('click', () => this.resendVerificationCode());
 
         // Обновление статистики
         setInterval(() => this.updateServerStats(), 30000);
+
+        // Обработка нажатий вне модальных окон
+        window.addEventListener('click', (e) => this.handleOutsideClick(e));
     },
 
-    // Анимация Деда Мороза
-    setupSantaAnimation() {
-        const santa = document.getElementById('santa');
-        let direction = 1;
-        let yPos = 20;
-
-        function animateSanta() {
-            yPos += direction * 0.5;
-            
-            if (yPos > 30 || yPos < 10) {
-                direction *= -1;
-            }
-            
-            santa.style.top = `${yPos}%`;
-            requestAnimationFrame(animateSanta);
+    // Система промокодов
+    setupPromocodeSystem() {
+        // Загрузка использованных промокодов
+        const savedPromocodes = localStorage.getItem('bloodyButterflyUsedPromocodes');
+        if (savedPromocodes) {
+            this.state.usedPromocodes = JSON.parse(savedPromocodes);
         }
 
-        // Добавление эффекта следов
-        function createSantaTrail() {
-            const trail = document.createElement('div');
-            trail.className = 'santa-trail';
-            trail.style.left = `${Math.random() * 100}%`;
-            trail.style.top = `${yPos + 5}%`;
-            document.querySelector('.background-container').appendChild(trail);
-
-            // Удаление следа через время
-            setTimeout(() => {
-                if (trail.parentNode) {
-                    trail.parentNode.removeChild(trail);
-                }
-            }, 3000);
+        // Загрузка активных промокодов
+        const activePromocodes = localStorage.getItem('bloodyButterflyActivePromocodes');
+        if (activePromocodes) {
+            this.state.activePromocodes = JSON.parse(activePromocodes);
         }
 
-        // Запуск анимаций
-        animateSanta();
-        setInterval(createSantaTrail, 2000);
+        // Отображение промокодов
+        this.renderPromocodes();
+        this.updateUserPromocodes();
     },
 
-    // Фоновые эффекты
-    setupBackgroundEffects() {
-        // Снежинки
-        function createSnowflake() {
-            const snowflake = document.createElement('div');
-            snowflake.className = 'snowflake';
-            snowflake.innerHTML = '❄';
+    // Отображение промокодов
+    renderPromocodes() {
+        const container = document.getElementById('promocodeSystem');
+        if (!container) return;
+
+        let html = '';
+        this.config.promocodes.forEach((promo, index) => {
+            const isUsed = this.state.usedPromocodes.includes(promo.code);
+            const isActive = this.state.activePromocodes.some(p => p.code === promo.code);
             
-            // Случайная позиция и размер
-            const size = Math.random() * 20 + 10;
-            const left = Math.random() * 100;
-            const opacity = Math.random() * 0.7 + 0.3;
-            const duration = Math.random() * 10 + 10;
-            
-            snowflake.style.cssText = `
-                position: absolute;
-                top: -50px;
-                left: ${left}%;
-                font-size: ${size}px;
-                opacity: ${opacity};
-                color: white;
-                pointer-events: none;
-                z-index: 1;
-                animation: snowflakeFall ${duration}s linear infinite;
+            html += `
+                <div class="promocode-card ${isUsed ? 'used' : ''} ${isActive ? 'active' : ''}" data-code="${promo.code}">
+                    <div class="promocode-header">
+                        <div class="promocode-type">${this.getPromoTypeName(promo.type)}</div>
+                        <div class="promocode-discount">-${promo.discount}%</div>
+                    </div>
+                    <div class="promocode-code">${promo.code}</div>
+                    <div class="promocode-details">
+                        <div><i class="fas fa-calendar"></i> Активен до: 31.12.2024</div>
+                        <div><i class="fas fa-tag"></i> Тип: ${this.getPromoTypeName(promo.type)}</div>
+                    </div>
+                    <button class="copy-promocode-btn ${isUsed ? 'copied' : ''}" data-code="${promo.code}">
+                        <i class="fas fa-${isUsed ? 'check' : 'copy'}"></i>
+                        ${isUsed ? 'ИСПОЛЬЗОВАН' : 'СКОПИРОВАТЬ'}
+                    </button>
+                    ${isActive ? '<div class="promocode-timer">АКТИВЕН</div>' : ''}
+                </div>
             `;
-            
-            document.querySelector('.snowflakes').appendChild(snowflake);
-            
-            // Удаление снежинки после падения
-            setTimeout(() => {
-                if (snowflake.parentNode) {
-                    snowflake.parentNode.removeChild(snowflake);
-                }
-            }, duration * 1000);
-        }
-
-        // Создание снежинок
-        setInterval(createSnowflake, 300);
-
-        // Добавление CSS анимации для снежинок
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes snowflakeFall {
-                0% {
-                    transform: translateY(-100px) rotate(0deg);
-                }
-                100% {
-                    transform: translateY(100vh) rotate(360deg);
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Эффект мерцания огней
-        const lights = document.querySelectorAll('.christmas-lights i');
-        lights.forEach((light, index) => {
-            setInterval(() => {
-                light.style.opacity = Math.random() * 0.5 + 0.5;
-                light.style.transform = `scale(${Math.random() * 0.3 + 0.85})`;
-            }, 1000 + index * 200);
         });
 
-        // Эффект параллакса для фона
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallaxElements = document.querySelectorAll('.parallax-layer');
-            
-            parallaxElements.forEach((element, index) => {
-                const speed = 0.5 + (index * 0.1);
-                element.style.transform = `translateY(${scrolled * speed}px)`;
+        container.innerHTML = html;
+
+        // Добавление обработчиков для кнопок копирования
+        container.querySelectorAll('.copy-promocode-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const code = e.target.closest('.promocode-card').dataset.code;
+                this.copyPromocodeToClipboard(code);
             });
         });
+
+        // Добавление обработчиков для активации кликом
+        container.querySelectorAll('.promocode-card:not(.used)').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('copy-promocode-btn')) {
+                    const code = card.dataset.code;
+                    this.activatePromocode(code);
+                }
+            });
+        });
+    },
+
+    // Получение имени типа промокода
+    getPromoTypeName(type) {
+        const types = {
+            'newyear': 'НОВОГОДНИЙ',
+            'creator': 'ОТ СОЗДАТЕЛЯ',
+            'special': 'СПЕЦИАЛЬНЫЙ',
+            'vip': 'VIP',
+            'player': 'ДЛЯ ИГРОКА'
+        };
+        return types[type] || 'СТАНДАРТНЫЙ';
+    },
+
+    // Копирование промокода в буфер обмена
+    copyPromocodeToClipboard(code) {
+        navigator.clipboard.writeText(code).then(() => {
+            this.showNotification(`Промокод "${code}" скопирован!`, 'success');
+            
+            // Отметка как использованного
+            if (!this.state.usedPromocodes.includes(code)) {
+                this.state.usedPromocodes.push(code);
+                localStorage.setItem('bloodyButterflyUsedPromocodes', JSON.stringify(this.state.usedPromocodes));
+                this.renderPromocodes();
+            }
+        }).catch(err => {
+            console.error('Ошибка копирования:', err);
+            this.showNotification('Ошибка копирования', 'error');
+        });
+    },
+
+    // Активация промокода
+    activatePromocode(code) {
+        if (!this.state.isAuthenticated) {
+            this.showNotification('Для активации промокода необходимо войти в систему', 'warning');
+            this.showAuthModal();
+            return;
+        }
+
+        const promo = this.config.promocodes.find(p => p.code === code);
+        if (!promo) {
+            this.showNotification('Неверный промокод', 'error');
+            return;
+        }
+
+        if (this.state.usedPromocodes.includes(code)) {
+            this.showNotification('Этот промокод уже использован', 'warning');
+            return;
+        }
+
+        // Проверка на активацию такого же типа промокода
+        const hasSameType = this.state.activePromocodes.some(p => {
+            const promoType = this.config.promocodes.find(cp => cp.code === p.code)?.type;
+            return promoType === promo.type;
+        });
+
+        if (hasSameType) {
+            this.showNotification('Промокод этого типа уже активен', 'warning');
+            return;
+        }
+
+        // Активация промокода
+        this.state.activePromocodes.push({
+            code: promo.code,
+            discount: promo.discount,
+            activatedAt: new Date().toISOString(),
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 дней
+        });
+
+        localStorage.setItem('bloodyButterflyActivePromocodes', JSON.stringify(this.state.activePromocodes));
+
+        // Обновление скидки пользователя
+        this.updateUserDiscount();
+        
+        // Отметка как использованного
+        this.state.usedPromocodes.push(code);
+        localStorage.setItem('bloodyButterflyUsedPromocodes', JSON.stringify(this.state.usedPromocodes));
+
+        this.showNotification(`Промокод активирован! Скидка ${promo.discount}% применена!`, 'success');
+        this.renderPromocodes();
+        this.updateUserPromocodes();
+    },
+
+    // Активация промокода вручную
+    activateManualPromocode() {
+        const input = document.getElementById('manualPromocode');
+        const code = input.value.trim();
+        
+        if (!code) {
+            this.showNotification('Введите промокод', 'error');
+            return;
+        }
+
+        this.activatePromocode(code);
+        input.value = '';
+    },
+
+    // Обновление скидки пользователя
+    updateUserDiscount() {
+        if (!this.state.isAuthenticated) {
+            this.state.userDiscount = 0;
+            return;
+        }
+
+        // Базовая скидка для зарегистрированных
+        let discount = this.config.defaultDiscount;
+        
+        // Добавление скидки от активных промокодов
+        this.state.activePromocodes.forEach(promo => {
+            discount += promo.discount;
+        });
+
+        // Максимальная скидка 70%
+        this.state.userDiscount = Math.min(discount, 70);
+        
+        // Сохранение в профиль пользователя
+        if (this.state.user) {
+            this.state.user.discount = this.state.userDiscount;
+            localStorage.setItem('bloodyButterflyUser', JSON.stringify(this.state.user));
+        }
+
+        // Обновление отображения
+        this.updateDiscountDisplay();
+    },
+
+    // Обновление отображения скидки
+    updateDiscountDisplay() {
+        // В профиле
+        const discountElement = document.getElementById('userDiscount');
+        if (discountElement) {
+            discountElement.textContent = `${this.state.userDiscount}%`;
+        }
+
+        // В бейдже
+        const discountBadge = document.getElementById('autoDiscountBadge');
+        const discountPercent = document.getElementById('autoDiscountPercent');
+        
+        if (this.state.isAuthenticated && this.state.userDiscount > 0) {
+            discountBadge.classList.add('active');
+            discountPercent.textContent = `${this.state.userDiscount}%`;
+        } else {
+            discountBadge.classList.remove('active');
+        }
+
+        // В ценах на донат
+        this.updateDonatePrices();
+    },
+
+    // Обновление цен с учетом скидки
+    updateDonatePrices() {
+        const prices = [
+            { original: 399, discounted: 299, id: 1 },
+            { original: 799, discounted: 599, id: 2 },
+            { original: 1499, discounted: 1199, id: 3 }
+        ];
+
+        prices.forEach(price => {
+            // Применение скидки пользователя
+            const finalPrice = Math.round(price.discounted * (1 - this.state.userDiscount / 100));
+            
+            const priceElement = document.getElementById(`discountedPrice${price.id}`);
+            const discountTag = document.getElementById(`discountTag${price.id}`);
+            
+            if (priceElement && discountTag) {
+                priceElement.textContent = `${finalPrice} ₽`;
+                
+                // Расчет общего процента скидки
+                const totalDiscount = Math.round((1 - finalPrice / price.original) * 100);
+                discountTag.textContent = `-${totalDiscount}%`;
+            }
+        });
+    },
+
+    // Обновление списка промокодов пользователя
+    updateUserPromocodes() {
+        const container = document.getElementById('userPromocodes');
+        if (!container) return;
+
+        if (this.state.activePromocodes.length === 0) {
+            container.innerHTML = '<p class="no-promocodes">У вас нет активных промокодов</p>';
+            return;
+        }
+
+        let html = '<div class="user-promocode-list">';
+        this.state.activePromocodes.forEach(promo => {
+            const expires = new Date(promo.expiresAt).toLocaleDateString();
+            html += `
+                <div class="user-promocode-item">
+                    <div class="user-promo-code">${promo.code}</div>
+                    <div class="user-promo-discount">-${promo.discount}%</div>
+                    <div class="user-promo-expires">Истекает: ${expires}</div>
+                </div>
+            `;
+        });
+        html += '</div>';
+
+        container.innerHTML = html;
+    },
+
+    // Показ случайного промокода (вместо Деда Мороза)
+    showRandomPromocode() {
+        if (!this.state.isAuthenticated) {
+            this.showNotification('Для получения промокода необходимо войти в систему', 'warning');
+            this.showAuthModal();
+            return;
+        }
+
+        // Выбор случайного неиспользованного промокода
+        const availablePromocodes = this.config.promocodes.filter(
+            promo => !this.state.usedPromocodes.includes(promo.code)
+        );
+
+        if (availablePromocodes.length === 0) {
+            this.showNotification('Все промокоды уже использованы!', 'info');
+            return;
+        }
+
+        const randomPromo = availablePromocodes[Math.floor(Math.random() * availablePromocodes.length)];
+        
+        // Показ модального окна
+        const modal = document.getElementById('promocodeModal');
+        const promocodeText = document.getElementById('promocodeText');
+        
+        promocodeText.textContent = randomPromo.code;
+        modal.classList.add('active');
+        
+        // Автоматическая активация через 3 секунды
+        setTimeout(() => {
+            this.activatePromocode(randomPromo.code);
+        }, 3000);
+
+        this.showNotification('🎁 Вы получили промокод! Он активируется автоматически.', 'success');
+    },
+
+    // Система аватаров
+    setupAvatarSystem() {
+        // Загрузка выбранного аватара
+        const savedAvatar = localStorage.getItem('bloodyButterflyAvatar');
+        if (savedAvatar) {
+            this.state.selectedAvatar = savedAvatar;
+            this.updateAvatarDisplay();
+        }
+    },
+
+    // Показ модального окна выбора аватара
+    showAvatarModal() {
+        const modal = document.getElementById('avatarModal');
+        const grid = document.getElementById('avatarGrid');
+        
+        if (!modal || !grid) return;
+
+        // Заполнение сетки аватаров
+        let html = '';
+        this.config.avatars.forEach((avatar, index) => {
+            const isSelected = avatar === this.state.selectedAvatar;
+            html += `
+                <div class="avatar-option ${isSelected ? 'selected' : ''}" data-avatar="${avatar}">
+                    <i class="fas ${avatar}"></i>
+                </div>
+            `;
+        });
+        
+        grid.innerHTML = html;
+
+        // Добавление обработчиков выбора
+        grid.querySelectorAll('.avatar-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                grid.querySelectorAll('.avatar-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                e.currentTarget.classList.add('selected');
+            });
+        });
+
+        // Показ модального окна
+        modal.classList.add('active');
+    },
+
+    // Скрытие модального окна аватара
+    hideAvatarModal() {
+        const modal = document.getElementById('avatarModal');
+        modal.classList.remove('active');
+    },
+
+    // Обновление отображения аватара
+    updateAvatarDisplay() {
+        const avatarElement = document.getElementById('currentAvatar');
+        if (avatarElement) {
+            const icon = avatarElement.querySelector('i');
+            if (icon) {
+                icon.className = `fas ${this.state.selectedAvatar}`;
+            }
+        }
+    },
+
+    // Изменение аватара
+    changeAvatar() {
+        const selectedOption = document.querySelector('.avatar-option.selected');
+        if (!selectedOption) {
+            this.showNotification('Выберите аватар', 'warning');
+            return;
+        }
+
+        const newAvatar = selectedOption.dataset.avatar;
+        this.state.selectedAvatar = newAvatar;
+        
+        // Сохранение
+        localStorage.setItem('bloodyButterflyAvatar', newAvatar);
+        
+        // Обновление отображения
+        this.updateAvatarDisplay();
+        
+        // Закрытие модального окна
+        this.hideAvatarModal();
+        
+        this.showNotification('Аватар успешно изменен!', 'success');
+    },
+
+    // Показ модального окна изменения ника
+    showNicknameModal() {
+        if (!this.state.isAuthenticated) {
+            this.showNotification('Необходима авторизация', 'warning');
+            return;
+        }
+
+        const modal = document.getElementById('nicknameModal');
+        modal.classList.add('active');
+    },
+
+    // Показ модального окна изменения пароля
+    showPasswordModal() {
+        if (!this.state.isAuthenticated) {
+            this.showNotification('Необходима авторизация', 'warning');
+            return;
+        }
+
+        const modal = document.getElementById('passwordModal');
+        modal.classList.add('active');
+    },
+
+    // Показ модального окна подтверждения email
+    showEmailModal() {
+        const modal = document.getElementById('emailModal');
+        modal.classList.add('active');
+    },
+
+    // Скрытие модальных окон
+    hideModal(modalName) {
+        const modal = document.getElementById(`${modalName}Modal`);
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    },
+
+    // Изменение ника
+    changeNickname() {
+        const newNickname = document.getElementById('newNickname').value.trim();
+        
+        if (!newNickname) {
+            this.showNotification('Введите новый ник', 'error');
+            return;
+        }
+
+        if (newNickname.length < 3) {
+            this.showNotification('Ник должен быть не менее 3 символов', 'error');
+            return;
+        }
+
+        // Симуляция отправки кода подтверждения на email
+        this.showLoading('Отправка кода подтверждения...');
+        
+        setTimeout(() => {
+            this.hideLoading();
+            this.showNotification('Код подтверждения отправлен на ваш email', 'success');
+            this.hideModal('nickname');
+            
+            // Показ окна ввода кода
+            this.showEmailModal();
+        }, 1500);
+    },
+
+    // Изменение пароля
+    changePassword() {
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmNewPassword').value;
+        
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            this.showNotification('Заполните все поля', 'error');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            this.showNotification('Пароли не совпадают', 'error');
+            return;
+        }
+
+        if (!this.validatePassword(newPassword)) {
+            this.showNotification('Новый пароль не соответствует требованиям', 'error');
+            return;
+        }
+
+        // Симуляция отправки кода подтверждения
+        this.showLoading('Отправка кода подтверждения...');
+        
+        setTimeout(() => {
+            this.hideLoading();
+            this.showNotification('Код подтверждения отправлен на ваш email', 'success');
+            this.hideModal('password');
+            
+            // Показ окна ввода кода
+            this.showEmailModal();
+        }, 1500);
+    },
+
+    // Подтверждение email
+    verifyEmail() {
+        const code = document.getElementById('verificationCode').value.trim();
+        
+        if (!code) {
+            this.showNotification('Введите код подтверждения', 'error');
+            return;
+        }
+
+        // Простая проверка кода (в реальном приложении была бы проверка с сервером)
+        if (code.length === 6) {
+            this.state.emailVerified = true;
+            this.showNotification('Email успешно подтвержден!', 'success');
+            this.hideModal('email');
+            
+            // Обновление статуса пользователя
+            if (this.state.user) {
+                this.state.user.emailVerified = true;
+                localStorage.setItem('bloodyButterflyUser', JSON.stringify(this.state.user));
+            }
+        } else {
+            this.showNotification('Неверный код подтверждения', 'error');
+        }
+    },
+
+    // Повторная отправка кода подтверждения
+    resendVerificationCode() {
+        this.showLoading('Отправка кода...');
+        
+        setTimeout(() => {
+            this.hideLoading();
+            this.showNotification('Код подтверждения отправлен повторно', 'success');
+        }, 1000);
+    },
+
+    // Обработка клика по кнопке доната (переход в Telegram)
+    handleDonateClick(event) {
+        event.preventDefault();
+        const packageType = event.currentTarget.dataset.package;
+        
+        // Открытие Telegram канала
+        window.open(this.config.telegramChannel, '_blank');
+        
+        // Логирование выбора пакета
+        console.log(`Выбран пакет доната: ${packageType}`);
+        this.showNotification('Переход в Telegram для оплаты...', 'info');
     },
 
     // Проверка статуса авторизации
@@ -202,8 +660,10 @@ const BloodyButterfly = {
             try {
                 this.state.user = JSON.parse(savedUser);
                 this.state.isAuthenticated = true;
+                this.state.emailVerified = this.state.user.emailVerified || false;
                 this.updateUserInterface();
-                this.showNotification('Добро пожаловать обратно!', 'success');
+                this.updateUserDiscount();
+                this.showNotification('Подключение к системе восстановлено!', 'success');
             } catch (error) {
                 console.error('Ошибка при загрузке пользователя:', error);
                 localStorage.removeItem('bloodyButterflyUser');
@@ -224,6 +684,7 @@ const BloodyButterfly = {
             // Обновление данных профиля
             document.getElementById('profileUsername').textContent = this.state.user.username;
             document.getElementById('userBalance').textContent = this.state.user.balance || 0;
+            document.getElementById('userDiscount').textContent = `${this.state.userDiscount}%`;
             
             if (this.state.user.vipUntil) {
                 document.getElementById('vipUntil').textContent = 
@@ -239,81 +700,6 @@ const BloodyButterfly = {
             profileTab.style.display = 'none';
             profileTabContent.classList.remove('active');
         }
-    },
-
-    // Обработка навигации
-    handleNavigation(event) {
-        event.preventDefault();
-        const tab = event.currentTarget.dataset.tab;
-        
-        // Обновление активного элемента навигации
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        event.currentTarget.classList.add('active');
-        
-        // Скрытие всех вкладок
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
-        });
-        
-        // Показ выбранной вкладки
-        const tabContent = document.getElementById(`${tab}Tab`);
-        if (tabContent) {
-            tabContent.classList.add('active');
-            this.state.activeTab = tab;
-            
-            // Особые обработки для вкладок
-            if (tab === 'profile' && !this.state.isAuthenticated) {
-                this.showNotification('Для доступа к профилю необходимо войти в систему', 'warning');
-                this.showAuthModal();
-                return;
-            }
-            
-            // Анимация перехода
-            tabContent.style.animation = 'none';
-            setTimeout(() => {
-                tabContent.style.animation = 'tabFade 0.5s ease-out';
-            }, 10);
-        }
-    },
-
-    // Показ модального окна авторизации
-    showAuthModal() {
-        const modal = document.getElementById('authModal');
-        modal.style.display = 'flex';
-        modal.classList.add('active');
-        
-        // Сброс форм
-        document.getElementById('loginForm').reset();
-        document.getElementById('registerForm').reset();
-        
-        // Показ формы входа по умолчанию
-        this.switchAuthTab({ currentTarget: document.querySelector('.auth-tab[data-auth="login"]') });
-    },
-
-    // Скрытие модального окна авторизации
-    hideAuthModal() {
-        const modal = document.getElementById('authModal');
-        modal.style.display = 'none';
-        modal.classList.remove('active');
-    },
-
-    // Переключение вкладок авторизации
-    switchAuthTab(event) {
-        const authType = event.currentTarget.dataset.auth;
-        
-        // Обновление активной вкладки
-        document.querySelectorAll('.auth-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        event.currentTarget.classList.add('active');
-        
-        // Показ соответствующей формы
-        document.querySelectorAll('.auth-form').forEach(form => {
-            form.classList.remove('active');
-        });
-        document.getElementById(`${authType}Form`).classList.add('active');
     },
 
     // Обработка входа
@@ -339,7 +725,6 @@ const BloodyButterfly = {
             return;
         }
         
-        // Симуляция запроса к API
         this.showLoading('Проверка данных...');
         
         setTimeout(() => {
@@ -351,15 +736,21 @@ const BloodyButterfly = {
                 email: 'user@example.com',
                 balance: 1000,
                 vipUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-                serverNickname: username
+                serverNickname: username,
+                discount: this.config.defaultDiscount,
+                emailVerified: false
             };
             
             this.state.isAuthenticated = true;
             localStorage.setItem('bloodyButterflyUser', JSON.stringify(this.state.user));
             
             this.updateUserInterface();
+            this.updateUserDiscount();
             this.hideAuthModal();
             this.showNotification('Успешный вход! Добро пожаловать!', 'success');
+            
+            // Автоматическая скидка для зарегистрированных
+            this.showNotification(`Вам автоматически начислена скидка ${this.config.defaultDiscount}%!`, 'success');
             
             // Обновление статистики
             this.updateServerStats();
@@ -424,6 +815,8 @@ const BloodyButterfly = {
                 balance: 500,
                 vipUntil: null,
                 serverNickname: username,
+                discount: this.config.defaultDiscount,
+                emailVerified: false,
                 registeredAt: new Date().toISOString()
             };
             
@@ -431,25 +824,312 @@ const BloodyButterfly = {
             localStorage.setItem('bloodyButterflyUser', JSON.stringify(this.state.user));
             
             this.updateUserInterface();
+            this.updateUserDiscount();
             this.hideAuthModal();
             this.showNotification('Регистрация успешна! Добро пожаловать!', 'success');
             
-            // Симуляция отправки email
+            // Автоматическая скидка для зарегистрированных
+            this.showNotification(`Вам автоматически начислена скидка ${this.config.defaultDiscount}%!`, 'success');
+            
+            // Симуляция отправки email подтверждения
             this.sendConfirmationEmail(email, username);
             
         }, 2000);
     },
 
-    // Проверка подключения к игровому серверу
-    async checkServerConnection(username) {
-        // Симуляция проверки подключения
-        return new Promise(resolve => {
+    // Выход из системы
+    handleLogout() {
+        this.state.user = null;
+        this.state.isAuthenticated = false;
+        this.state.userDiscount = 0;
+        localStorage.removeItem('bloodyButterflyUser');
+        
+        this.updateUserInterface();
+        this.updateDiscountDisplay();
+        this.showNotification('Вы вышли из системы', 'info');
+        
+        // Переключение на главную вкладку
+        document.querySelector('.nav-item[data-tab="home"]').click();
+    },
+
+    // Другие методы остаются такими же как в предыдущем коде...
+    // (setupBackgroundEffects, checkServerConnection, validatePassword, validateEmail, 
+    // sendConfirmationEmail, updateServerStats, animateCounter, setupBonusSystem,
+    // claimDailyBonus, addVipTime, setupPasswordValidation, setupAnimations,
+    // setupNotifications, showNotification, showLoading, hideLoading, 
+    // handleOutsideClick, startAnimations, animateYearCounter, animateSnow,
+    // animateLights, animateBackground, setupSmoothScrolling и т.д.)
+
+    // Настройка анимаций для киберпанк фона
+    setupBackgroundEffects() {
+        // Кибер сетка
+        const cyberGrid = document.querySelector('.cyber-grid');
+        if (cyberGrid) {
+            setInterval(() => {
+                const x = Math.random() * 10 - 5;
+                const y = Math.random() * 10 - 5;
+                cyberGrid.style.transform = `translate(${x}px, ${y}px)`;
+            }, 3000);
+        }
+
+        // Потоки данных
+        const createDataStream = () => {
+            const stream = document.createElement('div');
+            stream.className = 'data-stream';
+            stream.style.cssText = `
+                position: absolute;
+                top: ${Math.random() * 100}%;
+                left: -100px;
+                width: ${Math.random() * 100 + 50}px;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, var(--cyber-blue), transparent);
+                opacity: ${Math.random() * 0.5 + 0.1};
+                animation: dataStreamFlow ${Math.random() * 5 + 3}s linear forwards;
+            `;
+            
+            document.querySelector('.data-streams').appendChild(stream);
+            
             setTimeout(() => {
-                // В реальном приложении здесь был бы запрос к API сервера
-                const validNames = ['player1', 'gamer2', 'pro3', 'testUser', username.toLowerCase()];
-                resolve(validNames.includes(username.toLowerCase()));
-            }, 500);
-        });
+                stream.remove();
+            }, 5000);
+        };
+
+        // Создание потоков данных
+        setInterval(createDataStream, 500);
+
+        // Частицы
+        const createParticle = () => {
+            const particle = document.createElement('div');
+            particle.className = 'cyber-particle';
+            particle.style.cssText = `
+                position: absolute;
+                width: ${Math.random() * 3 + 1}px;
+                height: ${Math.random() * 3 + 1}px;
+                background: ${Math.random() > 0.5 ? 'var(--cyber-blue)' : 'var(--cyber-pink)'};
+                top: ${Math.random() * 100}%;
+                left: ${Math.random() * 100}%;
+                border-radius: 50%;
+                opacity: ${Math.random() * 0.5 + 0.1};
+                animation: particleFloat ${Math.random() * 10 + 5}s linear infinite;
+            `;
+            
+            document.querySelector('.particle-field').appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 15000);
+        };
+
+        // Создание частиц
+        for (let i = 0; i < 50; i++) {
+            setTimeout(createParticle, i * 100);
+        }
+        setInterval(createParticle, 300);
+
+        // Глитч эффект
+        setInterval(() => {
+            const glitch = document.querySelector('.glitch-overlay');
+            if (glitch && Math.random() > 0.7) {
+                glitch.style.opacity = '0.1';
+                glitch.style.background = Math.random() > 0.5 ? 'var(--cyber-blue)' : 'var(--cyber-pink)';
+                
+                setTimeout(() => {
+                    glitch.style.opacity = '0';
+                }, 100);
+            }
+        }, 1000);
+
+        // Добавление CSS анимаций
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes dataStreamFlow {
+                0% {
+                    transform: translateX(0);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 1;
+                }
+                90% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateX(calc(100vw + 100px));
+                    opacity: 0;
+                }
+            }
+            
+            @keyframes particleFloat {
+                0% {
+                    transform: translate(0, 0);
+                }
+                25% {
+                    transform: translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px);
+                }
+                50% {
+                    transform: translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px);
+                }
+                75% {
+                    transform: translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px);
+                }
+                100% {
+                    transform: translate(0, 0);
+                }
+            }
+            
+            @keyframes gridMove {
+                0% {
+                    background-position: 0 0;
+                }
+                100% {
+                    background-position: 50px 50px;
+                }
+            }
+            
+            @keyframes gridPulse {
+                0% {
+                    opacity: 0.3;
+                }
+                100% {
+                    opacity: 0.7;
+                }
+            }
+            
+            @keyframes hologramMove {
+                0% {
+                    transform: translateY(0);
+                }
+                100% {
+                    transform: translateY(-100px);
+                }
+            }
+            
+            @keyframes glitchOverlay {
+                0%, 100% {
+                    opacity: 0;
+                }
+                50% {
+                    opacity: 0.1;
+                }
+            }
+            
+            @keyframes buildingGlow {
+                0%, 100% {
+                    opacity: 0.3;
+                }
+                50% {
+                    opacity: 0.7;
+                }
+            }
+            
+            @keyframes windowFlicker {
+                0%, 100% {
+                    opacity: 0.8;
+                }
+                50% {
+                    opacity: 0.3;
+                }
+            }
+            
+            @keyframes hoverMove {
+                0% {
+                    transform: translateX(-100px);
+                }
+                100% {
+                    transform: translateX(calc(100vw + 100px));
+                }
+            }
+            
+            @keyframes carLight {
+                0%, 100% {
+                    opacity: 0.5;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes neonFlicker {
+                0%, 100% {
+                    opacity: 1;
+                    filter: drop-shadow(0 0 10px var(--cyber-pink));
+                }
+                50% {
+                    opacity: 0.8;
+                    filter: drop-shadow(0 0 5px var(--cyber-pink));
+                }
+            }
+            
+            @keyframes hologramAd {
+                0%, 100% {
+                    transform: translateY(0) rotateX(0);
+                }
+                50% {
+                    transform: translateY(-20px) rotateX(10deg);
+                }
+            }
+            
+            @keyframes dropPulse {
+                0%, 100% {
+                    transform: scale(1);
+                    box-shadow: 0 0 20px var(--cyber-purple);
+                }
+                50% {
+                    transform: scale(1.1);
+                    box-shadow: 0 0 40px var(--cyber-purple), 0 0 60px var(--cyber-purple);
+                }
+            }
+            
+            @keyframes dropGlow {
+                0%, 100% {
+                    opacity: 0.3;
+                    transform: scale(1);
+                }
+                50% {
+                    opacity: 0.7;
+                    transform: scale(1.2);
+                }
+            }
+            
+            @keyframes textFloat {
+                0%, 100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-5px);
+                }
+            }
+            
+            @keyframes discountPulse {
+                0%, 100% {
+                    background: var(--cyber-red);
+                }
+                50% {
+                    background: var(--cyber-pink);
+                }
+            }
+            
+            @keyframes badgeFloat {
+                0%, 100% {
+                    transform: translateY(0) rotate(0deg);
+                }
+                50% {
+                    transform: translateY(-10px) rotate(2deg);
+                }
+            }
+            
+            @keyframes badgeAppear {
+                0% {
+                    opacity: 0;
+                    transform: scale(0.8) translateY(50px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
     },
 
     // Валидация пароля
@@ -475,19 +1155,19 @@ const BloodyButterfly = {
     sendConfirmationEmail(email, username) {
         console.log(`📧 Отправка подтверждения на ${email} для пользователя ${username}`);
         // В реальном приложении здесь был бы запрос к email сервису
+        this.showNotification(`Код подтверждения отправлен на ${email}`, 'info');
     },
 
-    // Выход из системы
-    handleLogout() {
-        this.state.user = null;
-        this.state.isAuthenticated = false;
-        localStorage.removeItem('bloodyButterflyUser');
-        
-        this.updateUserInterface();
-        this.showNotification('Вы вышли из системы', 'info');
-        
-        // Переключение на главную вкладку
-        document.querySelector('.nav-item[data-tab="home"]').click();
+    // Проверка подключения к игровому серверу
+    async checkServerConnection(username) {
+        // Симуляция проверки подключения
+        return new Promise(resolve => {
+            setTimeout(() => {
+                // В реальном приложении здесь был бы запрос к API сервера
+                const validNames = ['player1', 'gamer2', 'pro3', 'testUser', username.toLowerCase()];
+                resolve(validNames.includes(username.toLowerCase()));
+            }, 500);
+        });
     },
 
     // Обновление статистики сервера
@@ -496,6 +1176,7 @@ const BloodyButterfly = {
         const onlineChange = Math.floor(Math.random() * 100) - 50;
         const giftsChange = Math.floor(Math.random() * 50);
         
+        this.state.serverStats = this.state.serverStats || { online: 1278, giftsToday: 356 };
         this.state.serverStats.online = Math.max(100, this.state.serverStats.online + onlineChange);
         this.state.serverStats.giftsToday = Math.max(0, this.state.serverStats.giftsToday + giftsChange);
         
@@ -528,6 +1209,31 @@ const BloodyButterfly = {
         }, stepTime);
     },
 
+    // Настройка валидации пароля
+    setupPasswordValidation() {
+        const passwordInput = document.getElementById('regPassword');
+        
+        passwordInput?.addEventListener('input', () => {
+            const password = passwordInput.value;
+            const requirements = document.querySelectorAll('.password-requirements li');
+            
+            if (requirements.length >= 4) {
+                // Проверка длины
+                requirements[0].classList.toggle('valid', password.length >= 8);
+                
+                // Проверка английских букв
+                requirements[1].classList.toggle('valid', /[a-zA-Z]/.test(password));
+                
+                // Проверка специальных символов
+                requirements[2].classList.toggle('valid', /[$!@#%^&*]/.test(password));
+                
+                // Проверка сложности
+                const isTooSimple = /^(123456789|qwerty|password|admin|123456|12345678)$/i.test(password);
+                requirements[3].classList.toggle('valid', !isTooSimple);
+            }
+        });
+    },
+
     // Система бонусов
     setupBonusSystem() {
         // Проверка ежедневного бонуса
@@ -536,8 +1242,11 @@ const BloodyButterfly = {
         
         if (lastBonusDate === today) {
             this.state.dailyBonusClaimed = true;
-            document.getElementById('claimBonus').disabled = true;
-            document.getElementById('claimBonus').textContent = 'Бонус уже получен';
+            const claimBtn = document.getElementById('claimBonus');
+            if (claimBtn) {
+                claimBtn.disabled = true;
+                claimBtn.innerHTML = '<i class="fas fa-check"></i><span>БОНУС ПОЛУЧЕН</span>';
+            }
         }
     },
 
@@ -607,17 +1316,20 @@ const BloodyButterfly = {
                     }
                 }
                 
-                const promocode = `BLOODY${selectedDiscount.percent}OFF${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
-                reward = `Промокод на скидку ${selectedDiscount.percent}%: ${promocode}`;
-                this.activatePromocodeForUser(promocode, selectedDiscount.percent);
+                const promocode = `BONUS${selectedDiscount.percent}OFF${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+                reward = `Промокод на скидку ${selectedDiscount.percent}%`;
+                this.activatePromocode(promocode);
             }
             
             // Сохранение статуса бонуса
             this.state.dailyBonusClaimed = true;
             localStorage.setItem('lastBonusDate', new Date().toDateString());
             
-            document.getElementById('claimBonus').disabled = true;
-            document.getElementById('claimBonus').textContent = 'Бонус получен';
+            const claimBtn = document.getElementById('claimBonus');
+            if (claimBtn) {
+                claimBtn.disabled = true;
+                claimBtn.innerHTML = '<i class="fas fa-check"></i><span>БОНУС ПОЛУЧЕН</span>';
+            }
             
             // Обновление календаря
             this.updateBonusCalendar();
@@ -640,94 +1352,6 @@ const BloodyButterfly = {
         
         localStorage.setItem('bloodyButterflyUser', JSON.stringify(this.state.user));
         this.updateUserInterface();
-    },
-
-    // Активация промокода для пользователя
-    activatePromocodeForUser(promocode, discount) {
-        if (!this.state.user) return;
-        
-        // Сохранение промокода
-        const userPromocodes = JSON.parse(localStorage.getItem('userPromocodes') || '[]');
-        userPromocodes.push({
-            code: promocode,
-            discount,
-            activatedAt: new Date().toISOString(),
-            validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-        });
-        
-        localStorage.setItem('userPromocodes', JSON.stringify(userPromocodes));
-        
-        // Обновление интерфейса
-        this.updatePromocodeList();
-    },
-
-    // Активация промокода
-    activatePromocode() {
-        const input = document.querySelector('.promocode-input');
-        const promocode = input.value.trim().toUpperCase();
-        
-        if (!promocode) {
-            this.showNotification('Введите промокод', 'error');
-            return;
-        }
-        
-        if (!this.state.isAuthenticated) {
-            this.showNotification('Для активации промокода необходимо войти в систему', 'warning');
-            this.showAuthModal();
-            return;
-        }
-        
-        this.showLoading('Активация промокода...');
-        
-        setTimeout(() => {
-            this.hideLoading();
-            
-            // Проверка валидности промокода
-            const validPromocodes = [
-                { code: 'NEWYEAR2026', discount: 15 },
-                { code: 'BLOODYVIP', discount: 20 },
-                { code: 'WINTERGIFT', discount: 10 }
-            ];
-            
-            const validPromo = validPromocodes.find(p => p.code === promocode);
-            
-            if (validPromo) {
-                this.activatePromocodeForUser(promocode, validPromo.discount);
-                input.value = '';
-                this.showNotification(`Промокод активирован! Скидка ${validPromo.discount}%`, 'success');
-            } else {
-                this.showNotification('Неверный или устаревший промокод', 'error');
-            }
-            
-        }, 1500);
-    },
-
-    // Обновление списка промокодов
-    updatePromocodeList() {
-        const container = document.querySelector('.active-promocodes');
-        if (!container) return;
-        
-        const userPromocodes = JSON.parse(localStorage.getItem('userPromocodes') || '[]');
-        
-        if (userPromocodes.length === 0) {
-            container.innerHTML = '<p>У вас нет активных промокодов</p>';
-            return;
-        }
-        
-        let html = '<div class="promocode-list">';
-        userPromocodes.forEach(promo => {
-            const validUntil = new Date(promo.validUntil).toLocaleDateString();
-            html += `
-                <div class="promocode-item">
-                    <span class="promo-code">${promo.code}</span>
-                    <span class="promo-discount">-${promo.discount}%</span>
-                    <span class="promo-date">До: ${validUntil}</span>
-                </div>
-            `;
-        });
-        html += '</div>';
-        
-        container.innerHTML = html;
     },
 
     // Обновление календаря бонусов
@@ -756,228 +1380,86 @@ const BloodyButterfly = {
         });
     },
 
-    // Показ модального окна с промокодом от Деда Мороза
-    showPromocodeModal() {
-        const modal = document.getElementById('promocodeModal');
-        const promocodeText = document.getElementById('promocodeText');
+    // Обработка навигации
+    handleNavigation(event) {
+        event.preventDefault();
+        const tab = event.currentTarget.dataset.tab;
         
-        // Генерация уникального промокода
-        const promocode = `SANTA-${Date.now().toString(36).toUpperCase()}-VIP`;
-        promocodeText.textContent = promocode;
-        
-        modal.classList.add('active');
-        
-        // Активация VIP на 1 день
-        this.addVipTime(24 * 60); // 24 часа в минутах
-        
-        // Создание праздничного эффекта
-        this.createHolidayEffect();
-        
-        this.showNotification('🎅 Дед Мороз подарил вам VIP на 1 день!', 'success');
-    },
-
-    // Скрытие модального окна с промокодом
-    hidePromocodeModal() {
-        const modal = document.getElementById('promocodeModal');
-        modal.classList.remove('active');
-    },
-
-    // Копирование промокода
-    copyPromocode() {
-        const promocodeText = document.getElementById('promocodeText').textContent;
-        
-        navigator.clipboard.writeText(promocodeText).then(() => {
-            this.showNotification('Промокод скопирован в буфер обмена!', 'success');
-        }).catch(err => {
-            console.error('Ошибка копирования:', err);
-            this.showNotification('Ошибка копирования', 'error');
+        // Обновление активного элемента навигации
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
         });
-    },
-
-    // Создание праздничного эффекта
-    createHolidayEffect() {
-        // Создание конфетти
-        for (let i = 0; i < 50; i++) {
+        event.currentTarget.classList.add('active');
+        
+        // Скрытие всех вкладок
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        
+        // Показ выбранной вкладки
+        const tabContent = document.getElementById(`${tab}Tab`);
+        if (tabContent) {
+            tabContent.classList.add('active');
+            this.state.activeTab = tab;
+            
+            // Особые обработки для вкладок
+            if (tab === 'profile' && !this.state.isAuthenticated) {
+                this.showNotification('Для доступа к профилю необходимо войти в систему', 'warning');
+                this.showAuthModal();
+                return;
+            }
+            
+            // Анимация перехода
+            tabContent.style.animation = 'none';
             setTimeout(() => {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.cssText = `
-                    position: fixed;
-                    width: 15px;
-                    height: 15px;
-                    background: ${this.getRandomColor()};
-                    top: -20px;
-                    left: ${Math.random() * 100}%;
-                    border-radius: 50%;
-                    z-index: 10000;
-                    pointer-events: none;
-                    animation: confettiFall ${Math.random() * 3 + 2}s linear forwards;
-                `;
-                
-                document.body.appendChild(confetti);
-                
-                // Удаление конфетти после анимации
-                setTimeout(() => {
-                    if (confetti.parentNode) {
-                        confetti.parentNode.removeChild(confetti);
-                    }
-                }, 5000);
-            }, i * 50);
-        }
-        
-        // Добавление CSS анимации для конфетти
-        if (!document.getElementById('confetti-animation')) {
-            const style = document.createElement('style');
-            style.id = 'confetti-animation';
-            style.textContent = `
-                @keyframes confettiFall {
-                    0% {
-                        transform: translateY(0) rotate(0deg);
-                        opacity: 1;
-                    }
-                    100% {
-                        transform: translateY(100vh) rotate(360deg);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
+                tabContent.style.animation = 'tabFade 0.5s ease-out';
+            }, 10);
         }
     },
 
-    // Получение случайного цвета
-    getRandomColor() {
-        const colors = [
-            '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff',
-            '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#fab1a0'
-        ];
-        return colors[Math.floor(Math.random() * colors.length)];
+    // Показ модального окна авторизации
+    showAuthModal() {
+        const modal = document.getElementById('authModal');
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+        
+        // Сброс форм
+        document.getElementById('loginForm').reset();
+        document.getElementById('registerForm').reset();
+        
+        // Показ формы входа по умолчанию
+        this.switchAuthTab({ currentTarget: document.querySelector('.auth-tab[data-auth="login"]') });
     },
 
-    // Настройка валидации пароля
-    setupPasswordValidation() {
-        const passwordInput = document.getElementById('regPassword');
+    // Скрытие модального окна авторизации
+    hideAuthModal() {
+        const modal = document.getElementById('authModal');
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+    },
+
+    // Переключение вкладок авторизации
+    switchAuthTab(event) {
+        const authType = event.currentTarget.dataset.auth;
         
-        passwordInput.addEventListener('input', () => {
-            const password = passwordInput.value;
-            const requirements = document.querySelectorAll('.password-requirements li');
-            
-            // Проверка длины
-            requirements[0].classList.toggle('valid', password.length >= 8);
-            
-            // Проверка английских букв
-            requirements[1].classList.toggle('valid', /[a-zA-Z]/.test(password));
-            
-            // Проверка специальных символов
-            requirements[2].classList.toggle('valid', /[$!@#%^&*]/.test(password));
-            
-            // Проверка сложности
-            const isTooSimple = /^(123456789|qwerty|password|admin|123456|12345678)$/i.test(password);
-            requirements[3].classList.toggle('valid', !isTooSimple);
+        // Обновление активной вкладки
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.classList.remove('active');
         });
-    },
-
-    // Настройка анимаций
-    setupAnimations() {
-        // Анимация появления элементов при прокрутке
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        event.currentTarget.classList.add('active');
         
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animated');
-                }
-            });
-        }, observerOptions);
-        
-        // Наблюдение за элементами для анимации
-        document.querySelectorAll('.stat-card, .package-card, .news-item, .bonus-day').forEach(el => {
-            observer.observe(el);
+        // Показ соответствующей формы
+        document.querySelectorAll('.auth-form').forEach(form => {
+            form.classList.remove('active');
         });
-        
-        // Анимация загрузки
-        window.addEventListener('load', () => {
-            document.body.classList.add('loaded');
-        });
+        document.getElementById(`${authType}Form`).classList.add('active');
     },
 
-    // Настройка системы уведомлений
-    setupNotifications() {
-        // Создание контейнера для уведомлений
-        const container = document.getElementById('notifications');
-        if (!container) return;
-        
-        // Стили для уведомлений
-        const style = document.createElement('style');
-        style.textContent = `
-            .notification {
-                background: linear-gradient(135deg, rgba(26, 35, 126, 0.95), rgba(13, 71, 161, 0.95));
-                color: white;
-                padding: 15px 20px;
-                margin-bottom: 10px;
-                border-radius: 10px;
-                border-left: 5px solid #ffd700;
-                animation: notificationSlide 0.5s ease-out;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                max-width: 400px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            }
-            
-            .notification.success {
-                border-left-color: #4caf50;
-            }
-            
-            .notification.error {
-                border-left-color: #f44336;
-            }
-            
-            .notification.warning {
-                border-left-color: #ff9800;
-            }
-            
-            .notification.info {
-                border-left-color: #2196f3;
-            }
-            
-            .notification-content {
-                flex: 1;
-                margin-right: 10px;
-            }
-            
-            .notification-close {
-                background: none;
-                border: none;
-                color: white;
-                cursor: pointer;
-                font-size: 20px;
-                opacity: 0.7;
-                transition: opacity 0.3s;
-            }
-            
-            .notification-close:hover {
-                opacity: 1;
-            }
-            
-            @keyframes notificationSlide {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    },
-
-    // Показать уведомление
+    // Показ уведомления
     showNotification(message, type = 'info') {
         const container = document.getElementById('notifications');
         if (!container) return;
@@ -985,89 +1467,105 @@ const BloodyButterfly = {
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.innerHTML = `
-            <div class="notification-content">${message}</div>
+            <div class="notification-content">
+                <i class="fas fa-${this.getNotificationIcon(type)}"></i>
+                <span>${message}</span>
+            </div>
             <button class="notification-close">&times;</button>
         `;
         
         container.appendChild(notification);
         
+        // Анимация появления
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
         // Автоматическое удаление через 5 секунд
         setTimeout(() => {
-            if (notification.parentNode) {
-                notification.style.animation = 'notificationSlide 0.5s ease-out reverse';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 500);
-            }
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
         }, 5000);
         
         // Обработчик закрытия
         notification.querySelector('.notification-close').addEventListener('click', () => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
         });
+    },
+
+    // Получение иконки для уведомления
+    getNotificationIcon(type) {
+        const icons = {
+            'success': 'check-circle',
+            'error': 'exclamation-circle',
+            'warning': 'exclamation-triangle',
+            'info': 'info-circle'
+        };
+        return icons[type] || 'info-circle';
     },
 
     // Показать загрузку
     showLoading(message = 'Загрузка...') {
-        // Создание элемента загрузки
-        const loading = document.createElement('div');
-        loading.id = 'loading-overlay';
-        loading.innerHTML = `
-            <div class="loading-content">
-                <div class="loading-spinner"></div>
-                <div class="loading-text">${message}</div>
-            </div>
-        `;
+        let loading = document.getElementById('loading-overlay');
         
-        // Стили для загрузки
-        const style = document.createElement('style');
-        style.textContent = `
-            #loading-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 9999;
-                backdrop-filter: blur(5px);
-            }
+        if (!loading) {
+            loading = document.createElement('div');
+            loading.id = 'loading-overlay';
+            loading.innerHTML = `
+                <div class="loading-content">
+                    <div class="cyber-loader"></div>
+                    <div class="loading-text">${message}</div>
+                </div>
+            `;
             
-            .loading-content {
-                text-align: center;
-                color: white;
-            }
-            
-            .loading-spinner {
-                width: 50px;
-                height: 50px;
-                border: 5px solid rgba(255, 255, 255, 0.1);
-                border-top-color: #ffd700;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                margin: 0 auto 20px;
-            }
-            
-            .loading-text {
-                font-size: 18px;
-                font-weight: 500;
-            }
-            
-            @keyframes spin {
-                to {
-                    transform: rotate(360deg);
+            // Стили для загрузки
+            const style = document.createElement('style');
+            style.textContent = `
+                #loading-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(10, 10, 15, 0.9);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    backdrop-filter: blur(10px);
                 }
-            }
-        `;
+                
+                .cyber-loader {
+                    width: 60px;
+                    height: 60px;
+                    border: 4px solid transparent;
+                    border-top: 4px solid var(--cyber-blue);
+                    border-right: 4px solid var(--cyber-pink);
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin: 0 auto 20px;
+                }
+                
+                .loading-text {
+                    font-family: 'Orbitron', sans-serif;
+                    color: var(--cyber-blue);
+                    font-size: 1.2rem;
+                    text-shadow: 0 0 10px currentColor;
+                }
+                
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
         
-        document.head.appendChild(style);
         document.body.appendChild(loading);
     },
 
@@ -1099,6 +1597,38 @@ const BloodyButterfly = {
         if (promocodeModal && event.target === promocodeModal) {
             this.hidePromocodeModal();
         }
+        
+        // Закрытие модального окна аватара
+        const avatarModal = document.getElementById('avatarModal');
+        if (avatarModal && event.target === avatarModal) {
+            this.hideAvatarModal();
+        }
+        
+        // Закрытие других модальных окон
+        ['nickname', 'password', 'email'].forEach(modal => {
+            const modalElement = document.getElementById(`${modal}Modal`);
+            if (modalElement && event.target === modalElement) {
+                this.hideModal(modal);
+            }
+        });
+    },
+
+    // Скрытие модального окна с промокодом
+    hidePromocodeModal() {
+        const modal = document.getElementById('promocodeModal');
+        modal.classList.remove('active');
+    },
+
+    // Копирование промокода
+    copyPromocode() {
+        const promocodeText = document.getElementById('promocodeText').textContent;
+        
+        navigator.clipboard.writeText(promocodeText).then(() => {
+            this.showNotification('Промокод скопирован в буфер обмена!', 'success');
+        }).catch(err => {
+            console.error('Ошибка копирования:', err);
+            this.showNotification('Ошибка копирования', 'error');
+        });
     },
 
     // Запуск всех анимаций
@@ -1106,502 +1636,61 @@ const BloodyButterfly = {
         // Анимация счетчика лет
         this.animateYearCounter();
         
-        // Анимация снега
-        this.animateSnow();
+        // Анимация неоновых вывесок
+        this.animateNeonSigns();
         
-        // Анимация огней
-        this.animateLights();
-        
-        // Анимация фона
-        this.animateBackground();
+        // Анимация кибер-эффектов
+        this.animateCyberEffects();
     },
 
     // Анимация счетчика лет
     animateYearCounter() {
-        const yearElement = document.querySelector('.year-number.next');
-        if (!yearElement) return;
-        
-        let year = 2025;
-        const targetYear = 2026;
-        
-        const interval = setInterval(() => {
-            year++;
-            yearElement.textContent = year;
-            
-            if (year >= targetYear) {
-                clearInterval(interval);
-                
-                // Праздничный эффект при смене года
-                setTimeout(() => {
-                    this.createHolidayEffect();
-                    this.showNotification('🎉 С Новым 2026 Годом! 🎉', 'success');
-                }, 500);
-            }
-        }, 100);
-    },
-
-    // Анимация снега
-    animateSnow() {
-        const snowContainer = document.querySelector('.snowflakes');
-        if (!snowContainer) return;
-        
-        function createSnow() {
-            const snow = document.createElement('div');
-            snow.className = 'snow-particle';
-            snow.style.cssText = `
-                position: absolute;
-                width: ${Math.random() * 5 + 2}px;
-                height: ${Math.random() * 5 + 2}px;
-                background: white;
-                border-radius: 50%;
-                top: -10px;
-                left: ${Math.random() * 100}%;
-                opacity: ${Math.random() * 0.7 + 0.3};
-                filter: blur(${Math.random() * 2}px);
-                animation: snowFall ${Math.random() * 10 + 5}s linear infinite;
-            `;
-            
-            snowContainer.appendChild(snow);
-            
-            // Удаление снежинки
-            setTimeout(() => {
-                if (snow.parentNode) {
-                    snow.parentNode.removeChild(snow);
-                }
-            }, 15000);
-        }
-        
-        // Создание снежинок
-        for (let i = 0; i < 100; i++) {
-            setTimeout(createSnow, i * 100);
-        }
-        
-        setInterval(createSnow, 300);
-    },
-
-    // Анимация огней
-    animateLights() {
-        const lights = document.querySelectorAll('.christmas-lights i');
-        lights.forEach((light, index) => {
+        const elements = document.querySelectorAll('.cyber-text');
+        elements.forEach(el => {
             setInterval(() => {
-                light.style.animation = 'none';
+                el.style.textShadow = `
+                    0 0 10px var(--cyber-blue),
+                    0 0 20px var(--cyber-blue),
+                    0 0 30px var(--cyber-blue)
+                `;
+                
                 setTimeout(() => {
-                    light.style.animation = `lightTwinkle ${Math.random() * 2 + 1}s infinite alternate`;
-                }, 10);
-            }, 3000 + index * 500);
+                    el.style.textShadow = `
+                        0 0 10px var(--cyber-pink),
+                        0 0 20px var(--cyber-pink),
+                        0 0 30px var(--cyber-pink)
+                    `;
+                }, 1000);
+            }, 2000);
         });
     },
 
-    // Анимация фона
-    animateBackground() {
-        const houses = document.querySelectorAll('.house');
-        houses.forEach((house, index) => {
-            house.style.animation = `houseGlow ${4 + index}s ease-in-out infinite`;
-        });
-        
-        const tree = document.querySelector('.christmas-tree');
-        if (tree) {
-            tree.style.animation = 'treeTwinkle 3s infinite';
-        }
-    },
-
-    // Дополнительные методы для улучшения UX
-    setupSmoothScrolling() {
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
+    // Анимация неоновых вывесок
+    animateNeonSigns() {
+        const signs = document.querySelectorAll('.neon-sign');
+        signs.forEach(sign => {
+            setInterval(() => {
+                const colors = ['var(--cyber-blue)', 'var(--cyber-pink)', 'var(--cyber-green)'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                sign.style.color = randomColor;
+            }, 3000);
         });
     },
 
-    setupFormAnimations() {
-        const inputs = document.querySelectorAll('input, textarea, select');
-        inputs.forEach(input => {
-            input.addEventListener('focus', () => {
-                input.parentElement.classList.add('focused');
-            });
-            
-            input.addEventListener('blur', () => {
-                if (!input.value) {
-                    input.parentElement.classList.remove('focused');
-                }
-            });
+    // Анимация кибер-эффектов
+    animateCyberEffects() {
+        const effects = document.querySelectorAll('.cyber-effects');
+        effects.forEach(effect => {
+            setInterval(() => {
+                const lines = effect.querySelectorAll('.cyber-line');
+                lines.forEach(line => {
+                    line.style.width = `${Math.random() * 100}%`;
+                    line.style.background = Math.random() > 0.5 ? 
+                        'linear-gradient(90deg, transparent, var(--cyber-blue), transparent)' :
+                        'linear-gradient(90deg, transparent, var(--cyber-pink), transparent)';
+                });
+            }, 1000);
         });
-    },
-
-    setupParallaxEffects() {
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallaxLayers = document.querySelectorAll('[data-parallax]');
-            
-            parallaxLayers.forEach(layer => {
-                const speed = layer.dataset.parallax || 0.5;
-                layer.style.transform = `translateY(${scrolled * speed}px)`;
-            });
-        });
-    },
-
-    setupImageLazyLoading() {
-        const images = document.querySelectorAll('img[data-src]');
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.add('loaded');
-                    observer.unobserve(img);
-                }
-            });
-        });
-        
-        images.forEach(img => imageObserver.observe(img));
-    },
-
-    setupTooltips() {
-        const tooltipElements = document.querySelectorAll('[data-tooltip]');
-        
-        tooltipElements.forEach(element => {
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.textContent = element.dataset.tooltip;
-            
-            element.appendChild(tooltip);
-            
-            element.addEventListener('mouseenter', () => {
-                tooltip.style.opacity = '1';
-                tooltip.style.visibility = 'visible';
-            });
-            
-            element.addEventListener('mouseleave', () => {
-                tooltip.style.opacity = '0';
-                tooltip.style.visibility = 'hidden';
-            });
-        });
-    },
-
-    setupKeyboardNavigation() {
-        document.addEventListener('keydown', (e) => {
-            // Закрытие модальных окон по ESC
-            if (e.key === 'Escape') {
-                this.hideAuthModal();
-                this.hidePromocodeModal();
-            }
-            
-            // Навигация по табам с помощью клавиш
-            if (e.altKey) {
-                const tabs = document.querySelectorAll('.nav-item');
-                const currentIndex = Array.from(tabs).findIndex(tab => 
-                    tab.classList.contains('active')
-                );
-                
-                switch(e.key) {
-                    case '1':
-                        tabs[0]?.click();
-                        break;
-                    case '2':
-                        tabs[1]?.click();
-                        break;
-                    case '3':
-                        tabs[2]?.click();
-                        break;
-                    case '4':
-                        tabs[3]?.click();
-                        break;
-                    case '5':
-                        tabs[4]?.click();
-                        break;
-                    case 'ArrowRight':
-                        tabs[(currentIndex + 1) % tabs.length]?.click();
-                        break;
-                    case 'ArrowLeft':
-                        tabs[(currentIndex - 1 + tabs.length) % tabs.length]?.click();
-                        break;
-                }
-            }
-        });
-    },
-
-    setupPerformanceMonitoring() {
-        // Мониторинг FPS
-        let frameCount = 0;
-        let lastTime = performance.now();
-        let fps = 60;
-        
-        function checkFPS() {
-            frameCount++;
-            const currentTime = performance.now();
-            
-            if (currentTime - lastTime >= 1000) {
-                fps = frameCount;
-                frameCount = 0;
-                lastTime = currentTime;
-                
-                // Логирование низкого FPS
-                if (fps < 30) {
-                    console.warn(`Низкий FPS: ${fps}. Рекомендуется оптимизация.`);
-                }
-            }
-            
-            requestAnimationFrame(checkFPS);
-        }
-        
-        checkFPS();
-    },
-
-    setupErrorHandling() {
-        window.addEventListener('error', (event) => {
-            console.error('Произошла ошибка:', event.error);
-            this.showNotification('Произошла ошибка. Пожалуйста, обновите страницу.', 'error');
-        });
-        
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('Необработанное обещание:', event.reason);
-            this.showNotification('Произошла ошибка при выполнении операции.', 'error');
-        });
-    },
-
-    setupAnalytics() {
-        // Отслеживание важных событий
-        const trackEvent = (category, action, label) => {
-            console.log(`Analytics: ${category} - ${action} - ${label}`);
-            // В реальном приложении здесь был бы вызов Google Analytics или другого сервиса
-        };
-        
-        // Отслеживание кликов по навигации
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                trackEvent('Navigation', 'Click', item.dataset.tab);
-            });
-        });
-        
-        // Отслеживание форм
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', () => {
-                trackEvent('Form', 'Submit', form.id);
-            });
-        });
-        
-        // Отслеживание бонусов
-        document.getElementById('claimBonus')?.addEventListener('click', () => {
-            trackEvent('Bonus', 'Claim', 'Daily');
-        });
-    },
-
-    setupOfflineSupport() {
-        // Проверка онлайн статуса
-        window.addEventListener('online', () => {
-            this.showNotification('Соединение восстановлено', 'success');
-        });
-        
-        window.addEventListener('offline', () => {
-            this.showNotification('Отсутствует интернет-соединение', 'warning');
-        });
-    },
-
-    setupPWAFeatures() {
-        // Проверка поддержки PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js').catch(error => {
-                console.error('Service Worker registration failed:', error);
-            });
-        }
-        
-        // Добавление на главный экран
-        let deferredPrompt;
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Показать кнопку установки
-            this.showInstallButton();
-        });
-    },
-
-    showInstallButton() {
-        const installButton = document.createElement('button');
-        installButton.id = 'install-button';
-        installButton.innerHTML = '📱 Установить приложение';
-        installButton.className = 'install-btn';
-        
-        installButton.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            
-            if (outcome === 'accepted') {
-                this.showNotification('Приложение установлено!', 'success');
-            }
-            
-            deferredPrompt = null;
-            installButton.remove();
-        });
-        
-        // Добавление кнопки в интерфейс
-        const header = document.querySelector('.new-year-header');
-        if (header) {
-            header.appendChild(installButton);
-        }
-    },
-
-    setupThemeSwitcher() {
-        // Проверка предпочтений пользователя
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const savedTheme = localStorage.getItem('theme');
-        
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-            document.body.classList.add('dark-theme');
-        }
-        
-        // Создание переключателя темы
-        const themeToggle = document.createElement('button');
-        themeToggle.id = 'theme-toggle';
-        themeToggle.innerHTML = '🌙';
-        themeToggle.className = 'theme-toggle';
-        themeToggle.title = 'Переключить тему';
-        
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-theme');
-            const isDark = document.body.classList.contains('dark-theme');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            themeToggle.innerHTML = isDark ? '☀️' : '🌙';
-        });
-        
-        // Добавление переключателя
-        const nav = document.querySelector('.main-nav');
-        if (nav) {
-            nav.appendChild(themeToggle);
-        }
-    },
-
-    setupLanguageSwitcher() {
-        const languages = {
-            'ru': '🇷🇺 Русский',
-            'en': '🇬🇧 English',
-            'de': '🇩🇪 Deutsch'
-        };
-        
-        const currentLang = localStorage.getItem('language') || 'ru';
-        
-        // Создание селектора языка
-        const langSelect = document.createElement('select');
-        langSelect.id = 'language-select';
-        langSelect.className = 'language-select';
-        
-        Object.entries(languages).forEach(([code, name]) => {
-            const option = document.createElement('option');
-            option.value = code;
-            option.textContent = name;
-            option.selected = code === currentLang;
-            langSelect.appendChild(option);
-        });
-        
-        langSelect.addEventListener('change', (e) => {
-            const lang = e.target.value;
-            localStorage.setItem('language', lang);
-            this.changeLanguage(lang);
-        });
-        
-        // Добавление селектора
-        const nav = document.querySelector('.main-nav');
-        if (nav) {
-            nav.appendChild(langSelect);
-        }
-    },
-
-    changeLanguage(lang) {
-        // Здесь должна быть логика смены языка
-        // Для простоты просто перезагружаем страницу
-        location.reload();
-    },
-
-    setupAccessibility() {
-        // Улучшение доступности для клавиатуры
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Tab') {
-                document.body.classList.add('keyboard-navigation');
-            }
-        });
-        
-        document.addEventListener('mousedown', () => {
-            document.body.classList.remove('keyboard-navigation');
-        });
-        
-        // Добавление ARIA атрибутов
-        document.querySelectorAll('button, a, input').forEach(element => {
-            if (!element.getAttribute('aria-label')) {
-                const label = element.textContent || element.title || element.placeholder;
-                if (label) {
-                    element.setAttribute('aria-label', label);
-                }
-            }
-        });
-    },
-
-    setupPrintStyles() {
-        // Стили для печати
-        const printStyle = document.createElement('style');
-        printStyle.media = 'print';
-        printStyle.textContent = `
-            .background-container,
-            .main-nav,
-            .auth-modal,
-            .promocode-modal,
-            .notifications-container,
-            button,
-            .buy-btn,
-            .claim-bonus-btn,
-            .activate-btn {
-                display: none !important;
-            }
-            
-            body {
-                background: white !important;
-                color: black !important;
-            }
-            
-            .main-container {
-                max-width: 100% !important;
-                padding: 20px !important;
-            }
-            
-            .content-container {
-                box-shadow: none !important;
-                border: 1px solid #ccc !important;
-            }
-        `;
-        document.head.appendChild(printStyle);
-    },
-
-    // Метод для очистки и сброса
-    cleanup() {
-        // Очистка всех интервалов и таймеров
-        if (this.animationIntervals) {
-            this.animationIntervals.forEach(clearInterval);
-        }
-        
-        if (this.animationFrames) {
-            this.animationFrames.forEach(cancelAnimationFrame);
-        }
-        
-        // Удаление всех слушателей событий
-        this.eventListeners?.forEach(({ element, event, handler }) => {
-            element.removeEventListener(event, handler);
-        });
-    },
-
-    // Деструктор
-    destroy() {
-        this.cleanup();
-        console.log('👋 Сайт уничтожен');
     }
 };
 
@@ -1609,12 +1698,9 @@ const BloodyButterfly = {
 document.addEventListener('DOMContentLoaded', () => {
     BloodyButterfly.init();
     
-    // Защита от закрытия с несохраненными данными
-    window.addEventListener('beforeunload', (e) => {
-        if (BloodyButterfly.state.isAuthenticated && !BloodyButterfly.state.user?.saved) {
-            e.preventDefault();
-            e.returnValue = 'У вас есть несохраненные изменения. Вы уверены, что хотите уйти?';
-        }
+    // Добавление обработчика для кнопки подтверждения аватара
+    document.getElementById('confirmAvatarBtn')?.addEventListener('click', () => {
+        BloodyButterfly.changeAvatar();
     });
 });
 
@@ -1630,7 +1716,7 @@ window.debugBloodyButterfly = {
             BloodyButterfly.state.user.balance += amount;
             localStorage.setItem('bloodyButterflyUser', JSON.stringify(BloodyButterfly.state.user));
             BloodyButterfly.updateUserInterface();
-            BloodyButterfly.showNotification(`Добавлено ${amount} монет!`, 'success');
+            BloodyButterfly.showNotification(`Добавлено ${amount} кредитов!`, 'success');
         }
     },
     giveVIP: (days = 30) => {
@@ -1641,124 +1727,12 @@ window.debugBloodyButterfly = {
             BloodyButterfly.updateUserInterface();
             BloodyButterfly.showNotification(`VIP на ${days} дней активирован!`, 'success');
         }
+    },
+    activateAllPromocodes: () => {
+        BloodyButterfly.config.promocodes.forEach(promo => {
+            if (!BloodyButterfly.state.usedPromocodes.includes(promo.code)) {
+                BloodyButterfly.activatePromocode(promo.code);
+            }
+        });
     }
 };
-
-// Экспорт для модульной системы
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = BloodyButterfly;
-}
-
-// Service Worker для PWA
-if ('serviceWorker' in navigator) {
-    const swCode = `
-        self.addEventListener('install', (event) => {
-            event.waitUntil(
-                caches.open('bloody-butterfly-v1').then((cache) => {
-                    return cache.addAll([
-                        '/',
-                        '/index.html',
-                        '/style.css',
-                        '/script.js',
-                        '/manifest.json'
-                    ]);
-                })
-            );
-        });
-        
-        self.addEventListener('fetch', (event) => {
-            event.respondWith(
-                caches.match(event.request).then((response) => {
-                    return response || fetch(event.request);
-                })
-            );
-        });
-    `;
-    
-    // Регистрация Service Worker
-    navigator.serviceWorker.register(
-        URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' }))
-    );
-}
-
-// Manifest для PWA
-const manifest = {
-    "name": "BloodyButterfly Server",
-    "short_name": "BloodyButterfly",
-    "description": "Официальный сайт сервера BloodyButterfly - Новый Год 2026",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#0a0a1a",
-    "theme_color": "#d32f2f",
-    "icons": [
-        {
-            "src": "/icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ]
-};
-
-// Добавление manifest в документ
-const link = document.createElement('link');
-link.rel = 'manifest';
-link.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/json' }));
-document.head.appendChild(link);
-
-// Финальная инициализация дополнительных функций
-setTimeout(() => {
-    BloodyButterfly.setupSmoothScrolling();
-    BloodyButterfly.setupFormAnimations();
-    BloodyButterfly.setupParallaxEffects();
-    BloodyButterfly.setupImageLazyLoading();
-    BloodyButterfly.setupTooltips();
-    BloodyButterfly.setupKeyboardNavigation();
-    BloodyButterfly.setupPerformanceMonitoring();
-    BloodyButterfly.setupErrorHandling();
-    BloodyButterfly.setupAnalytics();
-    BloodyButterfly.setupOfflineSupport();
-    BloodyButterfly.setupPWAFeatures();
-    BloodyButterfly.setupThemeSwitcher();
-    BloodyButterfly.setupLanguageSwitcher();
-    BloodyButterfly.setupAccessibility();
-    BloodyButterfly.setupPrintStyles();
-    
-    console.log('✨ Все функции инициализированы!');
-}, 1000);
-
-// Глобальный обработчик ошибок для улучшения UX
-window.onerror = function(msg, url, lineNo, columnNo, error) {
-    console.error('Глобальная ошибка:', { msg, url, lineNo, columnNo, error });
-    BloodyButterfly.showNotification('Произошла непредвиденная ошибка. Пожалуйста, обновите страницу.', 'error');
-    return false;
-};
-
-// Полифиллы для старых браузеров
-if (!String.prototype.includes) {
-    String.prototype.includes = function(search, start) {
-        if (typeof start !== 'number') {
-            start = 0;
-        }
-        if (start + search.length > this.length) {
-            return false;
-        }
-        return this.indexOf(search, start) !== -1;
-    };
-}
-
-// Функция для измерения производительности
-function measurePerformance(name, fn) {
-    const start = performance.now();
-    const result = fn();
-    const end = performance.now();
-    console.log(`${name} выполнено за ${(end - start).toFixed(2)}ms`);
-    return result;
-}
-
-// Экспорт объекта для глобального доступа
-window.BloodyButterfly = BloodyButterfly;
