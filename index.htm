@@ -3,263 +3,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎄 BloodyButterfly Server - Новый Год 2026 🎄</title>
+    <title>🎮 BloodyButterfly Server - ClientMod V34 🎮</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Новогодний фон с анимацией -->
+    <!-- Киберпанк фон -->
     <div class="background-container">
-        <div class="snowflakes"></div>
-        <div class="village-background">
-            <!-- Анимированные домики деревни -->
-            <div class="house house1"></div>
-            <div class="house house2"></div>
-            <div class="house house3"></div>
-            <div class="christmas-tree"></div>
-            <div class="snowman"></div>
-            <div class="fence"></div>
-            <!-- Падающий снег -->
-            <div class="snow-layer"></div>
+        <div class="cyber-grid"></div>
+        <div class="neon-grid"></div>
+        <div class="data-streams"></div>
+        <div class="hologram-effects"></div>
+        <div class="particle-field"></div>
+        <div class="glitch-overlay"></div>
+        
+        <!-- Кибер городской фон -->
+        <div class="cyber-city">
+            <div class="cyber-building b1"></div>
+            <div class="cyber-building b2"></div>
+            <div class="cyber-building b3"></div>
+            <div class="cyber-building b4"></div>
+            <div class="cyber-building b5"></div>
+            <div class="hover-car"></div>
+            <div class="neon-sign" data-text="BLOODY BUTTERFLY"></div>
+            <div class="hologram-ad"></div>
         </div>
         
-        <!-- Летающий Дед Мороз -->
-        <div class="santa-container" id="santa">
-            <div class="santa">
-                <div class="santa-head">
-                    <div class="santa-hat"></div>
-                    <div class="santa-face">
-                        <div class="santa-eye left"></div>
-                        <div class="santa-eye right"></div>
-                        <div class="santa-nose"></div>
-                        <div class="santa-beard"></div>
-                    </div>
+        <!-- Промокодный дроп -->
+        <div class="promocode-drop" id="promocodeDrop">
+            <div class="drop-container">
+                <div class="drop-icon">
+                    <i class="fas fa-gift"></i>
                 </div>
-                <div class="santa-body">
-                    <div class="santa-arm left"></div>
-                    <div class="santa-arm right"></div>
-                    <div class="santa-bag"></div>
-                </div>
-                <div class="santa-sleigh"></div>
-                <div class="santa-reindeer"></div>
+                <div class="drop-text">VIP DROP</div>
             </div>
-            <div class="santa-trail"></div>
         </div>
         
         <!-- Всплывающее окно с промокодом -->
         <div class="promocode-modal" id="promocodeModal">
             <div class="modal-content">
                 <span class="close-modal">&times;</span>
-                <h2>🎁 Поздравляем! 🎁</h2>
-                <p>Дед Мороз подарил вам VIP на 1 день!</p>
+                <h2><i class="fas fa-gem"></i> КИБЕР ПОДАРОК!</h2>
+                <p>Система наградила вас VIP доступом!</p>
                 <div class="promocode-display">
-                    <span id="promocodeText">BLOODY2026-VIP</span>
+                    <span id="promocodeText">CYBER-VIP-2024</span>
                     <button class="copy-btn" onclick="copyPromocode()">
-                        <i class="fas fa-copy"></i> Копировать
+                        <i class="fas fa-copy"></i> Копировать код
                     </button>
                 </div>
                 <p class="modal-note">Промокод активируется автоматически в вашем профиле</p>
+                <div class="cyber-effects">
+                    <div class="cyber-line"></div>
+                    <div class="cyber-dot"></div>
+                    <div class="cyber-dot"></div>
+                    <div class="cyber-dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Автоматическая скидка для зарегистрированных -->
+        <div class="auto-discount-badge" id="autoDiscountBadge">
+            <div class="auto-discount-content">
+                <i class="fas fa-bolt"></i>
+                <h3>АВТО-СКИДКА</h3>
+                <div class="auto-discount-percent" id="autoDiscountPercent">10%</div>
+                <p>Зарегистрированным пользователям</p>
+            </div>
+        </div>
+
+        <!-- Модальное окно выбора аватара -->
+        <div class="avatar-modal" id="avatarModal">
+            <div class="modal-content cyber">
+                <span class="close-avatar">&times;</span>
+                <h2><i class="fas fa-user-astronaut"></i> ВЫБОР АВАТАРА</h2>
+                <div class="avatar-grid" id="avatarGrid">
+                    <!-- Аватары будут добавлены через JS -->
+                </div>
+                <button class="confirm-avatar-btn" id="confirmAvatarBtn">
+                    <i class="fas fa-check"></i> ПОДТВЕРДИТЬ ВЫБОР
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Основной контейнер -->
     <div class="main-container">
-        <!-- Новогодний заголовок -->
-        <header class="new-year-header">
-            <div class="year-display">
-                <div class="year-number">2025</div>
-                <div class="year-transition">
-                    <span class="old-year">2025</span>
-                    <span class="new-year">2026</span>
-                </div>
-                <div class="year-number next">2026</div>
+        <!-- Кибер заголовок -->
+        <header class="cyber-header">
+            <div class="glitch-container">
+                <div class="glitch" data-text="CLIENTMOD V34">CLIENTMOD V34</div>
+                <div class="glitch" data-text="CLIENTMOD V34">CLIENTMOD V34</div>
+                <div class="glitch" data-text="CLIENTMOD V34">CLIENTMOD V34</div>
             </div>
             
             <h1 class="server-title">
-                <span class="bloody-text">BLOODY</span>
-                <span class="butterfly-text">BUTTERFLY</span>
-                <span class="server-badge">SERVER</span>
+                <span class="cyber-text" data-text="BLOODY">BLOODY</span>
+                <span class="cyber-spacer">//</span>
+                <span class="cyber-text" data-text="BUTTERFLY">BUTTERFLY</span>
+                <span class="server-badge">
+                    <i class="fas fa-server"></i>
+                    <span>SERVER</span>
+                </span>
             </h1>
             
-            <div class="new-year-subtitle">
-                <span class="subtitle-text">ClientMod V34 | Новогоднее обновление 2026</span>
-                <div class="christmas-lights">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-candy-cane"></i>
-                    <i class="fas fa-gift"></i>
-                    <i class="fas fa-snowflake"></i>
-                    <i class="fas fa-tree"></i>
+            <div class="cyber-subtitle">
+                <div class="scan-line"></div>
+                <span class="subtitle-text">Киберспортивный хаб | Версия 2024.1</span>
+                <div class="status-indicators">
+                    <div class="status online">
+                        <div class="status-dot"></div>
+                        <span>ONLINE</span>
+                    </div>
+                    <div class="status players">
+                        <div class="status-dot"></div>
+                        <span id="playerCount">1,278 PLAYERS</span>
+                    </div>
                 </div>
             </div>
         </header>
 
         <!-- Навигационное меню -->
-        <nav class="main-nav">
+        <nav class="cyber-nav">
             <ul class="nav-list">
                 <li class="nav-item active" data-tab="home">
-                    <i class="fas fa-home"></i>
-                    <span>Главная</span>
+                    <div class="nav-icon">
+                        <i class="fas fa-terminal"></i>
+                    </div>
+                    <span class="nav-text">ТЕРМИНАЛ</span>
+                    <div class="nav-indicator"></div>
                 </li>
                 <li class="nav-item" data-tab="donate">
-                    <i class="fas fa-gem"></i>
-                    <span>Донат</span>
+                    <div class="nav-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <span class="nav-text">БУСТ</span>
+                    <div class="nav-indicator"></div>
                 </li>
                 <li class="nav-item" data-tab="bonuses">
-                    <i class="fas fa-gift"></i>
-                    <span>Бонусы</span>
+                    <div class="nav-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <span class="nav-text">РЕСУРСЫ</span>
+                    <div class="nav-indicator"></div>
                 </li>
                 <li class="nav-item" data-tab="auth" id="authTab">
-                    <i class="fas fa-user"></i>
-                    <span>Вход/Регистрация</span>
+                    <div class="nav-icon">
+                        <i class="fas fa-user-secret"></i>
+                    </div>
+                    <span class="nav-text">ДОСТУП</span>
+                    <div class="nav-indicator"></div>
                 </li>
                 <li class="nav-item" data-tab="support">
-                    <i class="fas fa-headset"></i>
-                    <span>Поддержка</span>
+                    <div class="nav-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <span class="nav-text">ПОДДЕРЖКА</span>
+                    <div class="nav-indicator"></div>
                 </li>
                 <li class="nav-item" data-tab="profile" id="profileTab" style="display:none;">
-                    <i class="fas fa-user-circle"></i>
-                    <span>Профиль</span>
+                    <div class="nav-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <span class="nav-text">ПРОФИЛЬ</span>
+                    <div class="nav-indicator"></div>
                 </li>
             </ul>
+            <div class="nav-highlight"></div>
         </nav>
 
         <!-- Контентные вкладки -->
         <div class="content-container">
             <!-- Главная -->
             <div class="tab-content active" id="homeTab">
-                <div class="welcome-message">
-                    <h2><i class="fas fa-tree"></i> С Новым 2026 Годом!</h2>
-                    <p>Добро пожаловать на официальный сервер <strong>BloodyButterfly</strong>! Готовьтесь к новогоднему обновлению ClientMod V34!</p>
+                <div class="cyber-welcome">
+                    <h2><i class="fas fa-satellite-dish"></i> ДОБРО ПОЖАЛОВАТЬ В СИСТЕМУ</h2>
+                    <p>Подключение к игровому хабу <strong>BloodyButterfly</strong> установлено. Готовьтесь к киберспортивным баталиям!</p>
                     
                     <div class="server-stats">
-                        <div class="stat-card">
-                            <i class="fas fa-users"></i>
-                            <span class="stat-value" id="onlineCount">1278</span>
-                            <span class="stat-label">Онлайн</span>
+                        <div class="stat-card cyber">
+                            <div class="stat-icon">
+                                <i class="fas fa-network-wired"></i>
+                            </div>
+                            <div class="stat-data">
+                                <div class="stat-value" id="onlineCount">1278</div>
+                                <div class="stat-label">Онлайн операторов</div>
+                            </div>
+                            <div class="stat-graph"></div>
                         </div>
-                        <div class="stat-card">
-                            <i class="fas fa-gamepad"></i>
-                            <span class="stat-value">34</span>
-                            <span class="stat-label">Версия</span>
+                        <div class="stat-card cyber">
+                            <div class="stat-icon">
+                                <i class="fas fa-code-branch"></i>
+                            </div>
+                            <div class="stat-data">
+                                <div class="stat-value">34</div>
+                                <div class="stat-label">Версия системы</div>
+                            </div>
+                            <div class="stat-graph"></div>
                         </div>
-                        <div class="stat-card">
-                            <i class="fas fa-gift"></i>
-                            <span class="stat-value" id="giftsToday">356</span>
-                            <span class="stat-label">Подарков сегодня</span>
+                        <div class="stat-card cyber">
+                            <div class="stat-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="stat-data">
+                                <div class="stat-value" id="giftsToday">356</div>
+                                <div class="stat-label">Активаций сегодня</div>
+                            </div>
+                            <div class="stat-graph"></div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="news-container">
-                    <h3><i class="fas fa-newspaper"></i> Новогодние новости</h3>
+                    <h3><i class="fas fa-broadcast-tower"></i> СИСТЕМНЫЕ УВЕДОМЛЕНИЯ</h3>
                     <div class="news-item new">
-                        <div class="news-date">31.12.2025</div>
-                        <h4>Новогодний ивент 2026!</h4>
-                        <p>Присоединяйтесь к праздничному событию! Особые награды, зимние карты и новогодние скины!</p>
+                        <div class="news-date">[24.12.2024 20:34]</div>
+                        <h4>Кибер-ивент "НОВОГОДНИЙ ШТУРМ"</h4>
+                        <p>Присоединяйтесь к праздничному событию! Особые награды, эксклюзивные скины и кибер-подарки!</p>
+                        <div class="news-tag">EVENT</div>
                     </div>
                     <div class="news-item">
-                        <div class="news-date">30.12.2025</div>
-                        <h4>Обновление ClientMod V34</h4>
-                        <p>Новые оптимизации, исправления багов и праздничные эффекты!</p>
+                        <div class="news-date">[23.12.2024 15:22]</div>
+                        <h4>Обновление ClientMod V34.1</h4>
+                        <p>Новые оптимизации, исправления багов и кибер-эффекты. Патч 4.3 готов к загрузке.</p>
+                        <div class="news-tag">UPDATE</div>
                     </div>
                 </div>
             </div>
 
             <!-- Донат -->
             <div class="tab-content" id="donateTab">
-                <h2><i class="fas fa-gem"></i> Новогодние предложения</h2>
+                <h2><i class="fas fa-bolt"></i> КИБЕР-БУСТЕРЫ</h2>
                 <div class="donate-packages">
-                    <div class="package-card">
+                    <div class="package-card cyber">
                         <div class="package-header">
-                            <i class="fas fa-snowflake"></i>
-                            <h3>Новогодний набор</h3>
+                            <div class="package-icon">
+                                <i class="fas fa-microchip"></i>
+                            </div>
+                            <h3>БАЗОВЫЙ ПАК</h3>
                         </div>
-                        <div class="package-price">299 ₽</div>
+                        <div class="package-price">
+                            <span class="original-price">399 ₽</span>
+                            <span class="discounted-price" id="discountedPrice1">299 ₽</span>
+                        </div>
                         <ul class="package-features">
                             <li><i class="fas fa-check"></i> VIP на 7 дней</li>
-                            <li><i class="fas fa-check"></i> 5000 игровой валюты</li>
-                            <li><i class="fas fa-check"></i> Эксклюзивный скин "Снежинка"</li>
+                            <li><i class="fas fa-check"></i> 5000 кредитов</li>
+                            <li><i class="fas fa-check"></i> Скин "Неон"</li>
                         </ul>
-                        <button class="buy-btn">Купить</button>
+                        <button class="buy-btn cyber" data-package="basic">
+                            <span>ПРИОБРЕСТИ В ТЕЛЕГРАМ</span>
+                            <i class="fab fa-telegram-plane"></i>
+                        </button>
+                        <div class="discount-tag" id="discountTag1">-25%</div>
                     </div>
                     
-                    <div class="package-card featured">
-                        <div class="package-badge">Популярное</div>
+                    <div class="package-card cyber featured">
+                        <div class="package-badge">POPULAR</div>
                         <div class="package-header">
-                            <i class="fas fa-star"></i>
-                            <h3>Праздничный пакет</h3>
+                            <div class="package-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <h3>ПРО ПАК</h3>
                         </div>
-                        <div class="package-price">599 ₽</div>
+                        <div class="package-price">
+                            <span class="original-price">799 ₽</span>
+                            <span class="discounted-price" id="discountedPrice2">599 ₽</span>
+                        </div>
                         <ul class="package-features">
                             <li><i class="fas fa-check"></i> VIP на 30 дней</li>
-                            <li><i class="fas fa-check"></i> 15000 игровой валюты</li>
+                            <li><i class="fas fa-check"></i> 15000 кредитов</li>
                             <li><i class="fas fa-check"></i> 5 эксклюзивных скинов</li>
                         </ul>
-                        <button class="buy-btn">Купить</button>
+                        <button class="buy-btn cyber" data-package="pro">
+                            <span>ПРИОБРЕСТИ В ТЕЛЕГРАМ</span>
+                            <i class="fab fa-telegram-plane"></i>
+                        </button>
+                        <div class="discount-tag" id="discountTag2">-25%</div>
                     </div>
                     
-                    <div class="package-card">
+                    <div class="package-card cyber">
                         <div class="package-header">
-                            <i class="fas fa-crown"></i>
-                            <h3>Премиум набор</h3>
+                            <div class="package-icon">
+                                <i class="fas fa-space-shuttle"></i>
+                            </div>
+                            <h3>УЛЬТРА ПАК</h3>
                         </div>
-                        <div class="package-price">1199 ₽</div>
+                        <div class="package-price">
+                            <span class="original-price">1499 ₽</span>
+                            <span class="discounted-price" id="discountedPrice3">1199 ₽</span>
+                        </div>
                         <ul class="package-features">
                             <li><i class="fas fa-check"></i> VIP на 90 дней</li>
-                            <li><i class="fas fa-check"></i> 50000 игровой валюты</li>
+                            <li><i class="fas fa-check"></i> 50000 кредитов</li>
                             <li><i class="fas fa-check"></i> Все эксклюзивные скины</li>
                         </ul>
-                        <button class="buy-btn">Купить</button>
+                        <button class="buy-btn cyber" data-package="ultra">
+                            <span>ПРИОБРЕСТИ В ТЕЛЕГРАМ</span>
+                            <i class="fab fa-telegram-plane"></i>
+                        </button>
+                        <div class="discount-tag" id="discountTag3">-20%</div>
+                    </div>
+                </div>
+
+                <!-- Промокоды -->
+                <div class="promocode-section">
+                    <h3><i class="fas fa-qrcode"></i> АКТИВНЫЕ ПРОМОКОДЫ</h3>
+                    <div class="promocode-system" id="promocodeSystem">
+                        <!-- Промокоды будут добавлены через JS -->
                     </div>
                 </div>
             </div>
 
             <!-- Бонусы -->
             <div class="tab-content" id="bonusesTab">
-                <h2><i class="fas fa-gift"></i> Новогодние бонусы</h2>
+                <h2><i class="fas fa-gem"></i> РЕСУРСЫ СИСТЕМЫ</h2>
                 
                 <div class="bonus-section">
-                    <h3><i class="fas fa-calendar-day"></i> Ежедневный бонус</h3>
+                    <h3><i class="fas fa-calendar-alt"></i> ЕЖЕДНЕВНЫЙ ДОСТУП</h3>
                     <div class="daily-bonus-container">
                         <div class="bonus-calendar">
                             <!-- Календарь бонусов -->
                             <div class="bonus-day claimed">
                                 <div class="day-number">1</div>
-                                <i class="fas fa-gift"></i>
+                                <i class="fas fa-key"></i>
                             </div>
                             <div class="bonus-day today">
                                 <div class="day-number">2</div>
-                                <i class="fas fa-gift"></i>
-                                <div class="today-badge">Сегодня</div>
+                                <i class="fas fa-key"></i>
+                                <div class="today-badge">СЕГОДНЯ</div>
                             </div>
                             <!-- Остальные дни -->
                         </div>
                         
-                        <button class="claim-bonus-btn" id="claimBonus">
-                            <i class="fas fa-gift"></i> Получить бонус
+                        <button class="claim-bonus-btn cyber" id="claimBonus">
+                            <i class="fas fa-download"></i> 
+                            <span>ПОЛУЧИТЬ РЕСУРСЫ</span>
                         </button>
                         
-                        <div class="bonus-info">
-                            <p><i class="fas fa-info-circle"></i> Ежедневный бонус может содержать:</p>
+                        <div class="bonus-info cyber">
+                            <p><i class="fas fa-info-circle"></i> Ежедневный доступ может содержать:</p>
                             <ul>
-                                <li>VIP на 10-30 минут (шанс выпадения разный)</li>
+                                <li>VIP на 10-30 минут (разная вероятность)</li>
                                 <li>Промокоды на скидку 10-40%</li>
-                                <li>Игровую валюту</li>
+                                <li>Кредиты системы</li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 
                 <div class="bonus-section">
-                    <h3><i class="fas fa-ticket-alt"></i> Промокоды</h3>
-                    <div class="promocode-container">
-                        <input type="text" class="promocode-input" placeholder="Введите промокод">
-                        <button class="activate-btn">Активировать</button>
+                    <h3><i class="fas fa-qrcode"></i> АКТИВАЦИЯ КОДОВ</h3>
+                    <div class="promocode-container cyber">
+                        <input type="text" class="promocode-input" id="manualPromocode" placeholder="ВВЕДИТЕ КОД ДОСТУПА">
+                        <button class="activate-btn cyber" id="activatePromocodeBtn">
+                            <span>АКТИВИРОВАТЬ</span>
+                            <i class="fas fa-terminal"></i>
+                        </button>
                     </div>
-                    <div class="active-promocodes">
-                        <h4>Активные промокоды:</h4>
+                    <div class="active-promocodes" id="userPromocodes">
+                        <h4>Ваши активные коды:</h4>
                         <!-- Список активных промокодов -->
                     </div>
                 </div>
@@ -267,56 +370,168 @@
 
             <!-- Профиль -->
             <div class="tab-content" id="profileTabContent">
-                <h2><i class="fas fa-user-circle"></i> Мой профиль</h2>
-                <div class="profile-info">
-                    <div class="profile-header">
-                        <div class="avatar">
-                            <i class="fas fa-user"></i>
+                <h2><i class="fas fa-id-card"></i> ПРОФИЛЬ ОПЕРАТОРА</h2>
+                
+                <div class="profile-container">
+                    <!-- Информация профиля -->
+                    <div class="profile-info cyber">
+                        <div class="profile-header">
+                            <div class="avatar-selector">
+                                <div class="avatar cyber" id="currentAvatar">
+                                    <i class="fas fa-user-astronaut"></i>
+                                    <div class="avatar-glow"></div>
+                                </div>
+                                <button class="change-avatar-btn" id="changeAvatarBtn">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Изменить</span>
+                                </button>
+                            </div>
+                            
+                            <div class="profile-details">
+                                <h3 id="profileUsername">ГОСТЬ</h3>
+                                <div class="profile-status">
+                                    <span class="status-dot online"></span>
+                                    <span id="profileStatus">СИСТЕМА ОФФЛАЙН</span>
+                                </div>
+                                
+                                <div class="profile-creators">
+                                    <div class="creator-info">
+                                        <i class="fas fa-code"></i>
+                                        <span>Создатель сайта: <strong class="creator-name">GmaowG</strong></span>
+                                    </div>
+                                    <div class="creator-info">
+                                        <i class="fas fa-server"></i>
+                                        <span>Создатель сервера: <strong class="creator-name">KILLMAKER</strong></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="profile-details">
-                            <h3 id="profileUsername">Гость</h3>
-                            <div class="profile-status">
-                                <span class="status-dot online"></span>
-                                <span id="profileStatus">Не в сети</span>
+                        
+                        <div class="profile-stats">
+                            <div class="stat-item cyber">
+                                <i class="fas fa-clock"></i>
+                                <div class="stat-info">
+                                    <span>VIP доступ до:</span>
+                                    <strong id="vipUntil">--.--.----</strong>
+                                </div>
+                            </div>
+                            <div class="stat-item cyber">
+                                <i class="fas fa-coins"></i>
+                                <div class="stat-info">
+                                    <span>Кредиты:</span>
+                                    <strong id="userBalance">0</strong>
+                                </div>
+                            </div>
+                            <div class="stat-item cyber">
+                                <i class="fas fa-percentage"></i>
+                                <div class="stat-info">
+                                    <span>Ваша скидка:</span>
+                                    <strong id="userDiscount">0%</strong>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="profile-stats">
-                        <div class="stat-item">
-                            <i class="fas fa-clock"></i>
-                            <span>VIP до:</span>
-                            <strong id="vipUntil">--.--.----</strong>
-                        </div>
-                        <div class="stat-item">
-                            <i class="fas fa-coins"></i>
-                            <span>Баланс:</span>
-                            <strong id="userBalance">0</strong>
+
+                    <!-- Настройки профиля -->
+                    <div class="profile-settings">
+                        <h3><i class="fas fa-cog"></i> НАСТРОЙКИ ПРОФИЛЯ</h3>
+                        
+                        <div class="settings-grid">
+                            <div class="setting-card cyber">
+                                <div class="setting-icon">
+                                    <i class="fas fa-user-edit"></i>
+                                </div>
+                                <h4>Изменить ник</h4>
+                                <p>Смена игрового ника</p>
+                                <button class="setting-btn" id="changeNicknameBtn">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    <span>ИЗМЕНИТЬ</span>
+                                </button>
+                            </div>
+                            
+                            <div class="setting-card cyber">
+                                <div class="setting-icon">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                                <h4>Изменить пароль</h4>
+                                <p>Смена пароля доступа</p>
+                                <button class="setting-btn" id="changePasswordBtn">
+                                    <i class="fas fa-lock"></i>
+                                    <span>ИЗМЕНИТЬ</span>
+                                </button>
+                            </div>
+                            
+                            <div class="setting-card cyber">
+                                <div class="setting-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <h4>Подтвердить Email</h4>
+                                <p>Подтверждение почты</p>
+                                <button class="setting-btn" id="verifyEmailBtn">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>ПОДТВЕРДИТЬ</span>
+                                </button>
+                            </div>
+                            
+                            <div class="setting-card cyber">
+                                <div class="setting-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <h4>История операций</h4>
+                                <p>Просмотр истории</p>
+                                <button class="setting-btn" id="historyBtn">
+                                    <i class="fas fa-scroll"></i>
+                                    <span>ПОСМОТРЕТЬ</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <button class="logout-btn" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i> Выйти
+
+                    <!-- Выход из системы -->
+                    <button class="logout-btn cyber" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> 
+                        <span>ВЫЙТИ ИЗ СИСТЕМЫ</span>
                     </button>
                 </div>
             </div>
 
             <!-- Поддержка -->
             <div class="tab-content" id="supportTab">
-                <h2><i class="fas fa-headset"></i> Поддержка</h2>
+                <h2><i class="fas fa-headset"></i> ТЕХПОДДЕРЖКА</h2>
                 <div class="support-container">
                     <div class="support-options">
-                        <div class="support-card">
-                            <i class="fas fa-discord"></i>
-                            <h3>Discord</h3>
-                            <p>Присоединяйтесь к нашему Discord серверу</p>
-                            <a href="#" class="support-link">Перейти</a>
+                        <div class="support-card cyber">
+                            <div class="support-icon">
+                                <i class="fab fa-telegram"></i>
+                            </div>
+                            <h3>Telegram канал</h3>
+                            <p>Основной канал для доната и поддержки</p>
+                            <a href="https://t.me/bloodybutterfly_official" target="_blank" class="support-link cyber">
+                                <span>ПЕРЕЙТИ В ТЕЛЕГРАМ</span>
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
                         </div>
-                        <div class="support-card">
-                            <i class="fas fa-envelope"></i>
-                            <h3>Email</h3>
-                            <p>Напишите нам на почту</p>
-                            <a href="mailto:support@bloodybutterfly.ru" class="support-link">Написать</a>
+                        <div class="support-card cyber">
+                            <div class="support-icon">
+                                <i class="fab fa-discord"></i>
+                            </div>
+                            <h3>Discord сервер</h3>
+                            <p>Сообщество игроков и чат</p>
+                            <a href="#" class="support-link cyber">
+                                <span>ПОДКЛЮЧИТЬСЯ</span>
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                        <div class="support-card cyber">
+                            <div class="support-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h3>Кибер-почта</h3>
+                            <p>Техническая поддержка</p>
+                            <a href="mailto:support@bloodybutterfly.ru" class="support-link cyber">
+                                <span>НАПИСАТЬ</span>
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -325,110 +540,208 @@
 
         <!-- Модальное окно авторизации -->
         <div class="auth-modal" id="authModal">
-            <div class="modal-container">
-                <div class="auth-tabs">
-                    <button class="auth-tab active" data-auth="login">Вход</button>
-                    <button class="auth-tab" data-auth="register">Регистрация</button>
+            <div class="modal-container cyber">
+                <div class="auth-tabs cyber">
+                    <button class="auth-tab active" data-auth="login">
+                        <span>ВХОД</span>
+                    </button>
+                    <button class="auth-tab" data-auth="register">
+                        <span>РЕГИСТРАЦИЯ</span>
+                    </button>
                     <span class="close-auth">&times;</span>
                 </div>
                 
                 <!-- Форма входа -->
                 <form class="auth-form active" id="loginForm">
-                    <h3>Вход в аккаунт</h3>
+                    <h3><i class="fas fa-fingerprint"></i> АУТЕНТИФИКАЦИЯ</h3>
                     
-                    <div class="form-group">
+                    <div class="form-group cyber">
                         <label for="loginUsername">
-                            <i class="fas fa-user"></i> Ник на сервере
+                            <i class="fas fa-user-secret"></i> 
+                            <span>ИДЕНТИФИКАТОР СЕРВЕРА</span>
                         </label>
                         <input type="text" id="loginUsername" required 
-                               placeholder="Введите ваш ник на сервере BloodyButterfly">
-                        <div class="form-note">
+                               placeholder="ВВЕДИТЕ ВАШ НИК НА СЕРВЕРЕ BLOODYBUTTERFLY">
+                        <div class="form-note cyber">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <strong>ВАЖНО:</strong> Используйте тот же ник, что и на сервере!
+                            <strong>ВАЖНО:</strong> Используйте идентичный идентификатор сервера!
                         </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group cyber">
                         <label for="loginPassword">
-                            <i class="fas fa-lock"></i> Пароль
+                            <i class="fas fa-key"></i> 
+                            <span>ПАРОЛЬ ДОСТУПА</span>
                         </label>
                         <input type="password" id="loginPassword" required>
                     </div>
                     
-                    <button type="submit" class="auth-submit">
-                        <i class="fas fa-sign-in-alt"></i> Войти
+                    <button type="submit" class="auth-submit cyber">
+                        <i class="fas fa-sign-in-alt"></i> 
+                        <span>ПОДКЛЮЧИТЬСЯ К СИСТЕМЕ</span>
                     </button>
                 </form>
                 
                 <!-- Форма регистрации -->
                 <form class="auth-form" id="registerForm">
-                    <h3>Регистрация нового аккаунта</h3>
+                    <h3><i class="fas fa-user-plus"></i> РЕГИСТРАЦИЯ ОПЕРАТОРА</h3>
                     
-                    <div class="form-group">
+                    <div class="form-group cyber">
                         <label for="regUsername">
-                            <i class="fas fa-user"></i> Ник на сервере
+                            <i class="fas fa-user-secret"></i> 
+                            <span>ИДЕНТИФИКАТОР СЕРВЕРА</span>
                         </label>
                         <input type="text" id="regUsername" required 
-                               placeholder="Тот же ник, что и на сервере BloodyButterfly">
-                        <div class="form-warning">
+                               placeholder="ИДЕНТИЧНЫЙ ИДЕНТИФИКАТОР СЕРВЕРА BLOODYBUTTERFLY">
+                        <div class="form-warning cyber">
                             <i class="fas fa-exclamation-circle"></i>
-                            <strong>ВНИМАНИЕ:</strong> Используйте ровно тот же ник, что и на игровом сервере!
-                            <br>Иначе аккаунт не будет привязан и бонусы не начислятся!
+                            <strong>ВНИМАНИЕ:</strong> Используйте 100% идентичный идентификатор игрового сервера!
+                            <br>Иначе доступ к ресурсам будет заблокирован!
                         </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group cyber">
                         <label for="regEmail">
-                            <i class="fas fa-envelope"></i> Электронная почта
+                            <i class="fas fa-at"></i> 
+                            <span>КИБЕР-АДРЕС</span>
                         </label>
                         <input type="email" id="regEmail" required>
-                        <div class="form-note">
-                            На эту почту будут приходить коды подтверждения и уведомления
+                        <div class="form-note cyber">
+                            На этот адрес будут поступать коды доступа и уведомления системы
                         </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group cyber">
                         <label for="regPassword">
-                            <i class="fas fa-lock"></i> Пароль
+                            <i class="fas fa-key"></i> 
+                            <span>ПАРОЛЬ ДОСТУПА</span>
                         </label>
                         <input type="password" id="regPassword" required 
                                pattern="^(?=.*[a-zA-Z])(?=.*[$!@#%^&*]).{8,}$"
-                               title="Пароль должен содержать английские буквы и хотя бы один специальный символ ($!@#%^&*)">
-                        <div class="password-requirements">
-                            <p><strong>Требования к паролю:</strong></p>
+                               title="Пароль должен содержать английские символы и специальные знаки ($!@#%^&*)">
+                        <div class="password-requirements cyber">
+                            <p><strong>ТРЕБОВАНИЯ СИСТЕМЫ:</strong></p>
                             <ul>
                                 <li>Минимум 8 символов</li>
-                                <li>Английские буквы (A-Z, a-z)</li>
-                                <li>Хотя бы один специальный символ: $ ! @ # % ^ & *</li>
-                                <li class="invalid">Слишком простые пароли (123456789, qwerty и т.д.) запрещены!</li>
+                                <li>Английские символы (A-Z, a-z)</li>
+                                <li>Специальные знаки: $ ! @ # % ^ & *</li>
+                                <li class="invalid">Простые комбинации запрещены системой!</li>
                             </ul>
                         </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group cyber">
                         <label for="regConfirmPassword">
-                            <i class="fas fa-lock"></i> Подтверждение пароля
+                            <i class="fas fa-key"></i> 
+                            <span>ПОДТВЕРЖДЕНИЕ ПАРОЛЯ</span>
                         </label>
                         <input type="password" id="regConfirmPassword" required>
                     </div>
                     
-                    <button type="submit" class="auth-submit">
-                        <i class="fas fa-user-plus"></i> Зарегистрироваться
+                    <button type="submit" class="auth-submit cyber">
+                        <i class="fas fa-user-plus"></i> 
+                        <span>СОЗДАТЬ АККАУНТ</span>
                     </button>
                 </form>
             </div>
         </div>
 
+        <!-- Модальное окно изменения ника -->
+        <div class="modal" id="nicknameModal">
+            <div class="modal-content cyber">
+                <span class="close-modal-btn" data-modal="nickname">&times;</span>
+                <h2><i class="fas fa-user-edit"></i> ИЗМЕНЕНИЕ НИКА</h2>
+                <div class="form-group cyber">
+                    <label for="newNickname">Новый ник на сервере</label>
+                    <input type="text" id="newNickname" placeholder="Введите новый ник">
+                    <div class="form-note cyber">
+                        <i class="fas fa-info-circle"></i>
+                        После изменения ника будет отправлен код подтверждения на email
+                    </div>
+                </div>
+                <button class="modal-submit-btn" id="submitNicknameChange">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>ОТПРАВИТЬ КОД ПОДТВЕРЖДЕНИЯ</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Модальное окно изменения пароля -->
+        <div class="modal" id="passwordModal">
+            <div class="modal-content cyber">
+                <span class="close-modal-btn" data-modal="password">&times;</span>
+                <h2><i class="fas fa-key"></i> ИЗМЕНЕНИЕ ПАРОЛЯ</h2>
+                <div class="form-group cyber">
+                    <label for="currentPassword">Текущий пароль</label>
+                    <input type="password" id="currentPassword">
+                </div>
+                <div class="form-group cyber">
+                    <label for="newPassword">Новый пароль</label>
+                    <input type="password" id="newPassword">
+                </div>
+                <div class="form-group cyber">
+                    <label for="confirmNewPassword">Подтверждение нового пароля</label>
+                    <input type="password" id="confirmNewPassword">
+                </div>
+                <div class="form-note cyber">
+                    <i class="fas fa-info-circle"></i>
+                    После изменения пароля будет отправлен код подтверждения на email
+                </div>
+                <button class="modal-submit-btn" id="submitPasswordChange">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>ИЗМЕНИТЬ ПАРОЛЬ</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Модальное окно подтверждения email -->
+        <div class="modal" id="emailModal">
+            <div class="modal-content cyber">
+                <span class="close-modal-btn" data-modal="email">&times;</span>
+                <h2><i class="fas fa-envelope"></i> ПОДТВЕРЖДЕНИЕ EMAIL</h2>
+                <div class="form-group cyber">
+                    <label for="verificationCode">Код подтверждения</label>
+                    <input type="text" id="verificationCode" placeholder="Введите код из письма">
+                    <div class="form-note cyber">
+                        <i class="fas fa-info-circle"></i>
+                        Код отправлен на ваш email. Проверьте папку "Спам"
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-submit-btn secondary" id="resendVerificationCode">
+                        <i class="fas fa-redo"></i>
+                        <span>ОТПРАВИТЬ КОД ПОВТОРНО</span>
+                    </button>
+                    <button class="modal-submit-btn" id="submitVerificationCode">
+                        <i class="fas fa-check"></i>
+                        <span>ПОДТВЕРДИТЬ</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Футер -->
-        <footer class="main-footer">
+        <footer class="cyber-footer">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>BloodyButterfly Server</h4>
-                    <p>ClientMod V34 | Новогодняя версия 2026</p>
+                    <h4><i class="fas fa-server"></i> BloodyButterfly System</h4>
+                    <p>ClientMod V34 | Cyber Edition 2024.1</p>
                 </div>
                 <div class="footer-section">
-                    <p>© 2025-2026 BloodyButterfly Team. Все права защищены.</p>
+                    <div class="system-info">
+                        <span class="info-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Защищено системой</span>
+                        </span>
+                        <span class="info-item">
+                            <i class="fas fa-bolt"></i>
+                            <span>Стабильное соединение</span>
+                        </span>
+                    </div>
                 </div>
+            </div>
+            <div class="copyright">
+                <p>© 2024 BloodyButterfly Cyber Systems. Все права защищены.</p>
             </div>
         </footer>
     </div>
@@ -439,3 +752,30 @@
     <script src="script.js"></script>
 </body>
 </html>
+<!-- В разделе профиля, добавьте: -->
+<div class="profile-creators">
+    <div class="creator-card">
+        <div class="creator-icon">
+            <i class="fas fa-code"></i>
+        </div>
+        <div class="creator-details">
+            <h4>Создатель сайта</h4>
+            <div class="creator-signature">
+                <span class="creator-name">GmaowG</span>
+                <span class="creator-title">Full-Stack Developer</span>
+            </div>
+        </div>
+    </div>
+    <div class="creator-card">
+        <div class="creator-icon">
+            <i class="fas fa-server"></i>
+        </div>
+        <div class="creator-details">
+            <h4>Создатель сервера</h4>
+            <div class="creator-signature">
+                <span class="creator-name">KILLMAKER</span>
+                <span class="creator-title">Server Administrator</span>
+            </div>
+        </div>
+    </div>
+</div>
