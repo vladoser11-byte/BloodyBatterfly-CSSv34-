@@ -6,301 +6,64 @@
     <title>BloodyBatterfly - Сервер CSS ClientMod V34 2026</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦋</text></svg>">
+    <style>
+        /* Временные стили для быстрой загрузки */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: #0a0a14;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a14;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #ffb7c5;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <!-- Сакуровый фон с анимациями -->
-    <div class="sakura-background"></div>
-    <div class="sakura-petals"></div>
-    <div class="bloody-butterflies"></div>
-    <div class="lanterns"></div>
-    <div class="japan-particles"></div>
-
-    <!-- Модальное окно сакурового бонуса -->
-    <div class="sakura-modal" id="sakuraModal">
-        <div class="sakura-modal-content">
-            <div class="sakura-modal-header">
-                <h3><i class="fas fa-sparkles"></i> Сакуровое благословение!</h3>
-                <span class="close-sakura-modal">&times;</span>
-            </div>
-            <div class="sakura-modal-body">
-                <div class="sakura-gift-icon">
-                    <i class="fas fa-crown fa-3x"></i>
-                    <div class="sakura-petal"></div>
-                    <div class="sakura-petal"></div>
-                    <div class="sakura-petal"></div>
-                </div>
-                <p class="sakura-message">Дух сакуры дарит вам VIP на 1 день!</p>
-                <div class="promo-code-display">
-                    <span id="sakuraPromoCode">SAKURA-VIP-2026</span>
-                    <button class="copy-promo-btn" onclick="copySakuraPromo()">
-                        <i class="far fa-copy"></i> Копировать
-                    </button>
-                </div>
-                <p class="promo-instructions">Активируйте промокод в разделе "Промокоды" вашего профиля</p>
-            </div>
-        </div>
+    <div class="loading">
+        <div class="spinner"></div>
     </div>
 
-    <!-- Основной контейнер -->
-    <div class="container">
-        <!-- Шапка сайта -->
-        <header class="main-header">
-            <div class="header-top">
-                <div class="server-status">
-                    <div class="status-indicator online"></div>
-                    <span class="status-text">СЕРВЕР ONLINE</span>
-                    <div class="players-count">
-                        <i class="fas fa-users"></i>
-                        <span id="onlinePlayers">127/128</span>
-                    </div>
-                </div>
-                <div class="header-date">
-                    <span id="currentDateTime">31 декабря 2025, 23:59</span>
-                    <span class="site-author"><i class="fas fa-code"></i> Создатель сайта: GmeowG</span>
-                </div>
-            </div>
-
-            <div class="header-main">
-                <div class="logo-container">
-                    <div class="logo-animated">
-                        <div class="sakura-branch"></div>
-                        <div class="butterfly-wing left"></div>
-                        <div class="butterfly-body"></div>
-                        <div class="butterfly-wing right"></div>
-                        <div class="sakura-flower"></div>
-                        <div class="sakura-flower small"></div>
-                    </div>
-                    <div class="logo-text">
-                        <h1 class="server-name">BLOODY BATTERFLY</h1>
-                        <p class="server-subtitle">СЕРВЕР CSS CLIENTMOD V34 2026</p>
-                        <div class="creators">
-                            <span class="creator-site"><i class="fas fa-code"></i> Создатель сайта: <strong>GmeowG</strong></span>
-                            <span class="creator-server"><i class="fas fa-server"></i> Создатель сервера: <strong>KILLMAKER</strong></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="new-year-counter sakura-counter">
-                    <div class="counter-title">До Нового 2026 Года:</div>
-                    <div class="counter-display">
-                        <div class="time-unit sakura-unit">
-                            <span id="days">00</span>
-                            <div class="unit-label">Дней</div>
-                        </div>
-                        <div class="time-separator sakura-separator">:</div>
-                        <div class="time-unit sakura-unit">
-                            <span id="hours">00</span>
-                            <div class="unit-label">Часов</div>
-                        </div>
-                        <div class="time-separator sakura-separator">:</div>
-                        <div class="time-unit sakura-unit">
-                            <span id="minutes">00</span>
-                            <div class="unit-label">Минут</div>
-                        </div>
-                        <div class="time-separator sakura-separator">:</div>
-                        <div class="time-unit sakura-unit">
-                            <span id="seconds">00</span>
-                            <div class="unit-label">Секунд</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Главное меню -->
-            <nav class="main-nav sakura-nav">
-                <ul class="nav-list">
-                    <li><a href="#home" class="nav-link active" data-page="home"><i class="fas fa-home"></i> Главная</a></li>
-                    <li><a href="#profile" class="nav-link" data-page="profile"><i class="fas fa-user"></i> Профиль</a></li>
-                    <li><a href="#bonus" class="nav-link" data-page="bonus"><i class="fas fa-gift"></i> Ежедневный бонус</a></li>
-                    <li><a href="#donate" class="nav-link" data-page="donate"><i class="fas fa-crown"></i> Донат</a></li>
-                    <li><a href="#promocodes" class="nav-link" data-page="promocodes"><i class="fas fa-ticket-alt"></i> Промокоды</a></li>
-                    <li><a href="#support" class="nav-link" data-page="support"><i class="fas fa-headset"></i> Поддержка</a></li>
-                    <li><a href="#rules" class="nav-link" data-page="rules"><i class="fas fa-book"></i> Правила</a></li>
-                </ul>
-                
-                <div class="user-auth-section">
-                    <button class="auth-btn login-btn sakura-btn" id="loginBtn">
-                        <i class="fas fa-sign-in-alt"></i> Войти
-                    </button>
-                    <button class="auth-btn register-btn sakura-btn" id="registerBtn">
-                        <i class="fas fa-user-plus"></i> Регистрация
-                    </button>
-                </div>
-            </nav>
-        </header>
-
-        <!-- Основное содержимое -->
-        <main class="main-content" id="mainContent">
-            <!-- Домашняя страница -->
-            <section id="homePage" class="page active">
-                <div class="page-header sakura-header">
-                    <h2><i class="fas fa-sparkles"></i> Добро пожаловать на сервер BloodyBatterfly!</h2>
-                    <p class="page-subtitle">Лучший CSS ClientMod V34 сервер в сакуровом стиле 2026</p>
-                </div>
-
-                <div class="welcome-section">
-                    <div class="welcome-card sakura-card">
-                        <div class="welcome-icon sakura-icon">
-                            <i class="fas fa-cherry-blossom"></i>
-                        </div>
-                        <h3>Сакуровое обновление 2026</h3>
-                        <p>Уникальные сакуровые скины, аниме-эмоции и японская атмосфера ждут вас!</p>
-                    </div>
-                    
-                    <div class="welcome-card sakura-card">
-                        <div class="welcome-icon sakura-icon">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <h3>Уникальные возможности</h3>
-                        <p>VIP статусы, кастомные модели, особые способности и эксклюзивный контент</p>
-                    </div>
-                    
-                    <div class="welcome-card sakura-card">
-                        <div class="welcome-icon sakura-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h3>Активное сообщество</h3>
-                        <p>Присоединяйтесь к тысячам игроков в эпических битвах на наших серверах</p>
-                    </div>
-                </div>
-
-                <div class="server-info-grid">
-                    <div class="info-card sakura-card">
-                        <div class="info-card-header sakura-header">
-                            <i class="fas fa-info-circle"></i>
-                            <h4>Информация о сервере</h4>
-                        </div>
-                        <div class="info-card-content">
-                            <ul class="server-info-list">
-                                <li><strong>Версия:</strong> ClientMod V34</li>
-                                <li><strong>IP Адрес:</strong> bloodybatterfly.serv.cc</li>
-                                <li><strong>Порт:</strong> 27015</li>
-                                <li><strong>Режимы:</strong> Deathmatch, Zombie, GunGame</li>
-                                <li><strong>Карты:</strong> 50+ уникальных локаций</li>
-                                <li><strong>Античит:</strong> Advanced Anti-Cheat System</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="info-card sakura-card">
-                        <div class="info-card-header sakura-header">
-                            <i class="fas fa-bell"></i>
-                            <h4>Последние новости</h4>
-                        </div>
-                        <div class="info-card-content">
-                            <div class="news-item">
-                                <div class="news-date">25.12.2025</div>
-                                <h5>Сакуровый ивент начался!</h5>
-                                <p>Собирайте лепестки сакуры и получайте эксклюзивные награды</p>
-                            </div>
-                            <div class="news-item">
-                                <div class="news-date">20.12.2025</div>
-                                <h5>Обновление ClientMod V34.1</h5>
-                                <p>Добавлены новые модели оружия и оптимизирована работа сервера</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="quick-stats">
-                    <div class="stat-box sakura-stat">
-                        <div class="stat-icon sakura-icon">
-                            <i class="fas fa-gamepad"></i>
-                        </div>
-                        <div class="stat-info">
-                            <div class="stat-value">15,842</div>
-                            <div class="stat-label">Игроков онлайн</div>
-                        </div>
-                    </div>
-                    <div class="stat-box sakura-stat">
-                        <div class="stat-icon sakura-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <div class="stat-info">
-                            <div class="stat-value">328</div>
-                            <div class="stat-label">Дней работы</div>
-                        </div>
-                    </div>
-                    <div class="stat-box sakura-stat">
-                        <div class="stat-icon sakura-icon">
-                            <i class="fas fa-award"></i>
-                        </div>
-                        <div class="stat-info">
-                            <div class="stat-value">7,521</div>
-                            <div class="stat-label">VIP игроков</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Остальные страницы остаются без изменений в структуре, только с добавлением класса sakura-card к элементам -->
-            
-            <!-- ... остальной код страниц без изменений ... -->
-            
-        </main>
-
-        <!-- Футер -->
-        <footer class="main-footer sakura-footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>BloodyBatterfly</h4>
-                    <p>Лучший CSS ClientMod V34 сервер</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-vk"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Контакты</h4>
-                    <ul class="footer-links">
-                        <li><a href="mailto:support@bloodybatterfly.serv.cc">support@bloodybatterfly.serv.cc</a></li>
-                        <li><a href="#">Telegram поддержка</a></li>
-                        <li><a href="#">Discord сервер</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Сервер</h4>
-                    <ul class="footer-links">
-                        <li><strong>IP:</strong> bloodybatterfly.serv.cc</li>
-                        <li><strong>Порт:</strong> 27015</li>
-                        <li><strong>Версия:</strong> ClientMod V34</li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Создатели</h4>
-                    <ul class="footer-links">
-                        <li><strong>Сайт:</strong> GmeowG</li>
-                        <li><strong>Сервер:</strong> KILLMAKER</li>
-                        <li><strong>Год:</strong> 2025-2026</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2025-2026 BloodyBatterfly Server. Создатель сайта: <strong>GmeowG</strong>. Все права защищены. CSS ClientMod V34</p>
-                <p>Этот сайт не аффилирован с Valve Corporation. Counter-Strike: Source является зарегистрированной торговой маркой Valve Corporation.</p>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Уведомления -->
-    <div class="notification-container" id="notificationContainer"></div>
-
-    <!-- Загрузка -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="sakura-spinner"></div>
-            <p>Загрузка...</p>
-        </div>
-    </div>
+    <!-- Фоновые элементы -->
+    <div class="sakura-bg"></div>
+    <div class="butterflies-container"></div>
+    
+    <!-- Основной контейнер (будет заполнен JavaScript) -->
+    <div id="app"></div>
 
     <script src="script.js"></script>
+    <script>
+        // Скрываем загрузку когда страница загрузилась
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.querySelector('.loading').style.display = 'none';
+            }, 500);
+        });
+    </script>
 </body>
 </html>
