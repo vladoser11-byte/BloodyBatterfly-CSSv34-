@@ -3,266 +3,527 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BloodyBatterfly | CSS Clientmod V34 Сервер</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;800&family=Rubik+Mono+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <title>Bloody Butterfly — CSS v34</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass {
+            background: rgba(255,255,255,0.22);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.38);
+        }
+        .glass-mid {
+            background: rgba(255,255,255,0.34);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.42);
+        }
+        .glass-strong {
+            background: rgba(255,255,255,0.48);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.55);
+        }
+        .glass-ip {
+            background: rgba(255,255,255,0.16);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.28);
+        }
+        .btn-blood {
+            background: linear-gradient(135deg, #8B0000, #a81030);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        .btn-blood:hover {
+            background: linear-gradient(135deg, #5c0000, #8B0000);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(139,0,0,0.45);
+        }
+        .btn-blood:active { transform: translateY(0); }
+        .text-gradient {
+            background: linear-gradient(135deg, #8B0000, #c41e3a, #a81030);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .petal {
+            position: absolute;
+            top: -30px;
+            background: linear-gradient(135deg, #f0d4c0, #e8c0a8, #f5ddd0);
+            border-radius: 50% 0 50% 50%;
+            pointer-events: none;
+            will-change: transform, opacity;
+            animation: petalFall linear infinite;
+        }
+        @keyframes petalFall {
+            0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
+            8%   { opacity: 0.65; }
+            25%  { transform: translateY(25vh) rotate(100deg) translateX(28px); }
+            50%  { transform: translateY(50vh) rotate(200deg) translateX(-20px); }
+            75%  { transform: translateY(75vh) rotate(310deg) translateX(24px); }
+            92%  { opacity: 0.55; }
+            100% { transform: translateY(110vh) rotate(400deg) translateX(-14px); opacity: 0; }
+        }
+
+        .branch-float { animation: branchSway 8s ease-in-out infinite; }
+        @keyframes branchSway {
+            0%, 100% { transform: rotate(-2deg) translateY(0); }
+            50%      { transform: rotate(2deg) translateY(-8px); }
+        }
+        .branch-float-2 { animation: branchSway2 10s ease-in-out infinite; }
+        @keyframes branchSway2 {
+            0%, 100% { transform: rotate(1deg) translateY(0); }
+            50%      { transform: rotate(-1.5deg) translateY(-6px); }
+        }
+
+        .glow-pulse { animation: glowPulse 4s ease-in-out infinite; }
+        @keyframes glowPulse {
+            0%, 100% { filter: drop-shadow(0 0 6px rgba(230,190,160,0.4)); }
+            50%      { filter: drop-shadow(0 0 16px rgba(230,190,160,0.7)); }
+        }
+
+        .shimmer { background-size: 200% 100%; animation: shimmer 4s ease-in-out infinite; }
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50%      { background-position: 100% 50%; }
+        }
+
+        .pulse-dot { animation: pulseDot 2s ease-in-out infinite; }
+        @keyframes pulseDot {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+            50%      { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+        }
+
+        .toast {
+            position: fixed; bottom: 32px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            opacity: 0; transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            z-index: 9999; pointer-events: none;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        .star { color: #f59e0b; }
+        .star-empty { color: #d1d5db; }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%     { transform: translateX(-6px); }
+            40%     { transform: translateX(6px); }
+            60%     { transform: translateX(-4px); }
+            80%     { transform: translateX(4px); }
+        }
+        .shake { animation: shake 0.4s ease; }
+
+        .bg-glow {
+            position: absolute; border-radius: 50%;
+            filter: blur(90px); pointer-events: none;
+            animation: bgGlowFloat 14s ease-in-out infinite;
+        }
+        @keyframes bgGlowFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33%      { transform: translate(15px, -12px) scale(1.08); }
+            66%      { transform: translate(-12px, 8px) scale(0.94); }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(139,0,0,0.25); border-radius: 3px; }
+    </style>
 </head>
-<body>
-    <!-- Анимированный фон: сакура, бабочки, снежинки -->
-    <div class="bg-animation">
-        <div class="sakura"></div>
-        <div class="snowflake"></div>
-        <div class="butterfly"></div>
-        <div class="sakura"></div>
-        <div class="snowflake"></div>
-        <div class="butterfly"></div>
+<body class="min-h-screen overflow-x-hidden text-gray-800">
+
+    <!-- ===== ФОН: САКУРА ===== -->
+    <div class="fixed inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=1920&q=80&fit=crop" alt=""
+             class="w-full h-full object-cover scale-110 blur-[2px] opacity-45">
+        <div class="absolute inset-0"
+             style="background:
+                radial-gradient(ellipse at 15% 25%, rgba(240,212,192,0.5) 0%, transparent 50%),
+                radial-gradient(ellipse at 85% 20%, rgba(245,225,205,0.4) 0%, transparent 45%),
+                radial-gradient(ellipse at 50% 80%, rgba(235,200,175,0.35) 0%, transparent 45%),
+                linear-gradient(180deg, rgba(250,245,238,0.6) 0%, rgba(245,237,224,0.7) 25%, rgba(240,228,210,0.75) 55%, rgba(235,222,200,0.8) 100%);
+             "></div>
+        <div class="bg-glow" style="width:380px;height:380px;background:rgba(240,215,190,0.2);top:8%;left:5%;animation-delay:0s;"></div>
+        <div class="bg-glow" style="width:320px;height:320px;background:rgba(235,205,180,0.16);top:45%;right:0;animation-delay:-5s;"></div>
+        <div class="bg-glow" style="width:280px;height:280px;background:rgba(245,220,200,0.15);bottom:8%;left:35%;animation-delay:-9s;"></div>
     </div>
 
-    <div class="container">
-        <!-- Шапка -->
-        <header>
-            <div class="logo">
-                <h1><i class="fas fa-skull-crossbones"></i> Bloody<span class="accent">Batterfly</span> <span class="new-year-badge">V34 2026</span></h1>
-                <p>Официальный сервер CSS Clientmod V34 | Новогоднее обновление</p>
+    <!-- ===== ВЕТКИ САКУРЫ ===== -->
+    <div class="fixed top-0 left-0 z-[5] pointer-events-none branch-float glow-pulse opacity-55">
+        <svg width="260" height="200" viewBox="0 0 260 200" fill="none">
+            <path d="M0 0 Q55 35 72 90 Q82 125 108 155" stroke="rgba(120,70,40,0.25)" stroke-width="2.5" fill="none"/>
+            <path d="M72 90 Q90 72 118 82" stroke="rgba(120,70,40,0.18)" stroke-width="1.8" fill="none"/>
+            <circle cx="118" cy="80" r="7" fill="rgba(240,200,180,0.55)"/>
+            <circle cx="100" cy="88" r="5.5" fill="rgba(245,210,190,0.45)"/>
+            <circle cx="88" cy="105" r="8" fill="rgba(235,195,170,0.5)"/>
+            <circle cx="108" cy="152" r="6" fill="rgba(240,200,180,0.4)"/>
+            <circle cx="75" cy="72" r="5" fill="rgba(245,215,195,0.35)"/>
+        </svg>
+    </div>
+    <div class="fixed top-0 right-0 z-[5] pointer-events-none branch-float-2 glow-pulse opacity-45 scale-x-[-1]">
+        <svg width="220" height="180" viewBox="0 0 220 180" fill="none">
+            <path d="M0 0 Q45 30 58 75 Q65 105 88 130" stroke="rgba(120,70,40,0.2)" stroke-width="2" fill="none"/>
+            <circle cx="92" cy="65" r="6" fill="rgba(240,200,180,0.45)"/>
+            <circle cx="75" cy="80" r="5" fill="rgba(245,210,190,0.38)"/>
+            <circle cx="70" cy="98" r="7" fill="rgba(235,195,170,0.42)"/>
+            <circle cx="88" cy="128" r="5" fill="rgba(240,205,185,0.35)"/>
+        </svg>
+    </div>
+
+    <!-- ===== ЛЕПЕСТКИ ===== -->
+    <div id="particles" class="fixed inset-0 z-50 pointer-events-none overflow-hidden"></div>
+
+    <!-- ===== КОНТЕНТ ===== -->
+    <div class="relative z-10">
+
+        <!-- HEADER -->
+        <header class="fixed top-0 left-0 right-0 z-40 glass-strong">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <svg viewBox="0 0 60 60" class="w-8 h-8 flex-shrink-0 glow-pulse" fill="none">
+                        <circle cx="30" cy="14" r="9" fill="rgba(240,200,180,0.65)" stroke="rgba(200,30,60,0.25)" stroke-width="0.8"/>
+                        <circle cx="14" cy="26" r="9" fill="rgba(240,200,180,0.6)" stroke="rgba(200,30,60,0.25)" stroke-width="0.8"/>
+                        <circle cx="46" cy="26" r="9" fill="rgba(240,200,180,0.6)" stroke="rgba(200,30,60,0.25)" stroke-width="0.8"/>
+                        <circle cx="19" cy="44" r="9" fill="rgba(240,200,180,0.55)" stroke="rgba(200,30,60,0.25)" stroke-width="0.8"/>
+                        <circle cx="41" cy="44" r="9" fill="rgba(240,200,180,0.55)" stroke="rgba(200,30,60,0.25)" stroke-width="0.8"/>
+                        <circle cx="30" cy="30" r="5" fill="rgba(139,0,0,0.45)"/>
+                        <circle cx="30" cy="30" r="2.5" fill="rgba(255,230,220,0.65)"/>
+                    </svg>
+                    <h1 class="font-serif text-xl sm:text-2xl font-bold text-gradient tracking-tight">Bloody Butterfly</h1>
+                </div>
+                <a href="https://t.me/cssigrovoyray" target="_blank"
+                   class="btn-blood px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Наш Telegram</span>
+                    <span class="sm:hidden">TG</span>
+                </a>
             </div>
-            <nav>
-                <ul class="nav-list">
-                    <li><a href="#main" class="nav-link active"><i class="fas fa-home"></i> Главная</a></li>
-                    <li><a href="#donate" class="nav-link"><i class="fas fa-donate"></i> Донат</a></li>
-                    <li><a href="#promo" class="nav-link"><i class="fas fa-gift"></i> Промокоды</a></li>
-                    <li><a href="#bonus" class="nav-link"><i class="fas fa-coins"></i> Ежедневный бонус</a></li>
-                    <li><a href="#support" class="nav-link"><i class="fas fa-headset"></i> Поддержка</a></li>
-                    <li><a href="#register" class="nav-link"><i class="fas fa-user-plus"></i> Регистрация/Вход</a></li>
-                </ul>
-            </nav>
         </header>
 
-        <!-- Основной контент -->
-        <main>
-            <!-- Главная -->
-            <section id="main" class="content-section active">
-                <h2><i class="fas fa-gamepad"></i> Добро пожаловать на BloodyBatterfly!</h2>
-                <div class="info-grid">
-                    <div class="info-card">
-                        <h3><i class="fas fa-users"></i> Активное комьюнити</h3>
-                        <p>Стабильный онлайн, дружеская атмосфера, регулярные ивенты.</p>
-                    </div>
-                    <div class="info-card">
-                        <h3><i class="fas fa-calendar-star"></i> Новогодний ивент 2026</h3>
-                        <p>Праздничная атмосфера, тематические декорации на картах, новогодние скины.</p>
-                    </div>
-                    <div class="info-card">
-                        <h3><i class="fas fa-wrench"></i> Clientmod V34</h3>
-                        <p>Улучшенная оптимизация, новые команды, исправление старых багов.</p>
-                    </div>
-                </div>
-                <div class="server-stats">
-                    <h3><i class="fas fa-chart-line"></i> Статистика сервера</h3>
-                    <p>Онлайн: <span class="online-count">327</span> игроков</p>
-                    <p>Карты в ротации: 18</p>
-                    <p>Режимы: Deathmatch, Zombie Plague, GunGame</p>
-                    <p>Версия: CSS Clientmod V34</p>
-                </div>
-            </section>
-
-            <!-- Донат -->
-            <section id="donate" class="content-section">
-                <h2><i class="fas fa-crown"></i> Поддержать сервер</h2>
-                <p class="section-desc">Донат помогает развивать сервер и добавлять новый контент.</p>
-                <div class="donate-grid">
-                    <div class="donate-card">
-                        <h3>Спонсор</h3>
-                        <p class="price">199 ₽</p>
-                        <ul>
-                            <li>Цветной ник в чате</li>
-                            <li>Доступ к !skin</li>
-                            <li>Префикс [Sponsor]</li>
-                        </ul>
-                        <button class="btn-buy" onclick="window.open('https://t.me/BloodyBatterflyDonate', '_blank')">Купить через Telegram</button>
-                    </div>
-                    <div class="donate-card popular">
-                        <div class="popular-badge">Популярный</div>
-                        <h3>Вип</h3>
-                        <p class="price">499 ₽</p>
-                        <ul>
-                            <li>Всё из "Спонсора"</li>
-                            <li>Доступ к !vipmenu</li>
-                            <li>Возможность !respawn</li>
-                            <li>Ежемесячный бонус</li>
-                        </ul>
-                        <button class="btn-buy" onclick="window.open('https://t.me/BloodyBatterflyDonate', '_blank')">Купить через Telegram</button>
-                    </div>
-                    <div class="donate-card">
-                        <h3>Легенда</h3>
-                        <p class="price">999 ₽</p>
-                        <ul>
-                            <li>Всё из "Вип"</li>
-                            <li>Уникальный скин "Легенда"</li>
-                            <li>Личный слот на сервере</li>
-                            <li>Значок в табе</li>
-                        </ul>
-                        <button class="btn-buy" onclick="window.open('https://t.me/BloodyBatterflyDonate', '_blank')">Купить через Telegram</button>
+        <!-- HERO -->
+        <section class="pt-28 pb-8 sm:pt-36 sm:pb-12 px-4 sm:px-6">
+            <div class="max-w-3xl mx-auto text-center" data-aos="fade-up" data-aos-duration="900">
+                <h2 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-5">
+                    <span class="text-gradient shimmer"
+                          style="background-image: linear-gradient(135deg, #8B0000, #c41e3a, #a81030, #8B0000); background-size: 200% 100%;">
+                        Весна 2026 на<br>Bloody Butterfly
+                    </span>
+                </h2>
+                <p class="text-gray-600 text-base sm:text-lg max-w-xl mx-auto mb-8 leading-relaxed">
+                    Цветущая сакура, обновлённые карты и тёплое комьюнити. Лучший сервер CSS v34 этой весны.
+                </p>
+                <div class="glass-ip rounded-2xl p-5 sm:p-6 max-w-md mx-auto inline-block w-full" data-aos="zoom-in" data-aos-delay="200">
+                    <p class="text-xs uppercase tracking-widest text-white/60 font-medium mb-2">Адрес сервера</p>
+                    <div class="flex items-center justify-center gap-3">
+                        <code id="server-ip" class="text-lg sm:text-xl font-semibold text-white/90 tracking-wide select-all drop-shadow-sm">185.248.32.117:27015</code>
+                        <button id="copy-btn" onclick="copyIP()"
+                                class="btn-blood px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 whitespace-nowrap">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                            Копировать
+                        </button>
                     </div>
                 </div>
-            </section>
-
-            <!-- Промокоды -->
-            <section id="promo" class="content-section">
-                <h2><i class="fas fa-ticket-alt"></i> Новогодние промокоды 2026</h2>
-                <p class="section-desc">Активируй в игре командой <code>/promo КОД</code></p>
-                <div class="promo-container">
-                    <div class="promo-input">
-                        <input type="text" id="promoInput" placeholder="Введите промокод...">
-                        <button id="checkPromo"><i class="fas fa-check"></i> Проверить</button>
-                    </div>
-                    <div class="promo-list">
-                        <div class="promo-item">
-                            <span class="promo-code">NEWYEAR2026</span>
-                            <span class="promo-desc">Скидка 10% на донат (шанс 70%)</span>
-                        </div>
-                        <div class="promo-item">
-                            <span class="promo-code">BUTTERFLY25</span>
-                            <span class="promo-desc">Скидка 20% на донат (шанс 20%)</span>
-                        </div>
-                        <div class="promo-item">
-                            <span class="promo-code">BLOODYVIP</span>
-                            <span class="promo-desc">Скидка 30% на донат (шанс 10%)</span>
-                        </div>
-                        <div class="promo-item">
-                            <span class="promo-code">LEGEND2026</span>
-                            <span class="promo-desc">Скидка 40% на донат (шанс 5%)</span>
-                        </div>
-                    </div>
-                    <div id="promoResult"></div>
-                </div>
-            </section>
-
-            <!-- Ежедневный бонус -->
-            <section id="bonus" class="content-section">
-                <h2><i class="fas fa-calendar-day"></i> Ежедневный бонус</h2>
-                <p class="section-desc">Зайди на сервер и получи награду командой <code>/bonus</code></p>
-                <div class="bonus-calendar">
-                    <div class="bonus-day claimed">
-                        <div class="day">1</div>
-                        <div class="reward">500$</div>
-                    </div>
-                    <div class="bonus-day claimed">
-                        <div class="day">2</div>
-                        <div class="reward">Скин "Новичок"</div>
-                    </div>
-                    <div class="bonus-day today">
-                        <div class="day">3</div>
-                        <div class="reward">1000$</div>
-                    </div>
-                    <div class="bonus-day">
-                        <div class="day">4</div>
-                        <div class="reward">Кейс "Обычный"</div>
-                    </div>
-                    <div class="bonus-day">
-                        <div class="day">5</div>
-                        <div class="reward">Префикс на день</div>
-                    </div>
-                    <div class="bonus-day">
-                        <div class="day">6</div>
-                        <div class="reward">2000$</div>
-                    </div>
-                    <div class="bonus-day">
-                        <div class="day">7</div>
-                        <div class="reward">Вип на 1 день</div>
-                    </div>
-                </div>
-                <p class="bonus-notice">Награда обновляется каждый день в 00:00 МСК.</p>
-            </section>
-
-            <!-- Поддержка -->
-            <section id="support" class="content-section">
-                <h2><i class="fas fa-question-circle"></i> Поддержка</h2>
-                <div class="support-grid">
-                    <div class="support-card">
-                        <h3><i class="fab fa-telegram"></i> Telegram-канал</h3>
-                        <p>Анонсы, новости, обновления.</p>
-                        <button class="btn-tg" onclick="window.open('https://t.me/BloodyBatterflyNews', '_blank')">Перейти</button>
-                    </div>
-                    <div class="support-card">
-                        <h3><i class="fas fa-comments"></i> Чат поддержки</h3>
-                        <p>Помощь по игровым вопросам, багам.</p>
-                        <button class="btn-tg" onclick="window.open('https://t.me/BloodyBatterflySupport', '_blank')">Написать</button>
-                    </div>
-                    <div class="support-card">
-                        <h3><i class="fas fa-book"></i> FAQ & Гайды</h3>
-                        <p>Ответы на частые вопросы, установка Clientmod.</p>
-                        <button class="btn-tg" onclick="window.open('https://t.me/BloodyBatterflyFAQ', '_blank')">Читать</button>
-                    </div>
-                </div>
-                <div class="support-warning">
-                    <p><i class="fas fa-exclamation-triangle"></i> <strong>ВАЖНО:</strong> Администрация никогда не просит пароль от аккаунта!</p>
-                </div>
-            </section>
-
-            <!-- Регистрация/Вход -->
-            <section id="register" class="content-section">
-                <h2><i class="fas fa-user-shield"></i> Регистрация / Вход</h2>
-                <div class="auth-container">
-                    <div class="auth-tabs">
-                        <button class="auth-tab active" data-tab="login">Вход</button>
-                        <button class="auth-tab" data-tab="register">Регистрация</button>
-                    </div>
-
-                    <!-- Форма входа -->
-                    <form id="loginForm" class="auth-form active">
-                        <input type="text" placeholder="Ник на сервере" required>
-                        <input type="password" placeholder="Пароль" required>
-                        <button type="submit"><i class="fas fa-sign-in-alt"></i> Войти</button>
-                        <p class="auth-link"><a href="#forgot">Забыли пароль?</a></p>
-                    </form>
-
-                    <!-- Форма регистрации -->
-                    <form id="registerForm" class="auth-form">
-                        <input type="text" id="regNick" placeholder="Ник на сервере*" required>
-                        <p class="input-note">Укажите тот же ник, что и в игре на сервере.</p>
-                        
-                        <input type="email" id="regEmail" placeholder="Email*" required>
-                        <p class="input-note">На этот адрес придут уведомления о смене пароля, ежедневных бонусах и ответы поддержки.</p>
-                        
-                        <input type="password" id="regPassword" placeholder="Пароль*" required pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
-                        <p class="input-note">Пароль должен быть не менее 8 символов, содержать буквы, цифры и специальный символ.</p>
-                        
-                        <input type="password" id="regConfirm" placeholder="Подтвердите пароль*" required>
-                        
-                        <label class="checkbox-label">
-                            <input type="checkbox" required> Я согласен с правилами сервера
-                        </label>
-                        
-                        <button type="submit"><i class="fas fa-user-plus"></i> Зарегистрироваться</button>
-                    </form>
-
-                    <!-- Восстановление пароля -->
-                    <form id="forgotForm" class="auth-form">
-                        <h3><i class="fas fa-key"></i> Восстановление пароля</h3>
-                        <input type="email" placeholder="Ваш Email" required>
-                        <button type="submit"><i class="fas fa-paper-plane"></i> Отправить инструкцию</button>
-                        <p class="input-note">На указанный Email придет письмо со ссылкой для сброса пароля.</p>
-                    </form>
-                </div>
-            </section>
-        </main>
-
-        <!-- Подвал -->
-        <footer>
-            <p>BloodyBatterfly &copy; 2023-2026 | Сервер CSS Clientmod V34</p>
-            <p>Все права защищены. Данный сайт не является официальным продуктом Valve.</p>
-            <div class="footer-links">
-                <a href="#rules">Правила</a> | 
-                <a href="#privacy">Конфиденциальность</a> | 
-                <a href="#staff">Администрация</a>
             </div>
+        </section>
+
+        <!-- ОПИСАНИЕ -->
+        <section class="pb-8 sm:pb-14 px-4 sm:px-6">
+            <div class="max-w-3xl mx-auto" data-aos="fade-up" data-aos-duration="700">
+                <div class="glass rounded-3xl p-6 sm:p-8">
+                    <h3 class="font-serif text-xl sm:text-2xl font-bold text-gradient mb-5 text-center">О сервере</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-red-900/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i data-lucide="swords" class="w-5 h-5 text-red-800"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800 text-sm mb-0.5">Competitive 5v5</p>
+                                <p class="text-gray-500 text-xs leading-relaxed">Рейтинговые матчи, система скилла и честный матчмейкинг без смурфов.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-50/60 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i data-lucide="flower-2" class="w-5 h-5 text-amber-700"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800 text-sm mb-0.5">Весенние карты</p>
+                                <p class="text-gray-500 text-xs leading-relaxed">de_mirage, de_dust2, de_inferno — в уникальном весеннем оформлении с сакурой.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-red-900/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i data-lucide="shield-check" class="w-5 h-5 text-red-800"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800 text-sm mb-0.5">Античит защита</p>
+                                <p class="text-gray-500 text-xs leading-relaxed">Мощная защита от читеров. Баны моментально — играем чисто.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-50/60 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i data-lucide="gift" class="w-5 h-5 text-amber-700"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800 text-sm mb-0.5">Донат без Pay-to-Win</p>
+                                <p class="text-gray-500 text-xs leading-relaxed">Скины, модели, звуки — только косметика. Баланс не нарушаем.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- КАРТОЧКА СЕРВЕРА — de_mirage -->
+        <section class="pb-8 sm:pb-14 px-4 sm:px-6">
+            <div class="max-w-2xl mx-auto" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">
+                <div class="glass rounded-3xl overflow-hidden">
+                    <div class="relative">
+                        <img src="https://cdn.cloudflare.steamstatic.com/apps/csgo/images/maps/map_tabs/mirage.png" alt="de_mirage"
+                             class="w-full h-52 sm:h-72 object-cover bg-[#1a1a1a]"
+                             onerror="this.src='https://picsum.photos/seed/morocco-desert-alley-sandstone/800/420.jpg'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                            <div>
+                                <span class="inline-block glass px-3 py-1 rounded-full text-xs font-semibold text-gray-800 mb-1.5">🌸 Весенняя редакция</span>
+                                <h3 class="text-white font-serif text-2xl sm:text-3xl font-bold drop-shadow-lg">de_mirage</h3>
+                            </div>
+                            <div class="glass rounded-xl px-4 py-2.5 flex items-center gap-2.5">
+                                <span class="w-2.5 h-2.5 bg-green-500 rounded-full pulse-dot flex-shrink-0"></span>
+                                <span class="text-sm font-bold text-gray-800">26<span class="text-gray-500 font-normal">/32</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 sm:p-6">
+                        <button onclick="connectServer()" class="btn-blood w-full py-3.5 rounded-xl text-base font-semibold flex items-center justify-center gap-2">
+                            <i data-lucide="play" class="w-5 h-5"></i>
+                            Подключиться
+                        </button>
+                        <p class="text-center text-xs text-gray-500 mt-2.5">IP будет скопирован — вставьте в консоль CS:S</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- КНОПКИ -->
+        <section class="pb-8 sm:pb-14 px-4 sm:px-6">
+            <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4" data-aos="fade-up" data-aos-duration="700">
+                <a href="https://t.me/cssigrovoyray" target="_blank" class="btn-blood py-4 rounded-2xl text-center font-semibold flex items-center justify-center gap-2.5 text-sm sm:text-base">
+                    <i data-lucide="users" class="w-5 h-5"></i> Вступить в TG
+                </a>
+                <a href="https://t.me/Gongmap" target="_blank" class="btn-blood py-4 rounded-2xl text-center font-semibold flex items-center justify-center gap-2.5 text-sm sm:text-base">
+                    <i data-lucide="gem" class="w-5 h-5"></i> Купить Донат
+                </a>
+                <a href="https://t.me/Gongmap" target="_blank" class="btn-blood py-4 rounded-2xl text-center font-semibold flex items-center justify-center gap-2.5 text-sm sm:text-base">
+                    <i data-lucide="headphones" class="w-5 h-5"></i> Тех. Поддержка
+                </a>
+            </div>
+        </section>
+
+        <!-- ОТЗЫВЫ -->
+        <section class="pb-16 sm:pb-24 px-4 sm:px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-10" data-aos="fade-up">
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-gradient mb-3">Отзывы игроков</h2>
+                    <p class="text-gray-500 text-sm sm:text-base">Что говорят о сервере этой весной</p>
+                </div>
+                <div id="reviews-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10"></div>
+                <div class="glass-mid rounded-2xl p-5 sm:p-7 max-w-xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="font-serif text-lg font-bold text-gray-800 mb-4 text-center">Оставить отзыв</h3>
+                    <form id="review-form" onsubmit="submitReview(event)" novalidate>
+                        <div class="mb-4">
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 font-medium mb-1.5">Ник в игре <span class="text-red-500">*</span></label>
+                            <input type="text" id="review-nick" placeholder="Ваш никнейм как на сервере"
+                                   class="w-full px-4 py-3 rounded-xl bg-white/40 border border-white/50 text-gray-800 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-800/30 focus:border-red-800/40 transition">
+                            <p id="nick-error" class="text-red-600 text-xs mt-1 hidden"></p>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 font-medium mb-1.5">Оценка <span class="text-red-500">*</span></label>
+                            <div id="star-picker" class="flex gap-1.5 mb-1">
+                                <button type="button" onclick="setRating(1)" class="star-btn text-2xl transition-transform hover:scale-125" style="color:#d1d5db">☆</button>
+                                <button type="button" onclick="setRating(2)" class="star-btn text-2xl transition-transform hover:scale-125" style="color:#d1d5db">☆</button>
+                                <button type="button" onclick="setRating(3)" class="star-btn text-2xl transition-transform hover:scale-125" style="color:#d1d5db">☆</button>
+                                <button type="button" onclick="setRating(4)" class="star-btn text-2xl transition-transform hover:scale-125" style="color:#d1d5db">☆</button>
+                                <button type="button" onclick="setRating(5)" class="star-btn text-2xl transition-transform hover:scale-125" style="color:#d1d5db">☆</button>
+                            </div>
+                            <p id="rating-error" class="text-red-600 text-xs mt-0.5 hidden"></p>
+                        </div>
+                        <div class="mb-5 mt-3">
+                            <label class="block text-xs uppercase tracking-wider text-gray-500 font-medium mb-1.5">Текст отзыва <span class="text-red-500">*</span></label>
+                            <textarea id="review-text" rows="3" placeholder="Расскажите, что вам нравится на сервере..."
+                                      class="w-full px-4 py-3 rounded-xl bg-white/40 border border-white/50 text-gray-800 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-800/30 focus:border-red-800/40 transition resize-none"></textarea>
+                            <p id="text-error" class="text-red-600 text-xs mt-1 hidden"></p>
+                        </div>
+                        <button type="submit" class="btn-blood w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i> Отправить отзыв
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <footer class="glass-strong py-6 px-4 text-center">
+            <p class="text-gray-500 text-sm">© 2026 Bloody Butterfly — Легенда CSS v34</p>
         </footer>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="script.js"></script>
+    <!-- ТОСТ -->
+    <div id="toast" class="toast">
+        <div class="glass-strong rounded-2xl px-6 py-3.5 shadow-2xl flex items-center gap-3">
+            <span id="toast-icon" class="text-lg">✅</span>
+            <span id="toast-text" class="text-sm font-medium text-gray-800"></span>
+        </div>
+    </div>
+
+    <script>
+        AOS.init({ once: true, offset: 50 });
+        lucide.createIcons();
+
+        /* ===== ЛЕПЕСТКИ ===== */
+        (function() {
+            var c = document.getElementById('particles');
+            var mob = window.innerWidth < 640;
+            var pn = mob ? 16 : 28;
+            for (var i = 0; i < pn; i++) {
+                var p = document.createElement('div');
+                p.className = 'petal';
+                var s = Math.random() * 10 + 6;
+                p.style.left = Math.random() * 100 + '%';
+                p.style.width = s + 'px';
+                p.style.height = s + 'px';
+                p.style.animationDuration = (Math.random() * 10 + 7) + 's';
+                p.style.animationDelay = (Math.random() * 14) + 's';
+                p.style.opacity = '0';
+                c.appendChild(p);
+            }
+        })();
+
+        /* ===== ТОСТ ===== */
+        var toastTimer;
+        function showToast(text, icon) {
+            icon = icon || '✅';
+            var t = document.getElementById('toast');
+            document.getElementById('toast-text').textContent = text;
+            document.getElementById('toast-icon').textContent = icon;
+            t.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+        }
+
+        /* ===== IP ===== */
+        function copyIP() {
+            var ip = document.getElementById('server-ip').textContent;
+            navigator.clipboard.writeText(ip).then(function() {
+                var btn = document.getElementById('copy-btn');
+                btn.innerHTML = '<span>Скопировано! ✅</span>';
+                showToast('IP скопирован в буфер обмена');
+                setTimeout(function() {
+                    btn.innerHTML = '<i data-lucide="copy" class="w-4 h-4"></i> Копировать';
+                    lucide.createIcons();
+                }, 2200);
+            });
+        }
+        function connectServer() {
+            var ip = document.getElementById('server-ip').textContent;
+            navigator.clipboard.writeText(ip).then(function() {
+                showToast('IP скопирован! Вставьте в консоль CS:S', '🎮');
+            });
+        }
+
+        /* ===== ЗВЁЗДЫ ===== */
+        var currentRating = 0;
+        function setRating(r) {
+            currentRating = r;
+            document.querySelectorAll('.star-btn').forEach(function(btn, i) {
+                btn.textContent = i < r ? '★' : '☆';
+                btn.style.color = i < r ? '#f59e0b' : '#d1d5db';
+            });
+            document.getElementById('rating-error').classList.add('hidden');
+        }
+        function renderStars(n) {
+            var h = '';
+            for (var i = 1; i <= 5; i++) h += i <= n ? '<span class="star text-sm">★</span>' : '<span class="star-empty text-sm">★</span>';
+            return h;
+        }
+
+        /* ===== МАТ ===== */
+        var bw = ['хуй','хуя','хуе','хую','хуйн','хуёв','хуин','пизд','пизж','пизг','пизда','пизду','пиздой','бля','бляд','блят','блядь','еба','ёба','ебан','ебин','ёбан','ебуч','ебёт','ебет','ебал','ебла','ебли','ебать','ёбать','ебут','жоп','жопе','жопу','жопа','пидор','пидр','пидар','хер','хера','херу','херов','муд','муда','муде','мудак','мудила','говн','говно','говна','говном','залуп','залупа','залупы','шлюх','шлюха','шлюхой','трах','трахать','трахнул','долбоёб','долбоеб','уёб','уеб','уёби','ублюд','заеб','заёб','заебал','заёбал','отъеб','отеб','отьеб','выеб','выёб','наеб','наёб','наебал','подъеб','подеб','подёб','перееб','переб','переёб','педик','педер','педераст','гандон','гондон','мать твою','мать вашу','сука','сучка','сучий','fuck','shit','bitch','dick','cock','cunt','bastard','ass'];
+        function norm(t) { return t.toLowerCase().replace(/[@а́à]/g,'а').replace(/0/g,'о').replace(/о́/g,'о').replace(/[\!¡]/g,'и').replace(/[\$₽]/g,'с').replace(/3/g,'з').replace(/[\*·•]/g,'').replace(/[-_—–\s]+/g,' ').trim(); }
+        function hasBad(t) { var n=norm(t); return bw.some(function(w){return n.indexOf(w)!==-1;}); }
+
+        /* ===== ОТЗЫВЫ ===== */
+        var reviews = [
+            { nick:'SakuraKiller', text:'Сервер просто бомба весной! Карты в весеннем оформлении — это что-то новенькое, залипательно играть каждый вечер.', date:'12.04.2026', stars:5 },
+            { nick:'ButterflyHunter', text:'Пришёл по рекомендации друга — остался насовсем. Комьюнити классное, админы адекватные, нет токсиков.', date:'10.04.2026', stars:5 },
+            { nick:'xX_Blood_Xx', text:'Весенняя атмосфера на de_mirage — это шедевр. Как будто играешь в другую игру. Респект администрации!', date:'08.04.2026', stars:4 },
+            { nick:"Na'Vi_Fan_2006", text:'Античит реально работает, за два месяца ни одного смурфа не встретил. Пинг стабильный 35мс.', date:'05.04.2026', stars:5 },
+            { nick:'CherryBomb', text:'Донат не ломает баланс — только скины и звуки. Наконец-то нормальный сервер без птв.', date:'03.04.2026', stars:4 },
+            { nick:'Awp_King_99', text:'Играл на десятках серверов, этот — лучший. Сакура на картах прям под настроение весной!', date:'01.04.2026', stars:5 },
+        ];
+        function esc(s) { var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+        function renderReviews() {
+            var g = document.getElementById('reviews-grid');
+            g.innerHTML = reviews.map(function(r,i){
+                return '<div class="glass rounded-2xl p-5 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" data-aos="fade-up" data-aos-delay="'+i*60+'">'
+                    +'<div class="flex items-center gap-3 mb-3">'
+                        +'<div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-800 to-amber-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md">'+r.nick.charAt(0).toUpperCase()+'</div>'
+                        +'<div class="min-w-0 flex-1">'
+                            +'<p class="font-semibold text-gray-800 text-sm truncate">'+esc(r.nick)+'</p>'
+                            +'<div class="flex items-center gap-2"><div class="flex">'+renderStars(r.stars)+'</div><span class="text-xs text-gray-400">'+r.date+'</span></div>'
+                        +'</div>'
+                    +'</div>'
+                    +'<p class="text-gray-600 text-sm leading-relaxed">'+esc(r.text)+'</p>'
+                +'</div>';
+            }).join('');
+            AOS.refresh();
+        }
+        function submitReview(e) {
+            e.preventDefault();
+            var ne=document.getElementById('review-nick'), te=document.getElementById('review-text');
+            var neE=document.getElementById('nick-error'), teE=document.getElementById('text-error'), raE=document.getElementById('rating-error');
+            var v=true;
+            neE.classList.add('hidden'); teE.classList.add('hidden'); raE.classList.add('hidden');
+            ne.classList.remove('shake','ring-2','ring-red-400'); te.classList.remove('shake','ring-2','ring-red-400');
+            var nick=ne.value.trim(), text=te.value.trim();
+            if(!nick){neE.textContent='Укажите ваш никнейм';neE.classList.remove('hidden');ne.classList.add('shake','ring-2','ring-red-400');v=false;}
+            else if(nick.length<3){neE.textContent='Никнейм: мин. 3 символа';neE.classList.remove('hidden');ne.classList.add('shake','ring-2','ring-red-400');v=false;}
+            else if(nick.length>24){neE.textContent='Никнейм: макс. 24 символа';neE.classList.remove('hidden');ne.classList.add('shake','ring-2','ring-red-400');v=false;}
+            if(currentRating===0){raE.textContent='Поставьте оценку';raE.classList.remove('hidden');v=false;}
+            if(!text){teE.textContent='Напишите ваш отзыв';teE.classList.remove('hidden');te.classList.add('shake','ring-2','ring-red-400');v=false;}
+            else if(text.length<10){teE.textContent='Отзыв: мин. 10 символов';teE.classList.remove('hidden');te.classList.add('shake','ring-2','ring-red-400');v=false;}
+            if(!v)return;
+            if(hasBad(nick)||hasBad(text)){
+                var t=hasBad(nick)?ne:te, er=hasBad(nick)?neE:teE;
+                er.textContent='Обнаружена нецензурная лексика. Перепишите без мата.';er.classList.remove('hidden');
+                t.classList.add('shake','ring-2','ring-red-400');showToast('Обнаружен мат в тексте','🚫');return;
+            }
+            var now=new Date(), ds=String(now.getDate()).padStart(2,'0')+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+now.getFullYear();
+            reviews.unshift({nick:nick,text:text,date:ds,stars:currentRating});
+            renderReviews();
+            ne.value=''; te.value=''; setRating(0); currentRating=0;
+            showToast('Отзыв опубликован! Спасибо 🌸');
+            document.getElementById('reviews-grid').scrollIntoView({behavior:'smooth',block:'start'});
+        }
+        document.addEventListener('animationend',function(e){if(e.animationName==='shake')e.target.classList.remove('shake');});
+        renderReviews();
+    </script>
 </body>
 </html>
